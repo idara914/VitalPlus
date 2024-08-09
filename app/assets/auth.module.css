@@ -1,6 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 
   height: 100vh;
 }
@@ -50,4 +50,28 @@
   font-weight: bold;
   text-align: left;
   margin-bottom: 32px;
+}
+
+@media screen and (max-width: 1200px) {
+  .containerLeftInner {
+    width: 380px;
+  }
+
+  .containerRightInner {
+    width: 380px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .containerLeft {
+    display: none;
+  }
+
+  .containerRightInner {
+    width: 100%;
+  }
 }

@@ -111,7 +111,8 @@ export default function Login() {
         </form>
         <Divider text="OR" />
         <p>
-          Don't have an account? <Link href={"/auth/register"}>Register</Link>
+          Don&apos;t have an account?{" "}
+          <Link href={"/auth/register"}>Register</Link>
         </p>
       </section>
     </AuthLayout>

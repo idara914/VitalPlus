@@ -8,7 +8,7 @@ export default function AuthLayout({ heading, text, children }) {
       <div className={styles.containerLeft}>
         <div className={styles.containerLeftInner}>
           <h1 className={styles.heading}>{heading}</h1>
-          <Image src={LogoWhite} />
+          <Image src={LogoWhite} alt="vitalplus" />
           <p className={styles.paragraph}>{text}</p>
         </div>
       </div>
