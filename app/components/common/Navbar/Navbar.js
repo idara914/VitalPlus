@@ -71,7 +71,7 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu }) => (
 );
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const toggleMobileMenu = () => {
