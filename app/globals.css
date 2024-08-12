@@ -1,8 +1,14 @@
 :root {
   --primary-color: #7f3dff;
+  --primary-color-dark: #31097f;
+  --primary-color-darker: #000020;
   --secondary-color: #f5f5f5;
   --text-color: #425466;
+  --text-color-lighter: #9090a7;
   --heading-color: #27272e;
+  --common-body-padding: 80px;
+  --common-body-padding-md: 34px;
+  --common-body-padding-sm: 10px;
 }
 
 * {

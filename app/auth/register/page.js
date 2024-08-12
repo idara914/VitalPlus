@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import TextField from "../../components/TextField";
-import Button from "../../components/Button";
-import Divider from "../../components/Divider";
+import TextField from "../../components/common/TextField/TextField";
+import Button from "../../components/common/Button/Button";
+import Divider from "../../components/common/Divider/Divider";
 import Link from "next/link";
 import styles from "../../assets/auth.module.css";
-import AuthLayout from "@/app/components/Layouts/AuthLayout";
+import AuthLayout from "@/app/components/layouts/AuthLayout";
 
 export default function Register() {
   const [email, setEmail] = useState("");
