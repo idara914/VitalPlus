@@ -21,7 +21,7 @@ const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
         Contact Us
       </Link>
     </div>
-    <Link href="/admin/dashboard" onClick={toggleMobileMenu}>
+    <Link href="/auth/register" onClick={toggleMobileMenu}>
       <Button text={"Get Started"} customStyle={{ padding: "10px 14px" }} />
     </Link>
   </>
