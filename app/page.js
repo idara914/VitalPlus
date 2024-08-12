@@ -60,7 +60,7 @@ export default function Home() {
             membership option for you. Click here to explore our different
             options.{" "}
           </p>
-          <Link href={"/get-started"}>
+          <Link href={"/auth/register"}>
             <Button
               text={"Let's Get Started"}
               postImage={RightArrow}
