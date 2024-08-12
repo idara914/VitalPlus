@@ -1,5 +1,4 @@
 import styles from "../../assets/landing.module.css";
-import Image from "next/image";
 import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 
