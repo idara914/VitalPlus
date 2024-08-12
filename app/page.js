@@ -32,8 +32,8 @@ export default function Home() {
             <h1>The Connected Homecare Ecosystem</h1>
             <p>
               Enhance proactive homecare and improve health outcomes with our
-              solutions. We're here to support better health and well-being at
-              home.
+              solutions. We&apos;re here to support better health and well-being
+              at home.
             </p>
           </div>
         </section>
@@ -42,8 +42,8 @@ export default function Home() {
             <h1>We know homecare. We know Medicaid</h1>
             <p>
               Enhance proactive homecare and improve health outcomes with our
-              solutions. We're here to support better health and well-being at
-              home.
+              solutions. We&apos;re here to support better health and well-being
+              at home.
             </p>
             <Link href={"/demo"}>
               <Button text={"Try it Now"} customStyle={{ padding: "14px" }} />
