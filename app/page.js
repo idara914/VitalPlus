@@ -20,7 +20,7 @@ export default function Home() {
               Enhance proactive homecare and get a better health and well-being
               at home.
             </p>
-            <Link href={"/demo"}>
+            <Link href={"/admin/dashboard"}>
               <Button text={"Book A Demo"} customStyle={{ padding: "14px" }} />
             </Link>
           </div>

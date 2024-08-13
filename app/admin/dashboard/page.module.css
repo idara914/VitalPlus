@@ -1,0 +1,22 @@
+.container {
+  padding: var(--common-body-padding);
+  padding-top: 36px;
+}
+.contentContainer {
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (max-width: 868px) {
+  .container {
+    padding: var(--common-body-padding-md);
+  }
+}
+
+@media (max-width: 484px) {
+  .container {
+    padding: var(--common-body-padding-sm);
+  }
+}

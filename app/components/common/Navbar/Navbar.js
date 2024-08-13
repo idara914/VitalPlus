@@ -4,7 +4,7 @@ import styles from "./Navbar.module.css";
 import Logo from "../../../../public/logos/logo.png";
 import Bell from "../../../../public/icons/bell.png";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "../Button/Button";
 
@@ -70,9 +70,13 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu }) => (
   </>
 );
 
-const Navbar = () => {
+const Navbar = ({ isSignedIn }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(isSignedIn);
+  }, [isSignedIn]);
 
   const toggleMobileMenu = () => {
     setIsMobile(!isMobile);

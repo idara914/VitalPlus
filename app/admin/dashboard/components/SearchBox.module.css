@@ -1,0 +1,11 @@
+.container {
+  text-align: center;
+  max-width: 400px;
+  margin-top: 50px;
+}
+
+.container > p {
+  font-weight: 200;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
