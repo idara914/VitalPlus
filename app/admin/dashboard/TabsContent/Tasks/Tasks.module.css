@@ -1,0 +1,31 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-gap: 26px;
+}
+
+.innerContainer {
+}
+
+.innerContainer > h2 {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.taskCard {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 16px;
+}
+
+.taskCard > p {
+  margin-left: 10px;
+  color: #000;
+}
+
+.taskCard > img {
+  margin-top: 2px;
+}

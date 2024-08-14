@@ -7,6 +7,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "../Button/Button";
+import { Dropdown } from "antd";
+import {
+  resourseItems,
+  adminItems,
+  reportItems,
+  memberItems,
+  careProviderItems,
+  visitItems,
+  actionItems,
+  billingItems,
+} from "./helpers";
 
 const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   <>
@@ -30,27 +41,69 @@ const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
 const LoggedInNavOptions = ({ isMobile, toggleMobileMenu }) => (
   <>
     <div className={styles.navOptions}>
-      <Link href="/user/member" onClick={toggleMobileMenu}>
-        Member
-      </Link>
-      <Link href="/user/care-provider" onClick={toggleMobileMenu}>
-        Care Provider
-      </Link>
-      <Link href="/user/visit" onClick={toggleMobileMenu}>
-        Visit
-      </Link>
-      <Link href="/user/billing" onClick={toggleMobileMenu}>
-        Billing
-      </Link>
-      <Link href="/user/action" onClick={toggleMobileMenu}>
-        Action
-      </Link>
-      <Link href="/user/report" onClick={toggleMobileMenu}>
-        Report
-      </Link>
-      <Link href="/user/resources" onClick={toggleMobileMenu}>
-        Resources
-      </Link>
+      <Dropdown
+        menu={{
+          items: memberItems,
+        }}
+      >
+        <Link href="#" onClick={toggleMobileMenu}>
+          Member
+        </Link>
+      </Dropdown>
+      <Dropdown
+        menu={{
+          items: careProviderItems,
+        }}
+      >
+        <Link h href="#" onClick={toggleMobileMenu}>
+          Care Provider
+        </Link>
+      </Dropdown>
+      <Dropdown
+        menu={{
+          items: visitItems,
+        }}
+      >
+        <Link href="#" onClick={toggleMobileMenu}>
+          Visit
+        </Link>
+      </Dropdown>
+      <Dropdown
+        menu={{
+          items: billingItems,
+        }}
+      >
+        <Link href="#" onClick={toggleMobileMenu}>
+          Billing
+        </Link>
+      </Dropdown>
+      <Dropdown
+        menu={{
+          items: actionItems,
+        }}
+      >
+        <Link href="#" onClick={toggleMobileMenu}>
+          Action
+        </Link>
+      </Dropdown>
+      <Dropdown
+        menu={{
+          items: reportItems,
+        }}
+      >
+        <Link href="#" onClick={toggleMobileMenu}>
+          Report
+        </Link>
+      </Dropdown>
+      <Dropdown
+        menu={{
+          items: resourseItems,
+        }}
+      >
+        <Link href="#" onClick={toggleMobileMenu}>
+          Resources
+        </Link>
+      </Dropdown>
     </div>
     <div
       style={{
@@ -58,14 +111,39 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu }) => (
         alignItems: "center",
       }}
     >
-      <Link
-        href="/admin/dashboard"
-        onClick={toggleMobileMenu}
-        style={{ marginRight: "10px" }}
+      <Dropdown
+        menu={{
+          items: adminItems,
+        }}
       >
-        <Button text={"Admin"} customStyle={{ padding: "10px 14px" }} />
-      </Link>
-      <Image src={Bell} alt="bell" />
+        <Link
+          href="#"
+          onClick={toggleMobileMenu}
+          style={{ marginRight: "10px" }}
+        >
+          <Button text={"Admin"} customStyle={{ padding: "10px 14px" }} />
+        </Link>
+      </Dropdown>
+      <Dropdown
+        placement="bottom"
+        menu={{
+          items: [
+            {
+              label: "User 1 logged in",
+              key: "0",
+            },
+            {
+              type: "divider",
+            },
+            {
+              label: "User 2 logged in",
+              key: "2",
+            },
+          ],
+        }}
+      >
+        <Image src={Bell} alt="bell" style={{ cursor: "pointer" }} />
+      </Dropdown>
     </div>
   </>
 );
