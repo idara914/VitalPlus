@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import styles from "./Tabs.module.css";
 
 function Tabs({ options }) {
-  const [currentTab, setCurrentTab] = useState(3);
+  const [currentTab, setCurrentTab] = useState(0);
   const handleTabChange = (index) => {
     setCurrentTab(index);
   };
