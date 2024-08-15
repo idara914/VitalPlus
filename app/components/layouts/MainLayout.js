@@ -20,7 +20,10 @@ export default function MainLayout({ children, isSignedIn = false }) {
     >
       <div>
         <Navbar isSignedIn={isSignedIn} />
-        <div className={styles.containerRightInner}>{children}</div>
+        {children && (
+          <div className={styles.containerRightInner}>{children}</div>
+        )}
+        {!children && <div style={{ height: "100vh" }}></div>}
         <Footer />
       </div>
     </ConfigProvider>
