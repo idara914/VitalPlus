@@ -3,15 +3,17 @@ const { default: Link } = require("next/link");
 export const resourseItems = [
   {
     key: "training",
-    label: <Link href={"/training"}>Training</Link>,
+    label: <Link href={"/resource/training"}>Training</Link>,
   },
   {
     key: "missing-compliance",
-    label: <Link href={"/missing-compliance"}>Missing Compliance</Link>,
+    label: (
+      <Link href={"/resource/missing-compliance"}>Missing Compliance</Link>
+    ),
   },
   {
     key: "texas-evv",
-    label: <Link href={"/texas-evv"}>Texas EVV</Link>,
+    label: <Link href={"/resource/texas-evv"}>Texas EVV</Link>,
   },
 ];
 
@@ -19,131 +21,139 @@ export const adminItems = [
   {
     key: "manage-report-subscription",
     label: (
-      <Link href={"/manage-report-subscription"}>
+      <Link href={"/admin/manage-report-subscription"}>
         Manage Report Subscription
       </Link>
     ),
   },
   {
     key: "import-files",
-    label: <Link href={"/import-files"}>Import Files</Link>,
+    label: <Link href={"/admin/import-files"}>Import Files</Link>,
   },
   {
     key: "evv-aggregation-transaction-manager",
     label: (
-      <Link href={"/evv-aggregation-transaction-manager"}>
+      <Link href={"/admin/evv-aggregation-transaction-manager"}>
         EVV Aggregation Transaction Manager
       </Link>
     ),
   },
   {
     key: "mobile-user-management",
-    label: <Link href={"/mobile-user-management"}>Mobile User Management</Link>,
+    label: (
+      <Link href={"/admin/mobile-user-management"}>Mobile User Management</Link>
+    ),
   },
   {
     key: "user-management",
-    label: <Link href={"/user-management"}>User Management</Link>,
+    label: <Link href={"/admin/user-management"}>User Management</Link>,
   },
   {
     key: "change-password",
-    label: <Link href={"/change-password"}>Change Password</Link>,
+    label: <Link href={"/admin/change-password"}>Change Password</Link>,
   },
   {
     key: "payer-setup",
-    label: <Link href={"/payer-setup"}>Payer Setup</Link>,
+    label: <Link href={"/admin/payer-setup"}>Payer Setup</Link>,
   },
   {
     key: "coordinator-setup",
-    label: <Link href={"/coordinator-setup"}>Coordinator Setup</Link>,
+    label: <Link href={"/admin/coordinator-setup"}>Coordinator Setup</Link>,
   },
   {
     key: "compliance-setup",
-    label: <Link href={"/compliance-setup"}>Compliance Setup</Link>,
+    label: <Link href={"/admin/compliance-setup"}>Compliance Setup</Link>,
   },
   {
     key: "reference-table-management",
     label: (
-      <Link href={"/reference-table-management"}>
+      <Link href={"/admin/reference-table-management"}>
         Reference Table Management
       </Link>
     ),
   },
   {
     key: "provider-profile",
-    label: <Link href={"/provider-profile"}>Provider Profile</Link>,
+    label: <Link href={"/admin/provider-profile"}>Provider Profile</Link>,
   },
   {
     key: "process-monitor",
-    label: <Link href={"/process-monitor"}>Process Monitor</Link>,
+    label: <Link href={"/admin/process-monitor"}>Process Monitor</Link>,
   },
   {
     key: "search-payer",
-    label: <Link href={"/search-payer"}>Search Payer</Link>,
+    label: <Link href={"/admin/search-payer"}>Search Payer</Link>,
   },
   {
     key: "background-report-monitor",
     label: (
-      <Link href={"/background-report-monitor"}>Background Report Monitor</Link>
+      <Link href={"/admin/background-report-monitor"}>
+        Background Report Monitor
+      </Link>
     ),
   },
   {
     key: "duty-list-setup",
-    label: <Link href={"/duty-list-setup"}>Duty List Setup</Link>,
+    label: <Link href={"/admin/duty-list-setup"}>Duty List Setup</Link>,
   },
   {
     key: "org-structure",
-    label: <Link href={"/org-structure"}>Org Structure</Link>,
+    label: <Link href={"/admin/org-structure"}>Org Structure</Link>,
   },
   {
     key: "office-setup",
-    label: <Link href={"/office-setup"}>Office Setup</Link>,
+    label: <Link href={"/admin/office-setup"}>Office Setup</Link>,
   },
   {
     key: "payroll-setup",
-    label: <Link href={"/payroll-setup"}>Payroll Setup</Link>,
+    label: <Link href={"/admin/payroll-setup"}>Payroll Setup</Link>,
   },
 ];
 
 export const reportItems = [
   {
     key: "members",
-    label: <Link href={"/members"}>Members</Link>,
+    label: <Link href={"/report/members"}>Members</Link>,
   },
   {
     key: "member-roster",
-    label: <Link href={"/member-roster"}>Member Roster</Link>,
+    label: <Link href={"/report/member-roster"}>Member Roster</Link>,
   },
   {
     key: "expiring-benefit-plan",
-    label: <Link href={"/expiring-benefit-plan"}>Expiring Benefit Plan</Link>,
+    label: (
+      <Link href={"/report/expiring-benefit-plan"}>Expiring Benefit Plan</Link>
+    ),
   },
   {
     key: "payroll",
-    label: <Link href={"/payroll"}>Payroll</Link>,
+    label: <Link href={"/report/payroll"}>Payroll</Link>,
   },
   {
     key: "payroll-metrics",
-    label: <Link href={"/payroll-metrics"}>Payroll Metrics</Link>,
+    label: <Link href={"/report/payroll-metrics"}>Payroll Metrics</Link>,
   },
   {
     key: "referrals",
-    label: <Link href={"/referrals"}>Referrals</Link>,
+    label: <Link href={"/report/referrals"}>Referrals</Link>,
   },
   {
     key: "sales",
-    label: <Link href={"/sales"}>Sales</Link>,
+    label: <Link href={"/report/sales"}>Sales</Link>,
   },
   {
     key: "time-and-attendance",
-    label: <Link href={"/time-and-attendance"}>Time and Attendance</Link>,
+    label: (
+      <Link href={"/report/time-and-attendance"}>Time and Attendance</Link>
+    ),
   },
   {
     key: "provider",
-    label: <Link href={"/provider"}>Provider</Link>,
+    label: <Link href={"/report/provider"}>Provider</Link>,
   },
   {
     key: "visits",
-    label: <Link href={"/visits"}>Visits</Link>,
+    label: <Link href={"/report/visits"}>Visits</Link>,
   },
 ];
 
@@ -215,63 +225,67 @@ export const visitItems = [
 export const actionItems = [
   {
     key: "in-service",
-    label: <Link href={"/in-service"}>In Service</Link>,
+    label: <Link href={"/action/in-service"}>In Service</Link>,
   },
   {
     key: "bulk-shift-manager",
-    label: <Link href={"/bulk-shift-manager"}>Bulk Shift Manager</Link>,
+    label: <Link href={"/action/bulk-shift-manager"}>Bulk Shift Manager</Link>,
   },
   {
     key: "payroll",
-    label: <Link href={"/payroll"}>Payroll</Link>,
+    label: <Link href={"/action/payroll"}>Payroll</Link>,
   },
   {
     key: "order-tracking",
-    label: <Link href={"/order-tracking"}>Order Tracking</Link>,
+    label: <Link href={"/action/order-tracking"}>Order Tracking</Link>,
   },
   {
     key: "confirm-timesheet",
-    label: <Link href={"/confirm-timesheet"}>Confirm Timesheet</Link>,
+    label: <Link href={"/action/confirm-timesheet"}>Confirm Timesheet</Link>,
   },
   {
     key: "broadcast-message",
-    label: <Link href={"/broadcast-message"}>Broadcast Message</Link>,
+    label: <Link href={"/action/broadcast-message"}>Broadcast Message</Link>,
   },
   {
     key: "exclusion-verification-lists",
     label: (
-      <Link href={"/exclusion-verification-lists"}>
+      <Link href={"/action/exclusion-verification-lists"}>
         Exclusion/Verification Lists
       </Link>
     ),
   },
   {
     key: "collection",
-    label: <Link href={"/collection"}>Collection</Link>,
+    label: <Link href={"/action/collection"}>Collection</Link>,
   },
   {
     key: "overtime-dashboard",
-    label: <Link href={"/overtime-dashboard"}>Overtime Dashboard</Link>,
+    label: <Link href={"/action/overtime-dashboard"}>Overtime Dashboard</Link>,
   },
   {
     key: "pto-approval",
-    label: <Link href={"/pto-approval"}>PTO Approval</Link>,
+    label: <Link href={"/action/pto-approval"}>PTO Approval</Link>,
   },
   {
     key: "bulk-pay-rate-adjust",
-    label: <Link href={"/bulk-pay-rate-adjust"}>Bulk Pay Rate Adjust</Link>,
+    label: (
+      <Link href={"/action/bulk-pay-rate-adjust"}>Bulk Pay Rate Adjust</Link>
+    ),
   },
   {
     key: "travel-time",
-    label: <Link href={"/travel-time"}>Travel Time</Link>,
+    label: <Link href={"/action/travel-time"}>Travel Time</Link>,
   },
   {
     key: "broadcast-dashboard",
-    label: <Link href={"/broadcast-dashboard"}>Broadcast Dashboard</Link>,
+    label: (
+      <Link href={"/action/broadcast-dashboard"}>Broadcast Dashboard</Link>
+    ),
   },
   {
     key: "operation-worklist",
-    label: <Link href={"/operation-worklist"}>Operation Worklist</Link>,
+    label: <Link href={"/action/operation-worklist"}>Operation Worklist</Link>,
   },
 ];
 

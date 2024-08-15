@@ -128,14 +128,18 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute }) => (
         menu={{
           items: [
             {
-              label: "User 1 logged in",
+              label: (
+                <Link href={"/admin/notifications"}>User 1 logged in</Link>
+              ),
               key: "0",
             },
             {
               type: "divider",
             },
             {
-              label: "User 2 logged in",
+              label: (
+                <Link href={"/admin/notifications"}>User 2 logged in</Link>
+              ),
               key: "2",
             },
           ],
