@@ -22,13 +22,13 @@ import {
 const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   <>
     <div className={styles.navOptions}>
-      <Link href="/about" onClick={toggleMobileMenu}>
+      <Link href="/aboutus" onClick={toggleMobileMenu}>
         About
       </Link>
-      <Link href="/about" onClick={toggleMobileMenu}>
+      <Link href="/features" onClick={toggleMobileMenu}>
         Feature
       </Link>
-      <Link href="/about" onClick={toggleMobileMenu}>
+      <Link href="/contact-us" onClick={toggleMobileMenu}>
         Contact Us
       </Link>
     </div>
@@ -38,7 +38,7 @@ const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   </>
 );
 
-const LoggedInNavOptions = ({ isMobile, toggleMobileMenu }) => (
+const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute }) => (
   <>
     <div className={styles.navOptions}>
       <Dropdown
@@ -125,7 +125,6 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu }) => (
         </Link>
       </Dropdown>
       <Dropdown
-        placement="bottom"
         menu={{
           items: [
             {

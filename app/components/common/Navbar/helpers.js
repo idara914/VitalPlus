@@ -150,61 +150,65 @@ export const reportItems = [
 export const memberItems = [
   {
     key: "member-search",
-    label: <Link href={"/member-search"}>Member Search</Link>,
+    label: <Link href={"/member/search"}>Member Search</Link>,
   },
   {
     key: "new-member",
-    label: <Link href={"/new-member"}>New Member</Link>,
+    label: <Link href={"/member/new"}>New Member</Link>,
   },
   {
     key: "supplies-rx-search",
-    label: <Link href={"/supplies-rx-search"}>Supplies/RX Search</Link>,
+    label: <Link href={"/member/supplies-search"}>Supplies/RX Search</Link>,
   },
   {
     key: "claims",
-    label: <Link href={"/claims"}>Claims</Link>,
+    label: <Link href={"/member/claims"}>Claims</Link>,
   },
   {
     key: "assessments",
-    label: <Link href={"/assessments"}>Assessments</Link>,
+    label: <Link href={"/member/assesments"}>Assessments</Link>,
   },
 ];
 
 export const careProviderItems = [
   {
     key: "new-provider",
-    label: <Link href={"/new-provider"}>New Provider</Link>,
+    label: <Link href={"/care-provider/new"}>New Provider</Link>,
   },
   {
     key: "provider-search",
-    label: <Link href={"/provider-search"}>Provider Search</Link>,
+    label: <Link href={"/care-provider/search"}>Provider Search</Link>,
   },
   {
     key: "bulk-provider-manager",
-    label: <Link href={"/bulk-provider-manager"}>Bulk Provider Manager</Link>,
+    label: (
+      <Link href={"/care-provider/bulk-manager"}>Bulk Provider Manager</Link>
+    ),
   },
   {
     key: "contact-provider",
-    label: <Link href={"/contact-provider"}>Contact Provider</Link>,
+    label: <Link href={"/care-provider/contact"}>Contact Provider</Link>,
   },
 ];
 
 export const visitItems = [
   {
     key: "call-dashboard",
-    label: <Link href={"/call-dashboard"}>Call Dashboard</Link>,
+    label: <Link href={"/visit/call-dashboard"}>Call Dashboard</Link>,
   },
   {
     key: "visit-search",
-    label: <Link href={"/visit-search"}>Visit Search</Link>,
+    label: <Link href={"/visit/search"}>Visit Search</Link>,
   },
   {
     key: "appointments",
-    label: <Link href={"/appointments"}>Appointments</Link>,
+    label: <Link href={"/visit/appointments"}>Appointments</Link>,
   },
   {
     key: "bulk-visit-maintenance",
-    label: <Link href={"/bulk-visit-maintenance"}>Bulk Visit Maintenance</Link>,
+    label: (
+      <Link href={"/visit/bulk-visit-maintenance"}>Bulk Visit Maintenance</Link>
+    ),
   },
 ];
 
@@ -274,30 +278,40 @@ export const actionItems = [
 export const billingItems = [
   {
     key: "print-invoices",
-    label: <Link href={"/print-invoices"}>Print Invoices</Link>,
+    label: <Link href={"/billings/print-invoices"}>Print Invoices</Link>,
   },
   {
     key: "print-duty-sheets",
-    label: <Link href={"/print-duty-sheets"}>Print Duty Sheets</Link>,
+    label: <Link href={"/billings/print-duty-sheets"}>Print Duty Sheets</Link>,
   },
   {
     key: "new-invoice-batch",
-    label: <Link href={"/new-invoice-batch"}>New Invoice Batch</Link>,
+    label: <Link href={"/billings/new-invoice-batch"}>New Invoice Batch</Link>,
   },
   {
     key: "new-invoice-internal",
-    label: <Link href={"/new-invoice-internal"}>New Invoice (Internal)</Link>,
+    label: (
+      <Link href={"/billings/new-invoice-internal"}>
+        New Invoice (Internal)
+      </Link>
+    ),
   },
   {
     key: "electronic-billing",
-    label: <Link href={"/electronic-billing"}>Electronic Billing</Link>,
+    label: (
+      <Link href={"/billings/electronic-billing"}>Electronic Billing</Link>
+    ),
   },
   {
     key: "cash-payment",
-    label: <Link href={"/cash-payment"}>Cash Payment</Link>,
+    label: <Link href={"/billings/cash-payment"}>Cash Payment</Link>,
   },
   {
     key: "bulk-claim-maintenance",
-    label: <Link href={"/bulk-claim-maintenance"}>Bulk Claim Maintenance</Link>,
+    label: (
+      <Link href={"/billings/bulk-claim-maintenance"}>
+        Bulk Claim Maintenance
+      </Link>
+    ),
   },
 ];

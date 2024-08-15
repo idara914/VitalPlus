@@ -51,3 +51,7 @@ p {
   font-size: 16px;
   color: #484646 !important;
 }
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  background-color: rgba(239, 230, 254, 0.4) !important;
+}
