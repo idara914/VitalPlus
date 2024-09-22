@@ -1,4 +1,5 @@
 import { Lexend } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const lexend = Lexend({ subsets: ["latin"] });
@@ -11,7 +12,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={lexend.className}>{children}</body>
+      <body className={lexend.className}>
+        <Toaster position="bottom-left" />
+        {children}
+      </body>
     </html>
   );
 }

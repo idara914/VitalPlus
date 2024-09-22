@@ -9,12 +9,12 @@ import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from 'react-hot-toast';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
-export default function Login() {
+export default function Verify() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
 
   const validateEmail = (email) => {
@@ -27,11 +27,11 @@ export default function Login() {
     }
   };
 
-  const validatePassword = (password) => {
-    if (!password) {
-      return "Please enter your password";
-    } else if (password.length < 8) {
-      return "Password must be at least 8 characters";
+  const validateOtp = (otp) => {
+    if (!otp) {
+      return "Please enter your OTP";
+    } else if (otp.length < 6 || otp.length > 6) {
+      return "OTP is a 6 character code";
     } else {
       return null;
     }
@@ -43,33 +43,27 @@ export default function Login() {
     setError(validateEmail(email));
   };
 
-  const handlePasswordChange = (e) => {
-    const password = e.target.value;
-    setPassword(password);
-    setError(validatePassword(password));
+  const handleOtpChange = (e) => {
+    const otp = e.target.value;
+    setOtp(otp);
+    setError(validateOtp(otp));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
-    if (emailError || passwordError) {
-      setError(emailError || passwordError);
+    const otpError = validateOtp(otp);
+    if (emailError || otpError) {
+      setError(emailError || otpError);
     } else {
-      await instance.post('/auth/login', { email, password }).then(response => {
-        if (response.status == 200) {
-          toast.success(response.data.message);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-          router.push('/auth/2fa');
-        }
-      })
-        .catch(error => {
-          if (error.response.status == 403) {
-            toast.success(error.response.data.message);
-            router.push('/auth/verify');
-          } else {
-            toast.error(error.response.data.message);
+      await instance.post('/auth/verify-otp', { email, otp })
+        .then(response => {
+          if (response.status == 200) {
+            toast.success(response.data.message);
+            router.push('/auth/verified');
           }
+        }).catch(error => {
+          toast.error(error.response.data.message);
         });
     }
   };
@@ -80,7 +74,7 @@ export default function Login() {
       text="Enhance proactive homecare and improve health outcomes with our solutions. We're here to support better health and well-being at home."
     >
       <section>
-        <h1 className={styles.formHeading}>Welcome Back!</h1>
+        <h1 className={styles.formHeading}>OTP Verification!</h1>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Email"
@@ -94,43 +88,21 @@ export default function Login() {
           />
 
           <TextField
-            label="Password"
-            type="password"
-            placeholder="********"
-            value={password}
-            onChange={handlePasswordChange}
+            label="OTP"
+            type="text"
+            placeholder="123456"
+            value={otp}
+            onChange={handleOtpChange}
           />
-          <p
-            style={{
-              fontSize: "16px",
-              color: "#425466",
-              textAlign: "left",
-              marginTop: "16px",
-            }}
-          >
-            <Link
-              href={"/auth/forgot-password"}
-              style={{
-                color: "#425466",
-              }}
-            >
-              Forgot Password?
-            </Link>
-          </p>
           {error && <p style={{ color: "red" }}>{error}</p>}
           <Button
-            text="Login"
+            text="Confirm OTP"
             customStyle={{
               marginTop: "50px",
               width: "100%",
             }}
           />
         </form>
-        <Divider text="OR" />
-        <p>
-          Don&apos;t have an account?{" "}
-          <Link href={"/auth/register"}>Register</Link>
-        </p>
       </section>
     </AuthLayout>
   );

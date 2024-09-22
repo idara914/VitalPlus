@@ -45,11 +45,19 @@
 }
 
 .formHeading {
-  font-size: #27272e;
+  color: #27272e;
   font-size: 32px;
   font-weight: bold;
   text-align: left;
   margin-bottom: 32px;
+}
+
+.title {
+  color: #27272e;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 @media screen and (max-width: 1200px) {

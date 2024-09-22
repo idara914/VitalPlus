@@ -7,8 +7,12 @@ import Divider from "../../components/common/Divider/Divider";
 import Link from "next/link";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
+import instance from "@/services/axios";
+import { toast } from 'react-hot-toast';
+import { useRouter } from "next/navigation";
 
 export default function Register() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -59,15 +63,23 @@ export default function Register() {
     setError(validatePassword(password));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     if (emailError || passwordError) {
       setError(emailError || passwordError);
     } else {
-      // Proceed with login logic here
-      console.log("Login successful");
+      await instance.post('/auth/register', { username: name, email: email, password: password }).then(response => {
+        if (response.status == 201 || response.status == 200 ) {
+          if(response.data.status == true) {
+            toast.success(response.data.message);
+            router.push('/auth/verify');
+          }
+        }
+      }).catch(error => {
+        toast.error(error.response.data.message);
+      });
     }
   };
 
