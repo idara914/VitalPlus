@@ -12,12 +12,15 @@ export default function TwoFactorAuthenticator(props) {
   const [code, setCode] = useState(new Array(6).fill(''));
   const [qrCode, setQrCode] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(JSON.parse(window.localStorage.getItem('user')));
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (!user) {
+    let loggedInUser = JSON.parse(window.localStorage.getItem('user'));
+    if (!loggedInUser) {
       toast.error('Not logged in!');
       router.push('/auth/login')
+    } else {
+      setUser(loggedInUser);
     }
   }, []);
 
@@ -61,8 +64,8 @@ export default function TwoFactorAuthenticator(props) {
       heading="Two Factor Authentication"
       text="Please scan app to connect your account with 2FA. Enter the six digit code from your authentication app!"
     >
-      {!(user.mfa_authenticated) && !qrCode && <button onClick={handleSetup}>Setup MFA</button>}
-      {!(user.mfa_authenticated) && qrCode && (
+      {!(user && user.mfa_authenticated) && !qrCode && <button onClick={handleSetup}>Setup MFA</button>}
+      {!(user && user.mfa_authenticated) && qrCode && (
         <>
           <h3>Scan the QR Code</h3>
           <img src={qrCode} alt="Scan the QR Code" />
@@ -82,7 +85,7 @@ export default function TwoFactorAuthenticator(props) {
         </>
       )}
 
-      {(user.mfa_authenticated == 1) && (
+      {(user && user.mfa_authenticated == 1) && (
         <>
           <h3>Enter the Authentor Code</h3>
           <div className={styles.inputContainer}>
