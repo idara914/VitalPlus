@@ -59,7 +59,7 @@ export default function Login() {
       await instance.post('/auth/login', { email, password }).then(response => {
         if (response.status == 200) {
           toast.success(response.data.message);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+          window.localStorage.setItem('user', JSON.stringify(response.data.user));
           router.push('/auth/2fa');
         }
       })

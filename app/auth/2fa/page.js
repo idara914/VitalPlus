@@ -1,10 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TextField from "../../components/common/TextField/TextField";
-import Button from "../../components/common/Button/Button";
-import Divider from "../../components/common/Divider/Divider";
-import Link from "next/link";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from 'react-hot-toast';
@@ -14,11 +10,9 @@ import styles from './TwoFactorAuth.module.css';
 export default function TwoFactorAuthenticator(props) {
   const router = useRouter();
   const [code, setCode] = useState(new Array(6).fill(''));
-  const [backup, setBackup] = useState(false);
   const [qrCode, setQrCode] = useState(null);
-  const [token, setToken] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [user, setUser] = useState(JSON.parse(window.localStorage.getItem('user')));
 
   useEffect(() => {
     if (!user) {
@@ -52,8 +46,8 @@ export default function TwoFactorAuthenticator(props) {
     await instance.post('/auth/mfa/verify', { email: user.email, token }).then(response => {
       if (response.status == 200 || response.status == 201 && response.data.success) {
         toast.success(response.data.message);
-        localStorage.setItem('token', response.data.token)
-        localStorage.setItem('user', JSON.stringify(response.data.user))
+        window.localStorage.setItem('token', response.data.token)
+        window.localStorage.setItem('user', JSON.stringify(response.data.user))
         setIsAuthenticated(true);
         router.push('/member/new')
 

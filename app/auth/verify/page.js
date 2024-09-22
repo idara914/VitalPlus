@@ -3,8 +3,6 @@
 import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
-import Divider from "../../components/common/Divider/Divider";
-import Link from "next/link";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
