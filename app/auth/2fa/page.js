@@ -40,13 +40,13 @@ export default function TwoFactorAuthenticator(props) {
 
   // 1. Request MFA setup (QR Code generation)
   const handleSetup = async () => {
-    const response = await instance.post('/auth/mfa/setup', { email: user.email });
+    const response = await instance.post('/auth/mfa/setup', { email: user.Email });
     setQrCode(response.data.qrCode);
   };
 
   // 2. Verify the MFA token
   const handleVerify = async (token) => {
-    await instance.post('/auth/mfa/verify', { email: user.email, token }).then(response => {
+    await instance.post('/auth/mfa/verify', { email: user.Email, token }).then(response => {
       if (response.status == 200 || response.status == 201 && response.data.success) {
         toast.success(response.data.message);
         window.localStorage.setItem('token', response.data.token)
