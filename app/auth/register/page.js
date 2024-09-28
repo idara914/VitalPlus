@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import Divider from "../../components/common/Divider/Divider";
@@ -10,6 +10,7 @@ import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from 'react-hot-toast';
 import { useRouter } from "next/navigation";
+import { signIn } from "@/app/user";
 
 export default function Register() {
   const router = useRouter();
@@ -71,8 +72,9 @@ export default function Register() {
       setError(emailError || passwordError);
     } else {
       await instance.post('/auth/register', { username: name, email: email, password: password }).then(response => {
-        if (response.status == 201 || response.status == 200 ) {
-          if(response.data.status == true) {
+        if (response.status == 201 || response.status == 200) {
+          if (response.data.status == true) {
+            signIn(response.data.token, response.data.user)
             toast.success(response.data.message);
             router.push('/auth/verify');
           }

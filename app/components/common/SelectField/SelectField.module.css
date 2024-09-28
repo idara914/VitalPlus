@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+.label {
+  font-size: #121212;
+  font-size: 15px;
+  font-size: bold;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.input {
+  border: none;
+  background-color: rgba(122, 130, 138, 0.2);
+  height: 52px;
+  border-radius: 8px;
+  padding: 10px 20px;
+}

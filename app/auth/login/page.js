@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import Divider from "../../components/common/Divider/Divider";
@@ -10,6 +10,7 @@ import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from 'react-hot-toast';
 import { useRouter } from "next/navigation";
+import { signIn } from '@/app/user/index';
 
 export default function Login() {
   const router = useRouter();
@@ -51,16 +52,18 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
+
     if (emailError || passwordError) {
       setError(emailError || passwordError);
     } else {
       await instance.post('/auth/login', { email, password }).then(response => {
         if (response.status == 200) {
+          signIn(response.data.token, response.data.user)
           toast.success(response.data.message);
-          window.localStorage.setItem('user', JSON.stringify(response.data.user));
-          router.push('/auth/2fa');
+          router.push('/admin/dashboard');
         }
       })
         .catch(error => {

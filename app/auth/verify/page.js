@@ -8,22 +8,12 @@ import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function Verify() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
-
-  const validateEmail = (email) => {
-    if (!email) {
-      return "Please enter your email";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return "Invalid email address";
-    } else {
-      return null;
-    }
-  };
 
   const validateOtp = (otp) => {
     if (!otp) {
@@ -35,12 +25,6 @@ export default function Verify() {
     }
   };
 
-  const handleEmailChange = (e) => {
-    const email = e.target.value;
-    setEmail(email);
-    setError(validateEmail(email));
-  };
-
   const handleOtpChange = (e) => {
     const otp = e.target.value;
     setOtp(otp);
@@ -49,16 +33,15 @@ export default function Verify() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const emailError = validateEmail(email);
     const otpError = validateOtp(otp);
-    if (emailError || otpError) {
-      setError(emailError || otpError);
+    if (otpError) {
+      setError(otpError);
     } else {
-      await instance.post('/auth/verify-otp', { email, otp })
+      await instance.post('/auth/verify-otp', { otp }, { headers: { "Authorization": "Bearer " + Cookies.get("token") } })
         .then(response => {
           if (response.status == 200) {
             toast.success(response.data.message);
-            router.push('/auth/verified');
+            router.push('/account/update');
           }
         }).catch(error => {
           toast.error(error.response.data.message);
@@ -74,17 +57,6 @@ export default function Verify() {
       <section>
         <h1 className={styles.formHeading}>OTP Verification!</h1>
         <form onSubmit={handleSubmit}>
-          <TextField
-            label="Email"
-            type="email"
-            placeholder="example@email.com"
-            value={email}
-            onChange={handleEmailChange}
-            customStyle={{
-              marginBottom: "20px",
-            }}
-          />
-
           <TextField
             label="OTP"
             type="text"

@@ -18,6 +18,9 @@ import {
   actionItems,
   billingItems,
 } from "./helpers";
+import { signOut } from "@/app/user";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   <>
@@ -38,7 +41,7 @@ const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   </>
 );
 
-const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute }) => (
+const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute, signOutUser }) => (
   <>
     <div className={styles.navOptions}>
       <Dropdown
@@ -129,19 +132,10 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute }) => (
           items: [
             {
               label: (
-                <Link href={"/admin/notifications"}>User 1 logged in</Link>
+                <Link href={"#"} onClick={() => { signOutUser() }}>Log Out</Link>
               ),
               key: "0",
-            },
-            {
-              type: "divider",
-            },
-            {
-              label: (
-                <Link href={"/admin/notifications"}>User 2 logged in</Link>
-              ),
-              key: "2",
-            },
+            }
           ],
         }}
       >
@@ -154,10 +148,17 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute }) => (
 const Navbar = ({ isSignedIn }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoggedIn(isSignedIn);
   }, [isSignedIn]);
+
+  const signOutUser = async () => {
+    await signOut();
+    toast.success("Log out successfully");
+    router.push('/auth/login');
+  }
 
   const toggleMobileMenu = () => {
     setIsMobile(!isMobile);
@@ -172,6 +173,7 @@ const Navbar = ({ isSignedIn }) => {
         <LoggedInNavOptions
           isMobile={isMobile}
           toggleMobileMenu={toggleMobileMenu}
+          signOutUser={signOutUser}
         />
       ) : (
         <LoggedOutNavOptions
