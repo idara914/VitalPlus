@@ -56,7 +56,7 @@ export default function Login() {
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) {
+    if (emailError || passwordError) { 
       setError(emailError || passwordError);
     } else {
       await instance.post('/auth/login', { email, password }).then(response => {
