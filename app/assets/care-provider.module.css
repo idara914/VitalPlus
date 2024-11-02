@@ -1,0 +1,263 @@
+.newPageContainer {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  padding: 100px;
+}
+
+.newPageMiniContainer {
+  text-align: center;
+  background-color: #e5e7eb;
+  border-radius: 20px;
+  padding: 40px;
+  margin-left: 20px;
+  width: 500px;
+  height: 360px;
+}
+
+.emailPageContainer {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  padding: 100px;
+}
+
+.emailPageMiniContainer {
+  text-align: center;
+  background-color: #e5e7eb;
+  border-radius: 20px;
+  padding: 40px;
+  margin-left: 20px;
+  min-width: 800px;
+  height: 420px;
+}
+.newPageMiniContainer > h1 {
+  margin: 30px 0;
+}
+
+.manualPageForm {
+}
+
+.careProviderContainer {
+  width: 100%;
+  padding: var(--common-body-padding);
+}
+
+.careProviderSearchContainer {
+  background-color: #f3f4f6;
+  padding: 28px;
+  border-radius: 20px;
+}
+
+.careProviderSearchContainer > h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.careProviderSearchContainerFirst {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+.careProviderSearchContainerSecond {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.careProviderList {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 15px;
+  margin-top: 26px;
+}
+
+.careProviderListAbout {
+  display: flex;
+  align-items: center;
+}
+.careProviderListAbout > span {
+  margin-right: 10px;
+  color: #4b5565;
+  font-size: 14px;
+}
+
+.careProviderProfileContainer {
+  width: 100%;
+  padding: var(--common-body-padding);
+}
+
+.careProviderProfileContainerInner {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 30px;
+  position: relative;
+}
+
+.careProviderProfileContainerTop {
+  background-image: url("../../public/imgs/pexels-codioful-6985001.jpg");
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 16px;
+  z-index: -1;
+  border-top-right-radius: 16px;
+}
+
+.careProviderProfileContainerHeader {
+  margin-top: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.careProviderProfileContainerHeaderBasic {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+.careProviderProfileContainerHeaderBasic > div {
+  margin-left: 15px;
+}
+.careProviderProfileContainerHeaderBasic > div > div {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.careProviderProfileContainerHeaderBasic > div > div > span {
+  margin: 0 5px;
+}
+
+.careProviderProfileContainerHeaderBasic > div > h1 {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.careProviderProfileContainerMid {
+  display: flex;
+  /* border: 2px solid red; */
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.careProviderProfileContainerMidFirst {
+  width: 100%;
+  /* border: 5px solid blue; */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.careProviderProfileContainerMidFirstInfo {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  /* border: 2px solid green; */
+  grid-gap: 20px;
+}
+.careProviderProfileContainerMidFirstInfo > span {
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.careProviderProfileTable {
+  /* border: 2px solid yellow; */
+}
+.careProviderProfileTable tbody {
+  /* border: 1px solid red !important; */
+}
+.careProviderProfileTable th {
+  /* background: red !important; */
+  font-size: 12px !important;
+  color: #475467 !important;
+}
+
+.careProviderProfileTable td {
+  background: #fff !important;
+  font-size: 14px !important;
+  color: #475467 !important;
+}
+
+.careProviderProfileTable > h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.careProviderProfileContainerMidSecondDoc {
+  /* border: 3px solid blue; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  padding: 10px 20px;
+}
+.careProviderProfileContainerMidSecondDoc > span {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.careProviderProfileContainerMidSecond {
+  /* border: 2px solid red; */
+}
+
+.careProviderProfileContainerMidSecond > h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 1200px) {
+  .newPageContainer {
+    padding: 50px;
+  }
+
+  .newPageMiniContainer {
+    width: 450px;
+    height: 330px;
+  }
+
+  .careProviderContainer {
+    padding: var(--common-body-padding-md);
+  }
+
+  .careProviderProfileContainer {
+    padding: var(--common-body-padding-md);
+  }
+}
+@media screen and (max-width: 800px) {
+  .newPageContainer {
+    padding: 20px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .newPageMiniContainer {
+    width: 400px;
+    height: 350px;
+    margin-top: 20px;
+  }
+
+  .emailPageMiniContainer {
+    min-width: 100vw;
+  }
+}
+
+@media (max-width: 484px) {
+  .careProviderContainer {
+    padding: var(--common-body-padding-sm);
+  }
+
+  .careProviderProfileContainer {
+    padding: var(--common-body-padding-sm);
+  }
+}

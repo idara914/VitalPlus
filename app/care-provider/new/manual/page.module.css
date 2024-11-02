@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  padding: var(--common-body-padding);
+}
+
+.form {
+  background-color: #f3f4f6;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.ant-picker-calendar
+  .ant-picker-cell-in-view.ant-picker-cell-today
+  .ant-picker-cell-inner::before {
+  border: 1px solid #7f3dff !important;
+  background: #7f3dff !important;
+}
+
+@media screen and (max-width: 1200px) {
+  .container {
+    padding: var(--common-body-padding-md);
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .container {
+    padding: var(--common-body-padding-sm);
+  }
+}

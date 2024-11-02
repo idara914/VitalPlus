@@ -1,27 +1,25 @@
-import styles from "./TextField.module.css";
+import { DatePicker } from "antd";
+import React from "react";
+import styles from "./DateSelector.module.css";
 
-const TextField = ({
-  label,
-  type,
+function DateSelector({
   placeholder,
-  value,
   onChange,
-  customStyle,
+  label,
   containerStyles,
-}) => {
+  customStyle,
+}) {
   return (
     <div className={styles.container} style={containerStyles}>
       <label className={styles.label}>{label}</label>
-      <input
+      <DatePicker
         className={styles.input}
-        type={type}
-        placeholder={placeholder}
-        value={value}
         onChange={onChange}
+        placeholder={placeholder}
         style={customStyle}
       />
     </div>
   );
-};
+}
 
-export default TextField;
+export default DateSelector;

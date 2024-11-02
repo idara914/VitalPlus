@@ -2,7 +2,7 @@
   --primary-color: #7f3dff;
   --primary-color-dark: #31097f;
   --primary-color-darker: #000020;
-  --secondary-color: #f5f5f5;
+  --secondary-color: #fff;
   --text-color: #425466;
   --text-color-lighter: #9090a7;
   --heading-color: #27272e;
@@ -54,4 +54,78 @@ p {
 
 .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
   background-color: rgba(239, 230, 254, 0.4) !important;
+}
+
+.ant-select-selector {
+  border: none !important;
+  border-color: #fff !important;
+}
+
+.ant-select-selection-placeholder {
+  color: #6b7280 !important;
+  font-size: 13.5px;
+}
+
+.ant-picker-input > input::placeholder {
+  color: #6b7280 !important;
+  font-size: 13.5px;
+}
+
+.small-circle {
+  border: 2px solid #7f3dff;
+  height: 8px;
+  width: 8px;
+  border-radius: 100%;
+}
+
+.ant-picker-cell-inner {
+}
+
+.ant-tag {
+  border-radius: 16px;
+}
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+  border-color: #7f3dff;
+  background-color: #7f3dff;
+}
+
+/* Change header background color */
+.ant-picker-calendar-header {
+  background-color: #fff !important;
+}
+
+/* Change selected date background color */
+.ant-picker-calendar .ant-picker-cell-selected .ant-picker-calendar-date {
+  background-color: #7f3dff !important;
+}
+
+/* Change today's date color */
+.ant-picker-calendar .ant-picker-cell-today .ant-picker-calendar-date {
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+/* Change hover state color */
+.ant-picker-calendar-date:hover {
+  background-color: #e6f7ff !important;
+}
+
+/* Change weekend color */
+.ant-picker-calendar
+  .ant-picker-cell-in-view.ant-picker-cell-weekend
+  .ant-picker-calendar-date {
+  color: #fff !important;
+}
+
+/* Change current month dates color */
+.ant-picker-calendar .ant-picker-cell-in-view {
+  color: #333333 !important;
+}
+
+/* Change other month dates color */
+.ant-picker-calendar
+  .ant-picker-cell:not(.ant-picker-cell-in-view)
+  .ant-picker-calendar-date {
+  color: #999999 !important;
 }
