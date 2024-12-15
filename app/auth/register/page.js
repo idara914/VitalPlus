@@ -8,7 +8,7 @@ import Link from "next/link";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/app/user";
 
@@ -71,17 +71,27 @@ export default function Register() {
     if (emailError || passwordError) {
       setError(emailError || passwordError);
     } else {
-      await instance.post('/auth/register', { username: name, email: email, password: password }).then(response => {
-        if (response.status == 201 || response.status == 200) {
-          if (response.data.status == true) {
-            signIn(response.data.token, response.data.user)
-            toast.success(response.data.message);
-            router.push('/auth/verify');
-          }
-        }
-      }).catch(error => {
-        toast.error(error.response.data.message);
-      });
+      console.log("reacjed here");
+      await instance
+        .post("/auth/register", {
+          username: name,
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+          console.log("ammar", response);
+          // if (response.status == 201 || response.status == 200) {
+          //   if (response.data.status == true) {
+          //     signIn(response.data.token, response.data.user);
+          //     toast.success(response.data.message);
+          //     router.push("/auth/verify");
+          //   }
+          // }
+        })
+        .catch((error) => {
+          console.log("ammar", error.response);
+          toast.error(error.response.data.message);
+        });
     }
   };
 
