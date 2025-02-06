@@ -1,51 +1,112 @@
-"use client";  // ✅ Required for Next.js client-side components
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import TextField from "../../components/common/TextField/TextField";
+import Button from "../../components/common/Button/Button";
+import Divider from "../../components/common/Divider/Divider";
+import Link from "next/link";
+import styles from "../../assets/auth.module.css";
+import AuthLayout from "@/app/components/layouts/AuthLayout";
+import { toast } from 'react-hot-toast';
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 
 export default function Register() {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
-  const [error, setError] = useState(null);
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const validateEmail = (email) => {
+    if (!email) return "Please enter your email";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Invalid email address";
+    return null;
+  };
+
+  const validatePassword = (password) => {
+    if (!password) return "Please enter your password";
+    if (password.length < 8) return "Password must be at least 8 characters";
+    return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    if (emailError || passwordError) {
+      setError(emailError || passwordError);
+    } else {
+      try {
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "register",
+            username: name,
+            email: email,
+            password: password,
+          }),
+        });
 
-    try {
-      const res = await fetch("/api/auth", { 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "register",
-          username: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Registration failed");
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Registration failed");
-
-      toast.success(data.message);
-      router.push("/auth/verify");
-    } catch (err) {
-      console.error("Registration Error:", err);
-      toast.error("Error: " + err.message);
+        toast.success(data.message);
+        router.push('/auth/verify');
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" name="name" placeholder="Your Name" value={formData.name} onChange={handleChange} required />
-      <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-      <button type="submit">Create Account</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </form>
+    <AuthLayout
+      heading="Get Registered"
+      text="Enhance proactive homecare and improve health outcomes with our solutions. We're here to support better health and well-being at home."
+    >
+      <section>
+        <h1 className={styles.formHeading}>Get Registered</h1>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Your Name"
+            type="name"
+            placeholder="Your Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            customStyle={{ marginBottom: "20px" }}
+          />
+
+          <TextField
+            label="Email"
+            type="email"
+            placeholder="example@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            customStyle={{ marginBottom: "20px" }}
+          />
+
+          <TextField
+            label="Password"
+            type="password"
+            placeholder="********"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          
+          <Button
+            text="Create Account"
+            customStyle={{ marginTop: "50px", width: "100%" }}
+          />
+        </form>
+
+        <Divider text="OR" />
+        <p>
+          Already have an account? <Link href={"/auth/login"}>Sign In</Link>
+        </p>
+      </section>
+    </AuthLayout>
   );
 }
+
