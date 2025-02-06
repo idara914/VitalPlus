@@ -1,4 +1,4 @@
-"use client";
+"use client";  // ✅ Required for Next.js client-side components
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -16,11 +16,11 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/auth", { // ✅ Uses correct API path
+      const res = await fetch("/api/auth", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "register",  // ✅ Ensures correct API request format
+          action: "register",
           username: formData.name,
           email: formData.email,
           password: formData.password,
@@ -32,7 +32,7 @@ export default function Register() {
       if (!res.ok) throw new Error(data.message || "Registration failed");
 
       toast.success(data.message);
-      router.push("/auth/verify"); // ✅ Redirect to OTP verification page
+      router.push("/auth/verify");
     } catch (err) {
       console.error("Registration Error:", err);
       toast.error("Error: " + err.message);
