@@ -19,6 +19,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.5",
+    "nodemailer": "^6.10.0",
     "npm": "^10.8.2",
     "pg": "^8.12.0",
     "qrcode": "^1.5.4",
