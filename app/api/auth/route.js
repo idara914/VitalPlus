@@ -1,8 +1,14 @@
-import pool from "@/config/db";
-import redisClient from "@/config/redis";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import speakeasy from "speakeasy";
+import qrcode from "qrcode";
+import dotenv from "dotenv";
+import pool from "@/config/db";
+import redisClient from "@/config/redis";
 import { sendOtpEmail } from "@/utils/sendOtpEmail";
+
+dotenv.config();
 
 export async function POST(req) {
   try {
@@ -13,11 +19,16 @@ export async function POST(req) {
         return registerUser(body);
       case "login":
         return loginUser(body);
+      case "verify-otp":
+        return verifyOtp(body);
+      case "logout":
+        return logoutUser(body);
       default:
         return Response.json({ message: "Invalid action" }, { status: 400 });
     }
   } catch (error) {
-    return Response.json({ message: "Server error", error: error.message }, { status: 500 });
+    console.error("API Error:", error);
+    return Response.json({ message: "Internal server error", error: error.message }, { status: 500 });
   }
 }
 
@@ -60,7 +71,7 @@ async function registerUser({ username, email, password }) {
     );
 
     if (InsertedUser.length > 0) {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 999999).toString();
       await redisClient.setEx(email, 600, otp);
       await sendOtpEmail(email, otp);
 
@@ -72,6 +83,6 @@ async function registerUser({ username, email, password }) {
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   } catch (error) {
     console.error("Error registering user:", error);
-    return Response.json({ message: "Registration failed", error }, { status: 500 });
+    return Response.json({ message: "Registration failed", error: error.message }, { status: 500 });
   }
 }
