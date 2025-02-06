@@ -140,9 +140,3 @@ async function logoutUser({ email }) {
   await redisClient.del(email);
   return Response.json({ message: "Logged out successfully" }, { status: 200 });
 }
-
-// ✅ **Logout**
-async function logoutUser(req, res) {
-  await redisClient.del(req.body.email);
-  res.json({ message: "Logged out successfully" });
-}
