@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const redisUrl = process.env.REDIS_URL || "redis://default:8e1WgS4NWNub6g2PfDecXTWFCBG4ihjk@redis-15632.c89.us-east-1-3.ec2.redns.redis-cloud.com:15632";
+
 const redisClient = createClient({
-  url: process.env.REDIS_URL || "redis-15632.c89.us-east-1-3.ec2.redns.redis-cloud.com:15632",
+  url: redisUrl,
   legacyMode: true, // Ensures compatibility with older Redis methods
 });
 
@@ -21,3 +23,4 @@ async function connectRedis() {
 connectRedis();
 
 export default redisClient;
+
