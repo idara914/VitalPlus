@@ -5,12 +5,15 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Configure SSL correctly for Next.js & Vercel
+// Ensure self-signed certificates are allowed
+const sslConfig = {
+  rejectUnauthorized: false, // ✅ Allows self-signed certificates
+};
+
+// Initialize PostgreSQL pool with correct SSL settings
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL.includes("localhost")
-    ? false
-    : { rejectUnauthorized: false }, // ✅ Fixes self-signed certificate error
+  ssl: sslConfig, // ✅ Enables SSL with self-signed certificate acceptance
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
