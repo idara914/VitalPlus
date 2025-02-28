@@ -5,9 +5,12 @@ dotenv.config();
 
 const { Pool } = pg;
 
+// Enable SSL for production
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false, // Enables SSL for production
+  ssl: {
+    rejectUnauthorized: false, // ✅ Allows self-signed certificates
+  },
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
