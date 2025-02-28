@@ -5,12 +5,9 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Explicitly disable SSL
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.includes("sslmode=disable")
-    ? process.env.DATABASE_URL
-    : process.env.DATABASE_URL + "?sslmode=disable",
-  ssl: false, // ✅ Ensure SSL is completely disabled
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false, // Enables SSL for production
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
