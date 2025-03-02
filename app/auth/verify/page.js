@@ -33,30 +33,36 @@ export default function Verify() {
 
  const handleSubmit = async (e) => {
   e.preventDefault();
+  
   const otpError = validateOtp(otp);
   if (otpError) {
     setError(otpError);
-  } else {
-    try {
-      const response = await instance.post('/api/auth', // ✅ Correct API endpoint
-  {
-    action: "verify-otp",
-    otp,
-    email: Cookies.get("email"), // ✅ Ensure email is included
-  },
-  {
-    headers: { "Authorization": "Bearer " + Cookies.get("token") }
+    return;
   }
-);
 
-      if (response.status === 200) {
-        toast.success(response.data.message);
-        router.push('/account/update');
-      }
-    } catch (error) {
-      console.error("❌ OTP Verification Failed:", error);
-      toast.error(error.response?.data?.message || "OTP verification failed");
+  const email = Cookies.get("email");
+  if (!email) {
+    toast.error("Email is missing. Please log in again.");
+    return;
+  }
+
+  const token = Cookies.get("token"); // ✅ Get token safely
+  const headers = token ? { Authorization: `Bearer ${token}` } : {}; // ✅ Only add Authorization if token exists
+
+  try {
+    const response = await instance.post("/api/auth", {
+      action: "verify-otp",
+      otp,
+      email,
+    }, { headers });
+
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      router.push("/account/update");
     }
+  } catch (error) {
+    console.error("❌ OTP Verification Failed:", error);
+    toast.error(error.response?.data?.message || "OTP verification failed");
   }
 };
 
