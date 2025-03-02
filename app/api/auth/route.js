@@ -40,12 +40,11 @@ export async function POST(req) {
   }
 }
 
-// ✅ Improved `registerUser` function with fixes
+// ✅ Register User Function
 async function registerUser({ username, email, password }) {
   try {
     console.log("🟢 Registering User:", email);
 
-    // 🔹 Check if the user already exists
     const { rows } = await pool.query(
       `SELECT * FROM public."appUsers" WHERE "Email" = $1`, [email]
     );
@@ -57,10 +56,7 @@ async function registerUser({ username, email, password }) {
       );
     }
 
-    // 🔹 Hash the password securely
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 🔹 Prepare user data for insertion
     const userData = {
       FirstName: username.split(" ")[0] || "",
       LastName: username.split(" ").slice(1).join(" ") || "",
@@ -74,7 +70,6 @@ async function registerUser({ username, email, password }) {
       PasswordHash: hashedPassword,
     };
 
-    // 🔹 Insert user into the database
     const { rows: InsertedUser } = await pool.query(
       `INSERT INTO public."appUsers" 
       ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
@@ -106,7 +101,7 @@ async function registerUser({ username, email, password }) {
         await redisClient.connect();
       }
 
-      // ✅ Fix incorrect Redis argument format
+      // ✅ Store OTP with expiration in Redis
       await redisClient.setEx(email, 600, otp);
       console.log("📥 OTP Stored in Redis");
 
@@ -140,4 +135,60 @@ async function registerUser({ username, email, password }) {
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
+}
+
+// ✅ Verify OTP Function (NEW FIX)
+async function verifyOtp({ email, otp }) {
+  try {
+    console.log(`🔍 Verifying OTP for ${email}: ${otp}`);
+
+    if (!email || !otp) {
+      console.error("❌ Missing email or OTP.");
+      return new Response(
+        JSON.stringify({ message: "Email and OTP are required." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // ✅ Ensure Redis is connected before retrieving OTP
+    if (!redisClient.isOpen) {
+      await redisClient.connect();
+    }
+
+    // 🔹 Retrieve OTP from Redis
+    const storedOtp = await redisClient.get(email);
+    if (!storedOtp) {
+      console.error("❌ OTP Expired or Not Found.");
+      return new Response(
+        JSON.stringify({ message: "OTP expired or invalid." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    if (storedOtp !== otp) {
+      console.error("❌ Invalid OTP.");
+      return new Response(
+        JSON.stringify({ message: "Invalid OTP." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("✅ OTP Verified!");
+
+    // 🔹 Delete OTP from Redis after successful verification
+    await redisClient.del(email);
+
+    return new Response(
+      JSON.stringify({ message: "OTP Verified Successfully!" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("❌ Error verifying OTP:", error);
+    return new Response(
+      JSON.stringify({ message: "OTP verification failed.", error: error.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
+
 }
