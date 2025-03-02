@@ -6,9 +6,8 @@ import Button from "../../components/common/Button/Button";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
-import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Verify() {
   const router = useRouter();
@@ -16,13 +15,9 @@ export default function Verify() {
   const [error, setError] = useState(null);
 
   const validateOtp = (otp) => {
-    if (!otp) {
-      return "Please enter your OTP";
-    } else if (otp.length < 6 || otp.length > 6) {
-      return "OTP is a 6 character code";
-    } else {
-      return null;
-    }
+    if (!otp) return "Please enter your OTP";
+    if (otp.length !== 6) return "OTP must be exactly 6 digits";
+    return null;
   };
 
   const handleOtpChange = (e) => {
@@ -31,40 +26,30 @@ export default function Verify() {
     setError(validateOtp(otp));
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  const otpError = validateOtp(otp);
-  if (otpError) {
-    setError(otpError);
-    return;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const email = Cookies.get("email");
-  if (!email) {
-    toast.error("Email is missing. Please log in again.");
-    return;
-  }
-
-  const token = Cookies.get("token"); // ✅ Get token safely
-  const headers = token ? { Authorization: `Bearer ${token}` } : {}; // ✅ Only add Authorization if token exists
-
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "verify-otp",
-      otp,
-      email,
-    }, { headers });
-
-    if (response.status === 200) {
-      toast.success(response.data.message);
-      router.push("/account/update");
+    const otpError = validateOtp(otp);
+    if (otpError) {
+      setError(otpError);
+      return;
     }
-  } catch (error) {
-    console.error("❌ OTP Verification Failed:", error);
-    toast.error(error.response?.data?.message || "OTP verification failed");
-  }
-};
+
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "verify-otp",
+        otp, // ✅ Only sending the OTP, not email
+      });
+
+      if (response.status === 200) {
+        toast.success("OTP Verified Successfully!");
+        router.push("/account/update"); // ✅ Proceed to the next step
+      }
+    } catch (error) {
+      console.error("❌ OTP Verification Failed:", error);
+      toast.error(error.response?.data?.message || "OTP verification failed");
+    }
+  };
 
   return (
     <AuthLayout
@@ -72,7 +57,7 @@ export default function Verify() {
       text="Enhance proactive homecare and improve health outcomes with our solutions. We're here to support better health and well-being at home."
     >
       <section>
-        <h1 className={styles.formHeading}>OTP Verification!</h1>
+        <h1 className={styles.formHeading}>OTP Verification</h1>
         <form onSubmit={handleSubmit}>
           <TextField
             label="OTP"
@@ -88,9 +73,11 @@ export default function Verify() {
               marginTop: "50px",
               width: "100%",
             }}
+            onClick={handleSubmit} // ✅ Ensure button triggers submit
           />
         </form>
       </section>
     </AuthLayout>
   );
 }
+
