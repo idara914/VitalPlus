@@ -39,15 +39,15 @@ export default function Verify() {
   } else {
     try {
       const response = await instance.post('/api/auth', // ✅ Correct API endpoint
-        {
-          action: "verify-otp", // ✅ Make sure the action is sent
-          otp,
-          email: Cookies.get("email"), // ✅ Retrieve email from cookies or state
-        },
-        {
-          headers: { "Authorization": "Bearer " + Cookies.get("token") }
-        }
-      );
+  {
+    action: "verify-otp",
+    otp,
+    email: Cookies.get("email"), // ✅ Ensure email is included
+  },
+  {
+    headers: { "Authorization": "Bearer " + Cookies.get("token") }
+  }
+);
 
       if (response.status === 200) {
         toast.success(response.data.message);
