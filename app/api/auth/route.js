@@ -191,4 +191,4 @@ async function verifyOtp({ email, otp }) {
   }
 }
 
-}
+
