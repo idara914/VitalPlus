@@ -8,8 +8,8 @@ const transporter = nodemailer.createTransport({
   port: parseInt(process.env.SMTP_PORT, 10) || 465, // ✅ Ensure port is parsed as an integer
   secure: true, // ✅ Use `true` for port 465 (SSL)
   auth: {
-    user: process.env.SMTP_USER, // ✅ Your Hostinger email
-    pass: process.env.SMTP_PASS, // ✅ Your Hostinger email password
+    user: process.env.SMTP_USER || "", // ✅ Ensure SMTP_USER exists
+    pass: process.env.SMTP_PASS || "", // ✅ Ensure SMTP_PASS exists
   },
 });
 
@@ -22,6 +22,10 @@ export const sendOtpEmail = async (email, otp) => {
   };
 
   try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      throw new Error("SMTP credentials are missing!");
+    }
+
     await transporter.sendMail(mailOptions);
     console.log("📧 OTP Email Sent!");
   } catch (error) {
