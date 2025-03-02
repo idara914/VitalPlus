@@ -31,38 +31,23 @@ export default function Verify() {
     setError(validateOtp(otp));
   };
 
-const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
   const otpError = validateOtp(otp);
   if (otpError) {
     setError(otpError);
-    return;
+  } else {
+    try {
+      const response = await instance.post('/api/auth', // ✅ Correct API endpoint
+  {
+    action: "verify-otp",
+    otp,
+    email: Cookies.get("email"), // ✅ Ensure email is included
+  },
+  {
+    headers: { "Authorization": "Bearer " + Cookies.get("token") }
   }
-
-  // ✅ Ensure email exists before making the API call
-  const email = Cookies.get("email");
-  if (!email) {
-    toast.error("Email is missing. Please log in again.");
-    return;
-  }
-
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "verify-otp",
-      otp,
-      email,  // ✅ Ensure email is included
-    });
-
-    if (response.status === 200) {
-      toast.success(response.data.message);
-      router.push("/account/update");
-    }
-  } catch (error) {
-    console.error("❌ OTP Verification Failed:", error);
-    toast.error(error.response?.data?.message || "OTP verification failed");
-  }
-};
-
+);
 
       if (response.status === 200) {
         toast.success(response.data.message);
