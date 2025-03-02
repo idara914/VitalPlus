@@ -138,14 +138,15 @@ async function registerUser({ username, email, password }) {
 }
 
 // ✅ Verify OTP Function (NEW FIX)
-async function verifyOtp({ email, otp }) {
+// ✅ Verify OTP Function (No Email Needed)
+async function verifyOtp({ otp }) {
   try {
-    console.log(`🔍 Verifying OTP for ${email}: ${otp}`);
+    console.log(`🔍 Verifying OTP: ${otp}`);
 
-    if (!email || !otp) {
-      console.error("❌ Missing email or OTP.");
+    if (!otp) {
+      console.error("❌ Missing OTP.");
       return new Response(
-        JSON.stringify({ message: "Email and OTP are required." }),
+        JSON.stringify({ message: "OTP is required." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -155,9 +156,9 @@ async function verifyOtp({ email, otp }) {
       await redisClient.connect();
     }
 
-    // 🔹 Retrieve OTP from Redis
-    const storedOtp = await redisClient.get(email);
-    if (!storedOtp) {
+    // 🔹 Retrieve the email from Redis using OTP
+    const email = await redisClient.get(otp);
+    if (!email) {
       console.error("❌ OTP Expired or Not Found.");
       return new Response(
         JSON.stringify({ message: "OTP expired or invalid." }),
@@ -165,18 +166,16 @@ async function verifyOtp({ email, otp }) {
       );
     }
 
-    if (storedOtp !== otp) {
-      console.error("❌ Invalid OTP.");
-      return new Response(
-        JSON.stringify({ message: "Invalid OTP." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    console.log(`✅ OTP Verified for ${email}`);
 
-    console.log("✅ OTP Verified!");
+    // 🔹 Mark email as verified in the database
+    await pool.query(
+      `UPDATE public."appUsers" SET "EmailConfirmed" = true WHERE "Email" = $1`,
+      [email]
+    );
 
     // 🔹 Delete OTP from Redis after successful verification
-    await redisClient.del(email);
+    await redisClient.del(otp);
 
     return new Response(
       JSON.stringify({ message: "OTP Verified Successfully!" }),
@@ -190,5 +189,7 @@ async function verifyOtp({ email, otp }) {
     );
   }
 }
+
+
 
 
