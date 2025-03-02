@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // ✅ Force Node.js to trust self-signed certificates globally
-console.warn("⚠️ Warning: NODE_TLS_REJECT_UNAUTHORIZED is disabled in development mode.");
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const { Pool } = pg;
 
