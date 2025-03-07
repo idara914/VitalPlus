@@ -102,7 +102,7 @@ async function registerUser({ username, email, password }) {
       }
 
       // ✅ Store OTP with expiration in Redis
-      await redisClient.setEx(email, 600, otp);
+      await redisClient.setEx(otp, 600, email); // Store OTP for 10 minutes
       console.log("📥 OTP Stored in Redis");
 
       // 🔹 Send OTP email
@@ -156,7 +156,7 @@ async function verifyOtp({ otp }) {
       await redisClient.connect();
     }
 
-    // 🔹 Retrieve the email from Redis using OTP
+    // 🔹 Retrieve email using OTP from Redis
     const email = await redisClient.get(otp);
     if (!email) {
       console.error("❌ OTP Expired or Not Found.");
