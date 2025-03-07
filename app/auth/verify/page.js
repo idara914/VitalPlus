@@ -27,29 +27,28 @@ export default function Verify() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const otpError = validateOtp(otp);
-    if (otpError) {
-      setError(otpError);
-      return;
+  if (!otp || otp.length !== 6) {
+    toast.error("Invalid OTP");
+    return;
+  }
+
+  try {
+    const response = await instance.post("/api/auth", {
+      action: "verify-otp",
+      otp, // ✅ Only sending OTP
+    });
+
+    if (response.status === 200) {
+      toast.success("OTP Verified Successfully!");
+      router.push("/account/update");
     }
-
-    try {
-      const response = await instance.post("/api/auth", {
-        action: "verify-otp",
-        otp, // ✅ Only sending the OTP, not email
-      });
-
-      if (response.status === 200) {
-        toast.success("OTP Verified Successfully!");
-        router.push("/account/update"); // ✅ Proceed to the next step
-      }
-    } catch (error) {
-      console.error("❌ OTP Verification Failed:", error);
-      toast.error(error.response?.data?.message || "OTP verification failed");
-    }
-  };
+  } catch (error) {
+    console.error("❌ OTP Verification Failed:", error);
+    toast.error(error.response?.data?.message || "OTP verification failed");
+  }
+};
 
   return (
     <AuthLayout
