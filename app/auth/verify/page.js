@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -12,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function Verify() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams.get("token"); // Read token from URL
 
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
@@ -85,4 +86,3 @@ export default function Verify() {
     </AuthLayout>
   );
 }
-
