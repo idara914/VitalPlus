@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import Divider from "../../components/common/Divider/Divider";
 import Link from "next/link";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
@@ -16,6 +16,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email) => {
     if (!email) return "Please enter your email";
@@ -35,27 +36,34 @@ export default function Register() {
     const passwordError = validatePassword(password);
     if (emailError || passwordError) {
       setError(emailError || passwordError);
-    } else {
-      try {
-        const res = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "register",
-            username: name,
-            email: email,
-            password: password,
-          }),
-        });
+      return;
+    }
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Registration failed");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "register",
+          username: name,
+          email: email,
+          password: password,
+        }),
+      });
 
-        toast.success(data.message);
-        router.push('/auth/verify');
-      } catch (error) {
-        toast.error(error.message);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+
+      toast.success(data.message);
+
+      // ✅ Save email for OTP verification
+      localStorage.setItem("verify_email", email);
+      router.push("/auth/verify");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +77,7 @@ export default function Register() {
         <form onSubmit={handleSubmit}>
           <TextField
             label="Your Name"
-            type="name"
+            type="text"
             placeholder="Your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -92,12 +100,13 @@ export default function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          
+
           {error && <p style={{ color: "red" }}>{error}</p>}
-          
+
           <Button
-            text="Create Account"
+            text={loading ? "Creating Account..." : "Create Account"}
             customStyle={{ marginTop: "50px", width: "100%" }}
+            disabled={loading}
           />
         </form>
 
