@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import styles from "../../assets/auth.module.css";
@@ -13,6 +13,18 @@ export default function Verify() {
   const router = useRouter();
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("verify_email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    } else {
+      toast.error("Email not found. Please register again.");
+      router.push("/auth/register");
+    }
+  }, [router]);
 
   const validateOtp = (otp) => {
     if (!otp) return "Please enter your OTP";
@@ -21,34 +33,58 @@ export default function Verify() {
   };
 
   const handleOtpChange = (e) => {
-    const otp = e.target.value;
-    setOtp(otp);
-    setError(validateOtp(otp));
+    const value = e.target.value;
+    setOtp(value);
+    setError(validateOtp(value));
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!otp || otp.length !== 6) {
-    toast.error("Invalid OTP");
-    return;
-  }
-
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "verify-otp",
-      otp, // ✅ Only sending OTP
-    });
-
-    if (response.status === 200) {
-      toast.success("OTP Verified Successfully!");
-      router.push("/account/update");
+    e.preventDefault();
+    if (!otp || otp.length !== 6) {
+      toast.error("Invalid OTP");
+      return;
     }
-  } catch (error) {
-    console.error("❌ OTP Verification Failed:", error);
-    toast.error(error.response?.data?.message || "OTP verification failed");
-  }
-};
+
+    setLoading(true);
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "verify-otp",
+        otp,
+      });
+
+      if (response.status === 200) {
+        toast.success("OTP Verified Successfully!");
+        localStorage.removeItem("verify_email");
+        router.push("/account/update");
+      }
+    } catch (error) {
+      console.error("❌ OTP Verification Failed:", error);
+      toast.error(error.response?.data?.message || "OTP verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!email) {
+      toast.error("Email not found. Please register again.");
+      return;
+    }
+
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "resend-otp",
+        email,
+      });
+
+      if (response.status === 200) {
+        toast.success("OTP resent to your email");
+      }
+    } catch (error) {
+      console.error("❌ Resend OTP Failed:", error);
+      toast.error("Failed to resend OTP. Please try again.");
+    }
+  };
 
   return (
     <AuthLayout
@@ -67,21 +103,27 @@ export default function Verify() {
           />
           {error && <p style={{ color: "red" }}>{error}</p>}
           <Button
-            text="Confirm OTP"
+            text={loading ? "Verifying..." : "Confirm OTP"}
             customStyle={{
               marginTop: "50px",
               width: "100%",
             }}
-            onClick={handleSubmit} // ✅ Ensure button triggers submit
+            disabled={loading}
           />
         </form>
+
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          <p>Didn&apos;t receive OTP?</p>
+          <Button
+            text="Resend OTP"
+            customStyle={{ marginTop: "10px" }}
+            onClick={handleResendOtp}
+          />
+        </div>
       </section>
     </AuthLayout>
   );
 }
 
-
-  );
-}
 
 
