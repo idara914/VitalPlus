@@ -108,7 +108,7 @@ export default function Verify() {
         </form>
 
         <div style={{ marginTop: "20px", textAlign: "center" }}>
-          <p>Didn't receive OTP?</p>
+          <p>Didn&apos;t receive OTP?</p>
           <Button
             text={resendLoading ? "Resending..." : "Resend OTP"}
             customStyle={{ marginTop: "10px" }}
