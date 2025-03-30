@@ -1,5 +1,6 @@
-
 "use client";
+
+export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
@@ -13,7 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function Verify() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token"); // Read token from URL
+  const token = searchParams.get("token");
 
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
