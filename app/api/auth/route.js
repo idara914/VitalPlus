@@ -1,3 +1,4 @@
+// app/api/auth/route.js
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -8,6 +9,21 @@ import { sendOtpEmail } from "@/utils/sendOtpEmail";
 
 dotenv.config();
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_ORIGIN || "https://www.vital-plus.xyz",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+// ✅ Handle OPTIONS (Preflight)
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
+// ✅ Main POST Handler
 export async function POST(req) {
   try {
     console.log("🟢 API `/api/auth` called");
@@ -15,27 +31,33 @@ export async function POST(req) {
     const { action, ...body } = await req.json();
     console.log("🔍 Action:", action);
 
+    let response;
     switch (action) {
       case "register":
-        return registerUser(body);
+        response = await registerUser(body);
+        break;
       case "login":
-        return loginUser(body);
+        response = await loginUser(body);
+        break;
       case "verify-otp":
-        return verifyOtp(body);
+        response = await verifyOtp(body);
+        break;
       case "logout":
-        return logoutUser(body);
+        response = await logoutUser(body);
+        break;
       default:
-        console.error("❌ Invalid action received:", action);
-        return new Response(
-          JSON.stringify({ message: "Invalid action" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
+        response = new Response(JSON.stringify({ message: "Invalid action" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
     }
+
+    return response;
   } catch (error) {
     console.error("❌ API Error:", error);
     return new Response(
       JSON.stringify({ message: "Internal server error", error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 }
@@ -46,14 +68,14 @@ async function registerUser({ username, email, password }) {
     console.log("🟢 Registering User:", email);
 
     const { rows } = await pool.query(
-      `SELECT * FROM public."appUsers" WHERE "Email" = $1`, [email]
+      `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
+      [email]
     );
     if (rows.length > 0) {
-      console.error("❌ User already exists:", email);
-      return new Response(
-        JSON.stringify({ message: "User already exists" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ message: "User already exists" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -70,7 +92,7 @@ async function registerUser({ username, email, password }) {
       PasswordHash: hashedPassword,
     };
 
-    const { rows: InsertedUser } = await pool.query(
+    const { rows: inserted } = await pool.query(
       `INSERT INTO public."appUsers" 
       ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
@@ -89,107 +111,83 @@ async function registerUser({ username, email, password }) {
       ]
     );
 
-    if (InsertedUser.length > 0) {
-      console.log("✅ User Inserted Successfully:", InsertedUser[0]);
+    const otp = crypto.randomInt(100000, 999999).toString();
 
-      // 🔹 Generate OTP and store it in Redis
-      const otp = crypto.randomInt(100000, 999999).toString();
-      console.log("🔑 OTP Generated:", otp);
+    if (!redisClient.isOpen) await redisClient.connect();
+    await redisClient.setEx(otp, 600, email);
+    await sendOtpEmail(email, otp);
 
-      // ✅ Ensure Redis is connected before storing OTP
-      if (!redisClient.isOpen) {
-        await redisClient.connect();
-      }
+    const token = jwt.sign({ id: inserted[0].Id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-      // ✅ Store OTP with expiration in Redis
-      await redisClient.setEx(otp, 600, email); // Store OTP for 10 minutes
-      console.log("📥 OTP Stored in Redis");
-
-      // 🔹 Send OTP email
-      await sendOtpEmail(email, otp);
-      console.log("📧 OTP Email Sent");
-
-      // 🔹 Generate JWT Token
-      const token = jwt.sign(
-        { id: InsertedUser[0].Id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-
-      return new Response(
-        JSON.stringify({ message: "User registered", token, user: InsertedUser[0] }),
-        { status: 201, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    console.error("❌ Failed to insert user into DB");
     return new Response(
-      JSON.stringify({ message: "Internal Server Error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ message: "User registered", token, user: inserted[0] }),
+      { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-
   } catch (error) {
-    console.error("❌ Error registering user:", error);
+    console.error("❌ Registration Error:", error);
     return new Response(
       JSON.stringify({ message: "Registration failed", error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 }
 
-// ✅ Verify OTP Function (NEW FIX)
-// ✅ Verify OTP Function (No Email Needed)
+// ✅ Verify OTP Function
 async function verifyOtp({ otp }) {
   try {
     console.log(`🔍 Verifying OTP: ${otp}`);
-
     if (!otp) {
-      console.error("❌ Missing OTP.");
-      return new Response(
-        JSON.stringify({ message: "OTP is required." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ message: "OTP is required." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // ✅ Ensure Redis is connected before retrieving OTP
-    if (!redisClient.isOpen) {
-      await redisClient.connect();
-    }
-
-    // 🔹 Retrieve email using OTP from Redis
+    if (!redisClient.isOpen) await redisClient.connect();
     const email = await redisClient.get(otp);
+
     if (!email) {
-      console.error("❌ OTP Expired or Not Found.");
       return new Response(
         JSON.stringify({ message: "OTP expired or invalid." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`✅ OTP Verified for ${email}`);
-
-    // 🔹 Mark email as verified in the database
     await pool.query(
       `UPDATE public."appUsers" SET "EmailConfirmed" = true WHERE "Email" = $1`,
       [email]
     );
-
-    // 🔹 Delete OTP from Redis after successful verification
     await redisClient.del(otp);
 
     return new Response(
       JSON.stringify({ message: "OTP Verified Successfully!" }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("❌ Error verifying OTP:", error);
+    console.error("❌ OTP Verification Error:", error);
     return new Response(
       JSON.stringify({ message: "OTP verification failed.", error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 }
 
+// ⚠️ Optional: loginUser & logoutUser functions
+async function loginUser(body) {
+  return new Response(
+    JSON.stringify({ message: "Login not implemented yet" }),
+    { status: 501, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
+
+async function logoutUser(body) {
+  return new Response(
+    JSON.stringify({ message: "Logout not implemented yet" }),
+    { status: 501, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
+}
 
 
 
