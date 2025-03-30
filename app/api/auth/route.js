@@ -15,23 +15,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-// ✅ Handle OPTIONS (Preflight)
 export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: corsHeaders,
-  });
+  return new Response(null, { status: 204, headers: corsHeaders });
 }
 
-// ✅ Main POST Handler
 export async function POST(req) {
   try {
-    console.log("🟢 API `/api/auth` called");
-
     const { action, ...body } = await req.json();
-    console.log("🔍 Action:", action);
-
     let response;
+
     switch (action) {
       case "register":
         response = await registerUser(body);
@@ -42,19 +34,18 @@ export async function POST(req) {
       case "verify-otp":
         response = await verifyOtp(body);
         break;
-      case "logout":
-        response = await logoutUser(body);
+      case "resend-otp":
+        response = await resendOtp(body);
         break;
       default:
-        response = new Response(JSON.stringify({ message: "Invalid action" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        response = new Response(
+          JSON.stringify({ message: "Invalid action" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
     }
 
     return response;
   } catch (error) {
-    console.error("❌ API Error:", error);
     return new Response(
       JSON.stringify({ message: "Internal server error", error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -62,11 +53,8 @@ export async function POST(req) {
   }
 }
 
-// ✅ Register User Function
 async function registerUser({ username, email, password }) {
   try {
-    console.log("🟢 Registering User:", email);
-
     const { rows } = await pool.query(
       `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
       [email]
@@ -111,11 +99,7 @@ async function registerUser({ username, email, password }) {
       ]
     );
 
-    const otp = crypto.randomInt(100000, 999999).toString();
-
-    if (!redisClient.isOpen) await redisClient.connect();
-    await redisClient.setEx(otp, 600, email);
-    await sendOtpEmail(email, otp);
+    await generateAndSendOtp(email);
 
     const token = jwt.sign({ id: inserted[0].Id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
@@ -126,7 +110,6 @@ async function registerUser({ username, email, password }) {
       { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("❌ Registration Error:", error);
     return new Response(
       JSON.stringify({ message: "Registration failed", error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -134,10 +117,9 @@ async function registerUser({ username, email, password }) {
   }
 }
 
-// ✅ Verify OTP Function
 async function verifyOtp({ otp }) {
   try {
-    console.log(`🔍 Verifying OTP: ${otp}`);
+    console.log(`🔍 Received OTP: ${otp}`);
     if (!otp) {
       return new Response(JSON.stringify({ message: "OTP is required." }), {
         status: 400,
@@ -147,6 +129,8 @@ async function verifyOtp({ otp }) {
 
     if (!redisClient.isOpen) await redisClient.connect();
     const email = await redisClient.get(otp);
+
+    console.log(`📥 Redis Lookup: ${email}`);
 
     if (!email) {
       return new Response(
@@ -166,7 +150,6 @@ async function verifyOtp({ otp }) {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("❌ OTP Verification Error:", error);
     return new Response(
       JSON.stringify({ message: "OTP verification failed.", error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -174,7 +157,43 @@ async function verifyOtp({ otp }) {
   }
 }
 
-// ⚠️ Optional: loginUser & logoutUser functions
+// ✅ Resend OTP logic
+async function resendOtp({ email }) {
+  try {
+    console.log(`🔄 Resending OTP for: ${email}`);
+    if (!email) {
+      return new Response(
+        JSON.stringify({ message: "Email is required." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    await generateAndSendOtp(email);
+
+    return new Response(
+      JSON.stringify({ message: "OTP resent successfully." }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ message: "Failed to resend OTP.", error: error.message }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+}
+
+// ✅ OTP generation function used by register and resend
+async function generateAndSendOtp(email) {
+  const otp = crypto.randomInt(100000, 999999).toString();
+  console.log(`🔑 OTP Generated: ${otp} for ${email}`);
+
+  if (!redisClient.isOpen) await redisClient.connect();
+  await redisClient.setEx(otp, 600, email); // 10 minutes expiry
+
+  await sendOtpEmail(email, otp);
+}
+
+// Dummy stubs for login/logout
 async function loginUser(body) {
   return new Response(
     JSON.stringify({ message: "Login not implemented yet" }),
@@ -188,6 +207,5 @@ async function logoutUser(body) {
     { status: 501, headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
 }
-
 
 
