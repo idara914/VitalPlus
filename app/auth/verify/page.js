@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
@@ -120,4 +122,5 @@ export default function Verify() {
     </AuthLayout>
   );
 }
+
 
