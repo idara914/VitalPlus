@@ -1,25 +1,31 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from "react-hot-toast";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Verify() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get("email"); // We'll pass email as query param
-
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("verify_email");
+    if (storedEmail) {
+      setEmail(storedEmail);
+    } else {
+      toast.error("Email not found. Please register again.");
+      router.push("/auth/register");
+    }
+  }, [router]);
 
   const validateOtp = (otp) => {
     if (!otp) return "Please enter your OTP";
@@ -49,6 +55,7 @@ export default function Verify() {
 
       if (response.status === 200) {
         toast.success("OTP Verified Successfully!");
+        localStorage.removeItem("verify_email");
         router.push("/account/update");
       }
     } catch (error) {
