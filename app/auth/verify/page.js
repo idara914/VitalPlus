@@ -1,8 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import styles from "../../assets/auth.module.css";
@@ -19,6 +17,13 @@ export default function Verify() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Token missing. Please register again.");
+      router.push("/auth/register");
+    }
+  }, [token, router]);
 
   const validateOtp = (otp) => {
     if (!otp) return "Please enter your OTP";
