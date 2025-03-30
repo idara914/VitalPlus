@@ -18,26 +18,8 @@ export default function Register() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const validateEmail = (email) => {
-    if (!email) return "Please enter your email";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Invalid email address";
-    return null;
-  };
-
-  const validatePassword = (password) => {
-    if (!password) return "Please enter your password";
-    if (password.length < 8) return "Password must be at least 8 characters";
-    return null;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
-    if (emailError || passwordError) {
-      setError(emailError || passwordError);
-      return;
-    }
 
     setLoading(true);
     try {
@@ -56,10 +38,7 @@ export default function Register() {
       if (!res.ok) throw new Error(data.message || "Registration failed");
 
       toast.success(data.message);
-
-      // ✅ Save email for OTP verification
-      localStorage.setItem("verify_email", email);
-      router.push("/auth/verify");
+      router.push(`/auth/verify?token=${data.token}`);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -118,5 +97,3 @@ export default function Register() {
     </AuthLayout>
   );
 }
-
-
