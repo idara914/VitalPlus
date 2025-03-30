@@ -21,128 +21,109 @@ export async function OPTIONS() {
 export async function POST(req) {
   try {
     const { action, ...body } = await req.json();
-    let response;
+    if (action === "register") return await registerUser(body);
+    if (action === "verify-otp") return await verifyOtp(body);
 
-    switch (action) {
-      case "register":
-        response = await registerUser(body);
-        break;
-      case "verify-otp":
-        response = await verifyOtp(body);
-        break;
-      default:
-        response = new Response(
-          JSON.stringify({ message: "Invalid action" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-    }
-
-    return response;
+    return new Response(JSON.stringify({ message: "Invalid action" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ message: "Internal server error", error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 }
 
 async function registerUser({ username, email, password }) {
-  try {
-    const { rows } = await pool.query(
-      `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
-      [email]
-    );
-    if (rows.length > 0) {
-      return new Response(JSON.stringify({ message: "User already exists" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const userData = {
-      FirstName: username.split(" ")[0] || "",
-      LastName: username.split(" ").slice(1).join(" ") || "",
-      CreatedDT: new Date().toISOString(),
-      ModifiedDT: new Date().toISOString(),
-      UserName: username,
-      NormalizedUserName: username.toLowerCase().trim(),
-      Email: email,
-      NormalizedEmail: email.toLowerCase().trim(),
-      EmailConfirmed: false,
-      PasswordHash: hashedPassword,
-    };
-
-    const { rows: inserted } = await pool.query(
-      `INSERT INTO public."appUsers" 
-      ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-      RETURNING "Id", "FirstName", "LastName", "Email", "EmailConfirmed";`,
-      [
-        userData.FirstName,
-        userData.LastName,
-        userData.CreatedDT,
-        userData.ModifiedDT,
-        userData.UserName,
-        userData.NormalizedUserName,
-        userData.Email,
-        userData.NormalizedEmail,
-        userData.EmailConfirmed,
-        userData.PasswordHash,
-      ]
-    );
-
-    const otp = crypto.randomInt(100000, 999999).toString();
-    if (!redisClient.isOpen) await redisClient.connect();
-    await redisClient.setEx(otp, 600, email); // 10 min
-
-    await sendOtpEmail(email, otp);
-
-    const token = jwt.sign(
-      { id: inserted[0].Id, email },
-      process.env.JWT_SECRET,
-      { expiresIn: "10m" }
-    );
-
-    return new Response(
-      JSON.stringify({ message: "User registered", token }),
-      { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ message: "Registration failed", error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+  const { rows } = await pool.query(
+    `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
+    [email]
+  );
+  if (rows.length > 0) {
+    return new Response(JSON.stringify({ message: "User already exists" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const userData = {
+    FirstName: username.split(" ")[0] || "",
+    LastName: username.split(" ").slice(1).join(" ") || "",
+    CreatedDT: new Date().toISOString(),
+    ModifiedDT: new Date().toISOString(),
+    UserName: username,
+    NormalizedUserName: username.toLowerCase().trim(),
+    Email: email,
+    NormalizedEmail: email.toLowerCase().trim(),
+    EmailConfirmed: false,
+    PasswordHash: hashedPassword,
+  };
+
+  const { rows: inserted } = await pool.query(
+    `INSERT INTO public."appUsers" 
+    ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+    RETURNING "Id", "Email";`,
+    [
+      userData.FirstName,
+      userData.LastName,
+      userData.CreatedDT,
+      userData.ModifiedDT,
+      userData.UserName,
+      userData.NormalizedUserName,
+      userData.Email,
+      userData.NormalizedEmail,
+      userData.EmailConfirmed,
+      userData.PasswordHash,
+    ]
+  );
+
+  const otp = crypto.randomInt(100000, 999999).toString();
+  if (!redisClient.isOpen) await redisClient.connect();
+  await redisClient.setEx(`otp:${otp}`, 600, inserted[0].Email);
+
+  await sendOtpEmail(email, otp);
+
+  const token = jwt.sign(
+    { id: inserted[0].Id, email },
+    process.env.JWT_SECRET,
+    { expiresIn: "10m" }
+  );
+
+  return new Response(
+    JSON.stringify({ message: "User registered", token }),
+    { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
 }
 
 async function verifyOtp({ otp, token }) {
+  if (!otp || !token) {
+    return new Response(JSON.stringify({ message: "OTP and token required" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
-    if (!otp || !token) {
-      return new Response(
-        JSON.stringify({ message: "OTP and token are required." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.email;
-
+    const { email } = jwt.verify(token, process.env.JWT_SECRET);
     if (!redisClient.isOpen) await redisClient.connect();
-    const redisEmail = await redisClient.get(otp);
+    const redisEmail = await redisClient.get(`otp:${otp}`);
 
     if (!redisEmail || redisEmail !== email) {
-      return new Response(
-        JSON.stringify({ message: "OTP expired or invalid." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ message: "OTP expired or invalid" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     await pool.query(
       `UPDATE public."appUsers" SET "EmailConfirmed" = true WHERE "Email" = $1`,
       [email]
     );
-    await redisClient.del(otp);
+    await redisClient.del(`otp:${otp}`);
 
     return new Response(
       JSON.stringify({ message: "OTP Verified Successfully!" }),
@@ -155,5 +136,4 @@ async function verifyOtp({ otp, token }) {
     );
   }
 }
-
 
