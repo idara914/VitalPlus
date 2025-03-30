@@ -1,12 +1,15 @@
-import VerifyForm from "./VerifyForm";
-import { Suspense } from "react";
+"use client";
 
-export const dynamic = "force-dynamic";
+import VerifyForm from "./VerifyForm";
+import AuthLayout from "@/app/components/layouts/AuthLayout";
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <AuthLayout
+      heading="Verify your email"
+      text="Please enter the OTP sent to your email."
+    >
       <VerifyForm />
-    </Suspense>
+    </AuthLayout>
   );
 }
