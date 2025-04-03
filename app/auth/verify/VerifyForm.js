@@ -1,63 +1,73 @@
-"use client";
 
+"use client";
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
-import TextField from "@/app/components/common/TextField/TextField";
-import Button from "@/app/components/common/Button/Button";
 
 export default function VerifyForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-
   const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendTimeout, setResendTimeout] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (otp.length !== 6) {
-      toast.error("OTP must be 6 digits");
-      return;
+    setLoading(true);
+
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "verify-otp", email, otp }),
+    });
+
+    if (res.ok) {
+      toast.success("OTP Verified");
+    } else {
+      const data = await res.json();
+      toast.error(data.message);
     }
+    setLoading(false);
+  };
 
-    try {
-      setLoading(true);
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify-otp", otp, token }),
-      });
+  const handleResend = async () => {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "send-otp", email }),
+    });
 
-      if (res.ok) {
-        toast.success("OTP Verified Successfully");
-        router.push("/account/update");
-      } else {
-        const data = await res.json();
-        toast.error(data.message || "OTP Verification Failed");
-      }
-    } catch (err) {
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
+    const data = await res.json();
+    if (res.ok) {
+      toast.success("OTP Sent");
+      setResendTimeout(30);
+      const timer = setInterval(() => setResendTimeout((t) => (t > 0 ? t - 1 : 0)), 1000);
+      setTimeout(() => clearInterval(timer), 30000);
+    } else {
+      toast.error(data.message);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <TextField
-        label="OTP"
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
         type="text"
-        placeholder="123456"
+        placeholder="OTP"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
+        required
       />
-      <Button
-        text={loading ? "Verifying..." : "Confirm OTP"}
-        customStyle={{ marginTop: "50px", width: "100%" }}
-        disabled={loading}
-      />
+      <button type="submit" disabled={loading}>
+        {loading ? "Verifying..." : "Verify OTP"}
+      </button>
+      <button type="button" onClick={handleResend} disabled={resendTimeout > 0}>
+        {resendTimeout > 0 ? `Resend in ${resendTimeout}s` : "Resend OTP"}
+      </button>
     </form>
   );
 }
-
