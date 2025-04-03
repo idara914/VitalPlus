@@ -1,10 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
 import dotenv from "dotenv";
 import pool from "@/config/db";
-import { kv } from "@vercel/kv";
-import { sendOtpEmail } from "@/utils/sendOtpEmail";
 
 dotenv.config();
 
@@ -13,10 +10,6 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
-
-const OTP_EXPIRE = 600; // 10 minutes
-const MAX_RESEND = 5;
-const MAX_ATTEMPTS = 5;
 
 export async function OPTIONS() {
   return new Response(null, { status: 204, headers: corsHeaders });
@@ -27,11 +20,7 @@ export async function POST(req) {
     const { action, ...body } = await req.json();
 
     if (action === "register") return await registerUser(body);
-    if (action === "send-otp") return await handleSendOtp(body);
-    if (action === "verify-otp") {
-      const { otp, token } = body;
-      return await handleVerifyOtp({ otp, token });
-    }
+    if (action === "login") return await loginUser(body);
 
     return new Response(JSON.stringify({ message: "Invalid action" }), {
       status: 400,
@@ -90,12 +79,10 @@ async function registerUser({ username, email, password }) {
     ]
   );
 
-  await sendOtp(inserted[0].Email);
-
   const token = jwt.sign(
     { id: inserted[0].Id, email: inserted[0].Email },
     process.env.JWT_SECRET,
-    { expiresIn: "10m" }
+    { expiresIn: "1h" }
   );
 
   return new Response(
@@ -107,72 +94,36 @@ async function registerUser({ username, email, password }) {
   );
 }
 
-async function handleSendOtp({ token }) {
-  try {
-    const { email } = jwt.verify(token, process.env.JWT_SECRET);
-    const response = await sendOtp(email);
-    return new Response(JSON.stringify({ message: response.message }), {
-      status: response.status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: "Invalid token" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-}
+async function loginUser({ email, password }) {
+  const { rows } = await pool.query(
+    `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
+    [email]
+  );
 
-async function handleVerifyOtp({ otp, token }) {
-  try {
-    const { email } = jwt.verify(token, process.env.JWT_SECRET);
-    const response = await verifyOtp(email, otp);
-    return new Response(JSON.stringify({ message: response.message }), {
-      status: response.status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: "Invalid token" }), {
-      status: 400,
+  if (rows.length === 0) {
+    return new Response(JSON.stringify({ message: "Invalid credentials" }), {
+      status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-}
 
-async function sendOtp(email) {
-  const resendKey = `otp:resend:${email}`;
-  const resendCount = parseInt(await kv.get(resendKey)) || 0;
-
-  if (resendCount >= MAX_RESEND) {
-    return { status: 429, message: "Resend limit reached. Try later." };
+  const user = rows[0];
+  const isMatch = await bcrypt.compare(password, user.PasswordHash);
+  if (!isMatch) {
+    return new Response(JSON.stringify({ message: "Invalid credentials" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
-  const otp = crypto.randomInt(100000, 999999).toString();
-  await kv.set(`otp:code:${email}`, otp, { ex: OTP_EXPIRE });
-  await kv.set(`otp:attempts:${email}`, "0", { ex: OTP_EXPIRE });
-  await kv.set(resendKey, (resendCount + 1).toString(), { ex: 900 });
+  const token = jwt.sign(
+    { id: user.Id, email: user.Email },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 
-  await sendOtpEmail(email, otp);
-
-  return { status: 200, message: "OTP Sent" };
-}
-
-async function verifyOtp(email, otp) {
-  const code = await kv.get(`otp:code:${email}`);
-  let attempts = parseInt(await kv.get(`otp:attempts:${email}`)) || 0;
-
-  if (attempts >= MAX_ATTEMPTS) {
-    return { status: 403, message: "Too many failed attempts. Try later." };
-  }
-
-  if (otp === code) {
-    await kv.del(`otp:code:${email}`);
-    await kv.del(`otp:attempts:${email}`);
-    await kv.del(`otp:resend:${email}`);
-    return { status: 200, message: "OTP Verified" };
-  } else {
-    attempts++;
-    await kv.set(`otp:attempts:${email}`, attempts.toString(), { ex: OTP_EXPIRE });
-    return { status: 400, message: "Invalid OTP" };
-  }
+  return new Response(
+    JSON.stringify({ message: "Login successful", token }),
+    { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
 }
