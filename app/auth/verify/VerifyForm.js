@@ -9,7 +9,7 @@ import Button from "@/app/components/common/Button/Button";
 export default function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("otpToken"); // ✅ use otpToken
+  const token = searchParams.get("otpToken"); // ✅ now correctly using otpToken
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,7 +82,12 @@ export default function VerifyForm() {
       />
       <Button
         text={resending ? "Resending..." : "Resend OTP"}
-        customStyle={{ marginTop: "20px", width: "100%" }}
+        customStyle={{
+          marginTop: "20px",
+          width: "50%", // ✅ smaller
+          backgroundColor: "#f0f0f0", // ✅ lighter
+          color: "#333",
+        }}
         onClick={handleResend}
         disabled={resending || loading}
       />
