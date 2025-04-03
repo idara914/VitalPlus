@@ -87,13 +87,18 @@ async function registerUser({ username, email, password }) {
     ]
   );
 
-  const otpResponse = await sendOtp(inserted[0].Email);
+  await sendOtp(inserted[0].Email);
+
+  const token = jwt.sign(
+    { id: inserted[0].Id, email: inserted[0].Email },
+    process.env.JWT_SECRET,
+    { expiresIn: "10m" }
+  );
 
   return new Response(
     JSON.stringify({
       message: "User registered",
-      otpMessage: otpResponse.message,
-      otpToken: otpResponse.token,
+      token,
     }),
     { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
@@ -168,4 +173,3 @@ async function verifyOtp(email, otp) {
     return { status: 400, message: "Invalid OTP" };
   }
 }
-
