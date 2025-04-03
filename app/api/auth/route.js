@@ -100,10 +100,12 @@ async function registerUser({ username, email, password }) {
 }
 
 async function loginUser({ email, password }) {
-  const { rows } = await pool.query(
-    `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
-    [email]
-  );
+ const normalizedEmail = email.toLowerCase().trim();
+const { rows } = await pool.query(
+  `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
+  [normalizedEmail]
+);
+
 
   if (rows.length === 0) {
     return new Response(JSON.stringify({ message: "Invalid credentials" }), {
