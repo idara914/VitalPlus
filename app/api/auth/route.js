@@ -95,12 +95,20 @@ async function registerUser({ username, email, password }) {
   );
 }
 
-async function handleSendOtp({ email }) {
-  const response = await sendOtp(email);
-  return new Response(JSON.stringify({ message: response.message, token: response.token || null }), {
-    status: response.status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+async function handleSendOtp({ token }) {
+  try {
+    const { email } = jwt.verify(token, process.env.JWT_SECRET);
+    const response = await sendOtp(email);
+    return new Response(JSON.stringify({ message: response.message, token: response.token || null }), {
+      status: response.status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ message: "Invalid token" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 }
 
 async function handleVerifyOtp({ email, otp }) {
