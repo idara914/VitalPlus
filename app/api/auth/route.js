@@ -126,6 +126,7 @@ async function handleVerifyOtp({ otp, token }) {
     });
   }
 }
+
 async function sendOtp(email) {
   const resendKey = `otp:resend:${email}`;
   const resendCount = parseInt(await redisClient.get(resendKey)) || 0;
