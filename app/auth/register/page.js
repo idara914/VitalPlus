@@ -38,7 +38,7 @@ export default function Register() {
       if (!res.ok) throw new Error(data.message || "Registration failed");
 
       toast.success(data.message);
-      router.push("/auth/update"); // ✅ direct to update page after registration
+      router.push("/account/update"); // ✅ direct to update page after registration
     } catch (error) {
       toast.error(error.message);
     } finally {
