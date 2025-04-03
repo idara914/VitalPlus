@@ -103,7 +103,7 @@ async function handleSendOtp({ token }) {
   try {
     const { email } = jwt.verify(token, process.env.JWT_SECRET);
     const response = await sendOtp(email);
-    return new Response(JSON.stringify({ message: response.message, token: response.token || null }), {
+    return new Response(JSON.stringify({ message: response.message }), {
       status: response.status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -146,8 +146,7 @@ async function sendOtp(email) {
 
   await sendOtpEmail(email, otp);
 
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "10m" });
-  return { status: 200, message: "OTP Sent", token };
+  return { status: 200, message: "OTP Sent" };
 }
 
 async function verifyOtp(email, otp) {
