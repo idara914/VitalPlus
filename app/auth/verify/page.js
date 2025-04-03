@@ -1,5 +1,3 @@
-"use client";
-
 import VerifyForm from "./VerifyForm";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 
