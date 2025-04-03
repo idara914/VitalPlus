@@ -9,7 +9,7 @@ import Button from "@/app/components/common/Button/Button";
 export default function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams.get("otpToken"); // ✅ use otpToken
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,11 +30,11 @@ export default function VerifyForm() {
         body: JSON.stringify({ action: "verify-otp", otp, token }),
       });
 
+      const data = await res.json();
       if (res.ok) {
         toast.success("OTP Verified Successfully");
         router.push("/account/update");
       } else {
-        const data = await res.json();
         toast.error(data.message || "OTP Verification Failed");
       }
     } catch (err) {
