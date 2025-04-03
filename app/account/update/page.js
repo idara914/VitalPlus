@@ -24,36 +24,37 @@ export default function Update() {
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const data = {
-      orgName,
-      contactNumber,
-      faxNumber,
-      taxNumber,
-      address,
-      city,
-      state,
-      zipCode,
-      agencyType,
-    };
-
-    try {
-      const response = await instance.post('/user/updateProfile', data, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
-        },
-      });
-
-      if (response.status === 201) {
-        toast.success(response.data.message);
-        router.push('/admin/dashboard');
-      }
-    } catch (error) {
-      const msg = error.response?.data?.message || "Something went wrong";
-      toast.error(msg);
-    }
+  const data = {
+    action: "updateProfile", // ✅ required by your new API route
+    orgName,
+    contactNumber,
+    faxNumber,
+    taxNumber,
+    address,
+    city,
+    state,
+    zipCode,
+    agencyType,
   };
+
+  try {
+    const response = await instance.post('/api/user', data, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+    });
+
+    if (response.status === 201) {
+      toast.success(response.data.message);
+      router.push('/admin/dashboard');
+    }
+  } catch (error) {
+    const msg = error.response?.data?.message || "Something went wrong";
+    toast.error(msg);
+  }
+};
 
   return (
     <AuthLayout
