@@ -23,11 +23,18 @@ export default function Update() {
   const [agencyType, setAgencyType] = useState("Homehealth");
   const [error, setError] = useState(null);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
+  const token = Cookies.get("token");
+
+  if (!token) {
+    toast.error("You are not logged in.");
+    return;
+  }
+
   const data = {
-    action: "updateProfile", // ✅ required by your new API route
+    action: "updateProfile", // required for backend to recognize the request
     orgName,
     contactNumber,
     faxNumber,
@@ -40,11 +47,11 @@ export default function Update() {
   };
 
   try {
-const response = await instance.post('/api/user', data, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
+    const response = await instance.post('/api/user', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (response.status === 201) {
       toast.success(response.data.message);
@@ -55,6 +62,7 @@ const response = await instance.post('/api/user', data, {
     toast.error(msg);
   }
 };
+
 
   return (
     <AuthLayout
