@@ -1,10 +1,9 @@
-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import dotenv from "dotenv";
 import pool from "@/config/db";
-import redisClient from "@/config/redis";
+import { kv } from "@vercel/kv";
 import { sendOtpEmail } from "@/utils/sendOtpEmail";
 
 dotenv.config();
@@ -142,16 +141,16 @@ async function handleVerifyOtp({ otp, token }) {
 
 async function sendOtp(email) {
   const resendKey = `otp:resend:${email}`;
-  const resendCount = parseInt(await redisClient.get(resendKey)) || 0;
+  const resendCount = parseInt(await kv.get(resendKey)) || 0;
 
   if (resendCount >= MAX_RESEND) {
     return { status: 429, message: "Resend limit reached. Try later." };
   }
 
   const otp = crypto.randomInt(100000, 999999).toString();
-  await redisClient.setEx(`otp:code:${email}`, OTP_EXPIRE, otp);
-  await redisClient.setEx(`otp:attempts:${email}`, OTP_EXPIRE, "0");
-  await redisClient.setEx(resendKey, 900, (resendCount + 1).toString());
+  await kv.set(`otp:code:${email}`, otp, { ex: OTP_EXPIRE });
+  await kv.set(`otp:attempts:${email}`, "0", { ex: OTP_EXPIRE });
+  await kv.set(resendKey, (resendCount + 1).toString(), { ex: 900 });
 
   await sendOtpEmail(email, otp);
 
@@ -159,21 +158,21 @@ async function sendOtp(email) {
 }
 
 async function verifyOtp(email, otp) {
-  const code = await redisClient.get(`otp:code:${email}`);
-  let attempts = parseInt(await redisClient.get(`otp:attempts:${email}`)) || 0;
+  const code = await kv.get(`otp:code:${email}`);
+  let attempts = parseInt(await kv.get(`otp:attempts:${email}`)) || 0;
 
   if (attempts >= MAX_ATTEMPTS) {
     return { status: 403, message: "Too many failed attempts. Try later." };
   }
 
   if (otp === code) {
-    await redisClient.del(`otp:code:${email}`);
-    await redisClient.del(`otp:attempts:${email}`);
-    await redisClient.del(`otp:resend:${email}`);
+    await kv.del(`otp:code:${email}`);
+    await kv.del(`otp:attempts:${email}`);
+    await kv.del(`otp:resend:${email}`);
     return { status: 200, message: "OTP Verified" };
   } else {
     attempts++;
-    await redisClient.setEx(`otp:attempts:${email}`, OTP_EXPIRE, attempts.toString());
+    await kv.set(`otp:attempts:${email}`, attempts.toString(), { ex: OTP_EXPIRE });
     return { status: 400, message: "Invalid OTP" };
   }
 }
