@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import VerifyForm from "./VerifyForm";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 
