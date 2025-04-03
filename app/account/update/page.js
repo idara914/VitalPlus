@@ -40,11 +40,11 @@ export default function Update() {
   };
 
   try {
-    const response = await instance.post('/api/user', data, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
-      },
-    });
+const response = await instance.post('/api/user', data, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
     if (response.status === 201) {
       toast.success(response.data.message);
