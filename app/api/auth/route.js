@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import redisClient from "@/config/redisClient";
+import redisClient from "@/config/redis";
 import { sendOtpEmail } from "@/utils/sendOtpEmail";
 
 const OTP_EXPIRE = 600; // 10 minutes
