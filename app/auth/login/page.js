@@ -21,7 +21,7 @@ export default function Login() {
   const validateEmail = (email) => {
     if (!email) {
       return "Please enter your email";
-    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return "Invalid email address";
     } else {
       return null;
