@@ -8,9 +8,9 @@ import Link from "next/link";
 import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { signIn } from '@/app/user/index';
+import { signIn } from "@/app/user/index";
 
 export default function Login() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function Login() {
   const validateEmail = (email) => {
     if (!email) {
       return "Please enter your email";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
       return "Invalid email address";
     } else {
       return null;
@@ -39,15 +39,15 @@ export default function Login() {
   };
 
   const handleEmailChange = (e) => {
-    const email = e.target.value;
-    setEmail(email);
-    setError(validateEmail(email));
+    const value = e.target.value;
+    setEmail(value);
+    setError(validateEmail(value));
   };
 
   const handlePasswordChange = (e) => {
-    const password = e.target.value;
-    setPassword(password);
-    setError(validatePassword(password));
+    const value = e.target.value;
+    setPassword(value);
+    setError(validatePassword(value));
   };
 
   const handleSubmit = async (e) => {
@@ -62,24 +62,19 @@ export default function Login() {
   }
 
   try {
-    const res = await instance.post("/api/auth", {
+    const response = await instance.post("/api/auth", {
       action: "login",
       email,
       password,
     });
 
-    if (res.status === 200) {
-      signIn(res.data.token); // You can also store user info here if needed
-      toast.success(res.data.message);
+    if (response.status === 200) {
+      signIn(response.data.token); // Optional: save user data
+      toast.success(response.data.message);
       router.push("/admin/dashboard");
     }
-  } catch (err) {
-    if (err.response?.status === 403) {
-      toast.success(err.response.data.message);
-      router.push("/auth/verify");
-    } else {
-      toast.error(err.response?.data?.message || "Login failed");
-    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Login failed");
   }
 };
 
@@ -98,9 +93,7 @@ export default function Login() {
             placeholder="example@email.com"
             value={email}
             onChange={handleEmailChange}
-            customStyle={{
-              marginBottom: "20px",
-            }}
+            customStyle={{ marginBottom: "20px" }}
           />
 
           <TextField
@@ -110,36 +103,20 @@ export default function Login() {
             value={password}
             onChange={handlePasswordChange}
           />
-          <p
-            style={{
-              fontSize: "16px",
-              color: "#425466",
-              textAlign: "left",
-              marginTop: "16px",
-            }}
-          >
-            <Link
-              href={"/auth/forgot-password"}
-              style={{
-                color: "#425466",
-              }}
-            >
+          <p style={{ fontSize: "16px", color: "#425466", textAlign: "left", marginTop: "16px" }}>
+            <Link href={"/auth/forgot-password"} style={{ color: "#425466" }}>
               Forgot Password?
             </Link>
           </p>
+
           {error && <p style={{ color: "red" }}>{error}</p>}
-          <Button
-            text="Login"
-            customStyle={{
-              marginTop: "50px",
-              width: "100%",
-            }}
-          />
+
+          <Button text="Login" customStyle={{ marginTop: "50px", width: "100%" }} />
         </form>
+
         <Divider text="OR" />
         <p>
-          Don&apos;t have an account?{" "}
-          <Link href={"/auth/register"}>Register</Link>
+          Don&apos;t have an account? <Link href={"/auth/register"}>Register</Link>
         </p>
       </section>
     </AuthLayout>
