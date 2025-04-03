@@ -7,7 +7,7 @@ dotenv.config();
 const corsHeaders = {
   "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_ORIGIN || "https://www.vital-plus.xyz",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export async function OPTIONS() {
@@ -16,12 +16,8 @@ export async function OPTIONS() {
 
 export async function POST(req) {
   try {
-    const authHeader = req.headers.get("authorization") || "";
-    const token = authHeader.replace("Bearer ", "");
-    const { id, email } = jwt.verify(token, process.env.JWT_SECRET);
-
     const { action, ...body } = await req.json();
-    if (action === "updateProfile") return await updateProfile(id, email, body);
+    if (action === "updateProfile") return await updateProfile(body);
 
     return new Response(JSON.stringify({ message: "Invalid action" }), {
       status: 400,
@@ -35,7 +31,7 @@ export async function POST(req) {
   }
 }
 
-async function updateProfile(userId, userEmail, body) {
+async function updateProfile(body) {
   const {
     orgName,
     contactNumber,
@@ -46,7 +42,16 @@ async function updateProfile(userId, userEmail, body) {
     state,
     zipCode,
     agencyType,
+    email, // now required from frontend
+    userId, // now required from frontend
   } = body;
+
+  if (!email || !userId) {
+    return new Response(
+      JSON.stringify({ message: "Missing email or user ID" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
 
   const now = new Date();
   const formattedNow = now.toISOString();
@@ -60,7 +65,7 @@ async function updateProfile(userId, userEmail, body) {
     City: city,
     State: state,
     ZipCode: zipCode,
-    Email: userEmail,
+    Email: email,
     IsActive: true,
     IsDeleted: false,
     CreatedBy: userId,
