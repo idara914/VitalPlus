@@ -33,8 +33,19 @@ const handleSubmit = async (e) => {
     return;
   }
 
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const userId = localStorage.getItem("userId"); // or another method
+  const email = localStorage.getItem("email");
+
+  if (!userId || !email) {
+    toast.error("User info missing. Please register again.");
+    return;
+  }
+
   const data = {
-    action: "updateProfile", // required for backend to recognize the request
+    action: "updateProfile",
     orgName,
     contactNumber,
     faxNumber,
@@ -44,14 +55,23 @@ const handleSubmit = async (e) => {
     state,
     zipCode,
     agencyType,
+    userId,
+    email,
   };
 
   try {
-    const response = await instance.post('/api/user', data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await instance.post("/api/user", data);
+
+    if (response.status === 201) {
+      toast.success("Profile updated!");
+      router.push("/admin/dashboard");
+    }
+  } catch (error) {
+    const msg = error.response?.data?.message || "Something went wrong";
+    toast.error(msg);
+  }
+};
+
 
     if (response.status === 201) {
       toast.success(response.data.message);
