@@ -9,7 +9,7 @@ import Button from "@/app/components/common/Button/Button";
 export default function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token"); // ✅ correct param
+  const token = searchParams.get("token");
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export default function VerifyForm() {
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp, token }), // ✅ removed action
+        body: JSON.stringify({ action: "verify-otp", otp, token }), // ✅ action required
       });
 
       const data = await res.json();
@@ -50,7 +50,7 @@ export default function VerifyForm() {
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send-otp", token }),
+        body: JSON.stringify({ action: "send-otp", token }), // ✅ action required
       });
 
       const data = await res.json();
@@ -84,8 +84,8 @@ export default function VerifyForm() {
         text={resending ? "Resending..." : "Resend OTP"}
         customStyle={{
           marginTop: "20px",
-          width: "50%", // smaller
-          backgroundColor: "#f0f0f0", // lighter
+          width: "50%",
+          backgroundColor: "#f0f0f0",
           color: "#333",
         }}
         onClick={handleResend}
@@ -94,4 +94,5 @@ export default function VerifyForm() {
     </form>
   );
 }
+
 
