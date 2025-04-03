@@ -1,60 +1,55 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import pool from './../config/db.js';
-import { auth } from './../middlewares/authMiddleware.js';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import pool from "@/config/db";
 
 dotenv.config();
 
-const router = express.Router();
+const corsHeaders = {
+  "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_ORIGIN || "https://www.vital-plus.xyz",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
-// Example route to validate token
-router.post('/getUserByEmail', async (req, res) => {
-  let { email } = req.body;
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: corsHeaders });
+}
 
-  if (!email) return res.status(403).send({ message: 'Server Error' });
-
-  const { rows } = await pool.query('SELECT id, email, mfa_secret FROM users WHERE email = $1', [email]);
-
-  if (rows.length > 0) {
-    return res.status(200).json({ success: true, user: rows[0] });
-  } else {
-    return res.status(400).json({ success: false, message: "Server Error" });
-  }
-});
-
-// Example route to validate token
-router.get('/getUsers', async (req, res) => {
-
+export async function POST(req) {
   try {
-    const { rows } = await pool.query(`SELECT * FROM public."appUsers"`);
+    const authHeader = req.headers.get("authorization") || "";
+    const token = authHeader.replace("Bearer ", "");
+    const { id, email } = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (rows.length > 0) {
-      return res.status(200).json({ success: true, data: rows });
-    } else {
-      return res.status(200).json({ success: true, message: "No record Found" });
-    }
-  } catch (e) {
-    return res.status(500).json({ success: false, message: "Something went wrong!", error: e });
+    const { action, ...body } = await req.json();
+    if (action === "updateProfile") return await updateProfile(id, email, body);
+
+    return new Response(JSON.stringify({ message: "Invalid action" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
+}
 
-});
+async function updateProfile(userId, userEmail, body) {
+  const {
+    orgName,
+    contactNumber,
+    faxNumber,
+    taxNumber,
+    address,
+    city,
+    state,
+    zipCode,
+    agencyType,
+  } = body;
 
-// Example route to validate token
-router.post('/updateProfile', auth, async (req, res) => {
-  const { orgName, contactNumber, faxNumber, taxNumber, address, city, state, zipCode, agencyType } = req.body;
-
-  const options = {
-    timeZone: 'America/New_York', // Change to desired US timezone
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false, // Use 24-hour format
-  };
-
-  const formatter = new Intl.DateTimeFormat('en-US', options);
+  const now = new Date();
+  const formattedNow = now.toISOString();
 
   const agencyData = {
     Name: orgName,
@@ -65,34 +60,59 @@ router.post('/updateProfile', auth, async (req, res) => {
     City: city,
     State: state,
     ZipCode: zipCode,
-    Email: req.user.user.Email,
+    Email: userEmail,
     IsActive: true,
     IsDeleted: false,
-    CreatedBy: req.user.id,
-    CreatedDT: formatter.format(new Date()),
-    ModifiedBy: req.user.id,
-    ModifiedDT: formatter.format(new Date()),
+    CreatedBy: userId,
+    CreatedDT: formattedNow,
+    ModifiedBy: userId,
+    ModifiedDT: formattedNow,
     CountryId: 1,
-    AgencyType: agencyType
-  } 
+    AgencyType: agencyType,
+  };
 
-  // Insert the user into the database
-  const { rows: InsertedUser } = await pool.query(
-    'INSERT INTO public."Agency" ("Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber", "City","State", "ZipCode", "Email", "IsActive", "IsDeleted", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "CountryId", "AgencyType") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING "Id";',
-    [agencyData.Name, agencyData.FullAddress, agencyData.ContactNumber1, agencyData.FaxNumber, agencyData.TaxNumber, agencyData.City, agencyData.State, agencyData.ZipCode, agencyData.Email, agencyData.IsActive, agencyData.IsDeleted, agencyData.CreatedBy, agencyData.CreatedDT, agencyData.ModifiedBy, agencyData.ModifiedDT, agencyData.CountryId, agencyData.AgencyType]
+  const { rows: inserted } = await pool.query(
+    `INSERT INTO public."Agency" (
+      "Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber",
+      "City", "State", "ZipCode", "Email", "IsActive", "IsDeleted",
+      "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "CountryId", "AgencyType"
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+    RETURNING "Id";`,
+    [
+      agencyData.Name,
+      agencyData.FullAddress,
+      agencyData.ContactNumber1,
+      agencyData.FaxNumber,
+      agencyData.TaxNumber,
+      agencyData.City,
+      agencyData.State,
+      agencyData.ZipCode,
+      agencyData.Email,
+      agencyData.IsActive,
+      agencyData.IsDeleted,
+      agencyData.CreatedBy,
+      agencyData.CreatedDT,
+      agencyData.ModifiedBy,
+      agencyData.ModifiedDT,
+      agencyData.CountryId,
+      agencyData.AgencyType,
+    ]
   );
 
-  if (InsertedUser.length > 0) {
+  if (inserted.length > 0) {
     await pool.query(
       `UPDATE public."appUsers" SET "CompanyId" = $2, "ModifiedBy" = $3, "ModifiedDT" = $4 WHERE "Id" = $1;`,
-      [req.user.id, InsertedUser[0].Id, req.user.id, new Date().toISOString()]
+      [userId, inserted[0].Id, userId, formattedNow]
     );
-    res.status(201).json({ status: true, message: 'User profile updated successfully' });
+
+    return new Response(
+      JSON.stringify({ message: "User profile updated successfully" }),
+      { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } else {
-    res.status(500).json({ status: false, message: 'Something went wrong!' });
+    return new Response(
+      JSON.stringify({ message: "Failed to update user profile" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
-
-});
-
-
-export default router;
+}
