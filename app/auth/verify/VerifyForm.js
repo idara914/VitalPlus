@@ -9,7 +9,7 @@ import Button from "@/app/components/common/Button/Button";
 export default function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token"); // ✅ now using registration token
+  const token = searchParams.get("token"); // ✅ correct param
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export default function VerifyForm() {
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify-otp", otp, token }),
+        body: JSON.stringify({ otp, token }), // ✅ removed action
       });
 
       const data = await res.json();
