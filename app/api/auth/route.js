@@ -85,14 +85,19 @@ async function registerUser({ username, email, password }) {
     { expiresIn: "1h" }
   );
 
-  return new Response(
-    JSON.stringify({
-      message: "User registered",
-      token,
-    }),
-    { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
-}
+ return new Response(
+  JSON.stringify({
+    message: "User registered",
+    token,
+    userId: inserted[0].Id,
+    email: inserted[0].Email,
+  }),
+  {
+    status: 201,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  }
+);
+
 
 async function loginUser({ email, password }) {
   const { rows } = await pool.query(
