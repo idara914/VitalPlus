@@ -18,33 +18,38 @@ export default function Register() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "register",
-          username: name,
-          email: email,
-          password: password,
-        }),
-      });
+  try {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "register",
+        username: name,
+        email: email,
+        password: password,
+      }),
+    });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Registration failed");
 
-      toast.success(data.message);
-      router.push("/account/update"); // ✅ direct to update page after registration
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // ✅ Store for use on /account/update
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("email", email);
+
+    toast.success(data.message);
+    router.push("/account/update");
+  } catch (error) {
+    toast.error(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <AuthLayout
