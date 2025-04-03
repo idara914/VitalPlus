@@ -97,7 +97,7 @@ async function registerUser({ username, email, password }) {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   }
 );
-
+}
 
 async function loginUser({ email, password }) {
   const { rows } = await pool.query(
