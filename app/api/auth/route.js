@@ -90,7 +90,11 @@ async function registerUser({ username, email, password }) {
   const otpResponse = await sendOtp(inserted[0].Email);
 
   return new Response(
-    JSON.stringify({ message: "User registered", otpMessage: otpResponse.message, token: otpResponse.token }),
+    JSON.stringify({
+      message: "User registered",
+      otpMessage: otpResponse.message,
+      otpToken: otpResponse.token,
+    }),
     { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
 }
@@ -165,3 +169,4 @@ async function verifyOtp(email, otp) {
     return { status: 400, message: "Invalid OTP" };
   }
 }
+
