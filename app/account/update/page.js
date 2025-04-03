@@ -7,7 +7,6 @@ import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from 'react-hot-toast';
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import SelectField from "@/app/components/common/SelectField/SelectField";
 
 export default function Update() {
@@ -23,66 +22,43 @@ export default function Update() {
   const [agencyType, setAgencyType] = useState("Homehealth");
   const [error, setError] = useState(null);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const token = Cookies.get("token");
+    const userId = localStorage.getItem("userId");
+    const email = localStorage.getItem("email");
 
-  if (!token) {
-    toast.error("You are not logged in.");
-    return;
-  }
+    if (!userId || !email) {
+      toast.error("User info missing. Please register again.");
+      return;
+    }
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+    const data = {
+      action: "updateProfile",
+      orgName,
+      contactNumber,
+      faxNumber,
+      taxNumber,
+      address,
+      city,
+      state,
+      zipCode,
+      agencyType,
+      userId,
+      email,
+    };
 
-  const userId = localStorage.getItem("userId"); // or another method
-  const email = localStorage.getItem("email");
-
-  if (!userId || !email) {
-    toast.error("User info missing. Please register again.");
-    return;
-  }
-
-  const data = {
-    action: "updateProfile",
-    orgName,
-    contactNumber,
-    faxNumber,
-    taxNumber,
-    address,
-    city,
-    state,
-    zipCode,
-    agencyType,
-    userId,
-    email,
+    try {
+      const response = await instance.post("/api/user", data);
+      if (response.status === 201) {
+        toast.success(response.data.message);
+        router.push("/admin/dashboard");
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || "Something went wrong";
+      toast.error(msg);
+    }
   };
-
-  try {
-    const response = await instance.post("/api/user", data);
-
-    if (response.status === 201) {
-      toast.success("Profile updated!");
-      router.push("/admin/dashboard");
-    }
-  } catch (error) {
-    const msg = error.response?.data?.message || "Something went wrong";
-    toast.error(msg);
-  }
-};
-
-
-    if (response.status === 201) {
-      toast.success(response.data.message);
-      router.push('/admin/dashboard');
-    }
-  } catch (error) {
-    const msg = error.response?.data?.message || "Something went wrong";
-    toast.error(msg);
-  }
-};
-
 
   return (
     <AuthLayout
