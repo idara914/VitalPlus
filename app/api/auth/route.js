@@ -1,3 +1,4 @@
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -28,7 +29,10 @@ export async function POST(req) {
 
     if (action === "register") return await registerUser(body);
     if (action === "send-otp") return await handleSendOtp(body);
-    if (action === "verify-otp") return await handleVerifyOtp(body);
+    if (action === "verify-otp") {
+      const { otp, token } = body;
+      return await handleVerifyOtp({ otp, token });
+    }
 
     return new Response(JSON.stringify({ message: "Invalid action" }), {
       status: 400,
