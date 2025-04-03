@@ -51,31 +51,38 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) { 
-      setError(emailError || passwordError);
-    } else {
-      await instance.post('/auth/login', { email, password }).then(response => {
-        if (response.status == 200) {
-          signIn(response.data.token, response.data.user)
-          toast.success(response.data.message);
-          router.push('/admin/dashboard');
-        }
-      })
-        .catch(error => {
-          if (error.response.status == 403) {
-            toast.success(error.response.data.message);
-            router.push('/auth/verify');
-          } else {
-            toast.error(error.response.data.message);
-          }
-        });
+  if (emailError || passwordError) {
+    setError(emailError || passwordError);
+    return;
+  }
+
+  try {
+    const res = await instance.post("/api/auth", {
+      action: "login",
+      email,
+      password,
+    });
+
+    if (res.status === 200) {
+      signIn(res.data.token); // You can also store user info here if needed
+      toast.success(res.data.message);
+      router.push("/admin/dashboard");
     }
-  };
+  } catch (err) {
+    if (err.response?.status === 403) {
+      toast.success(err.response.data.message);
+      router.push("/auth/verify");
+    } else {
+      toast.error(err.response?.data?.message || "Login failed");
+    }
+  }
+};
+
 
   return (
     <AuthLayout
