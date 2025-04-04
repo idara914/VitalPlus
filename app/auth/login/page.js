@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
 import Button from "../../components/common/Button/Button";
 import Divider from "../../components/common/Divider/Divider";
@@ -19,12 +19,10 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   const validateEmail = (email) => {
-  const trimmed = email.trim();
-  if (!trimmed) return "Please enter your email";
-  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
-  return isValid ? null : "Invalid email address";
-};
-
+    if (!email) return "Please enter your email";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Invalid email address";
+    return null;
+  };
 
   const validatePassword = (password) => {
     if (!password) return "Please enter your password";
@@ -53,13 +51,18 @@ export default function Login() {
       const data = response.data;
 
       if (!data.token) {
-        toast.error("Login succeeded, but token is missing!");
+        toast.error("Login failed: token missing from response.");
         return;
       }
 
       await signIn(data.token, data.user); // 🔐 Sets cookie
-      toast.success(data.message);
-      router.push("/admin/dashboard");
+
+      // Ensure token is set before redirect
+      setTimeout(() => {
+        toast.success(data.message);
+        router.push("/admin/dashboard");
+      }, 500);
+
     } catch (error) {
       console.error("Login error:", error);
       toast.error(error.response?.data?.message || "Login failed");
@@ -105,7 +108,7 @@ export default function Login() {
               marginTop: "16px",
             }}
           >
-            <Link href={"/auth/forgot-password"} style={{ color: "#425466" }}>
+            <Link href="/auth/forgot-password" style={{ color: "#425466" }}>
               Forgot Password?
             </Link>
           </p>
@@ -121,10 +124,10 @@ export default function Login() {
 
         <Divider text="OR" />
         <p>
-          Don&apos;t have an account?{" "}
-          <Link href={"/auth/register"}>Register</Link>
+          Don&apos;t have an account? <Link href="/auth/register">Register</Link>
         </p>
       </section>
     </AuthLayout>
   );
 }
+
