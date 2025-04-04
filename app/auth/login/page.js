@@ -10,7 +10,6 @@ import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/app/user/index";
 
 export default function Login() {
   const router = useRouter();
@@ -47,22 +46,15 @@ export default function Login() {
         email,
         password,
       });
-console.log("Login API response:", response);
-      // ✅ Use exact destructuring of returned response
+
       const { data } = response;
 
-      if (!data?.token) {
-        console.error("Token missing in response:", data);
-        toast.error("Login failed: token missing.");
-        return;
-      }
-
-      await signIn(data.token, data.user);
-
-      toast.success(data.message || "Login successful");
-      setTimeout(() => {
+      if (data?.message === "Login successful") {
+        toast.success("Login successful!");
         router.push("/admin/dashboard");
-      }, 100);
+      } else {
+        toast.error("Login failed: No token received.");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error(error?.response?.data?.message || "Login failed");
@@ -106,7 +98,11 @@ console.log("Login API response:", response);
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <Button text="Login" type="submit" customStyle={{ marginTop: "50px", width: "100%" }} />
+          <Button
+            text="Login"
+            type="submit"
+            customStyle={{ marginTop: "50px", width: "100%" }}
+          />
         </form>
 
         <Divider text="OR" />
