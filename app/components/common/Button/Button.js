@@ -10,4 +10,15 @@ const Button = ({ text, customStyle, postImage }) => {
   );
 };
 
-export default Button;
+export default function Button({ text, onClick, customStyle = {}, disabled = false }) {
+  return (
+    <button
+      style={customStyle}
+      onClick={onClick}
+      disabled={disabled}
+      type="button"
+    >
+      {text}
+    </button>
+  );
+}
