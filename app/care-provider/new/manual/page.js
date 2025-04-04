@@ -54,7 +54,7 @@ export default function ManualAdd() {
 
   let userId;
   try {
-    const decoded = jwt_decode(token);
+    const decoded = jwtDecode(token);
     userId = decoded?.id;
     if (!userId) throw new Error("Invalid token payload.");
   } catch (e) {
