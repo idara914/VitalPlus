@@ -111,8 +111,11 @@ export default function Login() {
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <Button text="Login" customStyle={{ marginTop: "50px", width: "100%" }} />
-        </form>
+         <Button
+  text="Login"
+  type="submit"
+  customStyle={{ marginTop: "50px", width: "100%" }}
+/>
 
         <Divider text="OR" />
         <p>
