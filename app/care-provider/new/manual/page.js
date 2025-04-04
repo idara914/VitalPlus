@@ -38,31 +38,48 @@ export default function ManualAdd() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async () => {
-    const requiredFields = ["FirstName", "LastName", "PhoneNumber", "Email", "ZipCode"];
-    const missing = requiredFields.find((field) => !form[field]);
-    if (missing) return toast.error(`${missing.replace(/([A-Z])/g, " $1")} is required.`);
+ const handleSubmit = async () => {
+  const requiredFields = ["FirstName", "LastName", "PhoneNumber", "Email", "ZipCode"];
+  const missing = requiredFields.find((field) => !form[field]);
+  if (missing) return toast.error(`${missing.replace(/([A-Z])/g, " $1")} is required.`);
 
-    const userId = localStorage.getItem("userId");
-    if (!userId) return toast.error("User ID missing.");
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="))
+    ?.split("=")[1];
 
-    const payload = { ...form, userId };
-    try {
-      const res = await fetch("/api/provider", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+  if (!token) return toast.error("Login session missing.");
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+  let userId;
+  try {
+    const decoded = jwt_decode(token);
+    userId = decoded?.id;
+    if (!userId) throw new Error("Invalid token payload.");
+  } catch (e) {
+    return toast.error("Invalid or expired session.");
+  }
 
-      toast.success("Provider saved");
-      router.push("/admin/dashboard");
-    } catch (err) {
-      toast.error(err.message || "Error saving provider");
-    }
-  };
+  const payload = { ...form, userId };
+
+  try {
+    const res = await fetch("/api/provider", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    toast.success("Provider saved");
+    router.push("/admin/dashboard");
+  } catch (err) {
+    toast.error(err.message || "Error saving provider");
+  }
+};
+
 
   const handleCancel = () => router.push("/care-provider");
 
