@@ -10,8 +10,7 @@ import DateSelector from "@/app/components/common/DateSelector/DateSelector";
 import Button from "@/app/components/common/Button/Button";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import jwtDecode from "jwt-decode"; 
-
+import { jwtDecode } from "jwt-decode"; // ✅ Fixed
 
 const customField = { backgroundColor: "#fff" };
 
@@ -40,48 +39,47 @@ export default function ManualAdd() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
- const handleSubmit = async () => {
-  const requiredFields = ["FirstName", "LastName", "PhoneNumber", "Email", "ZipCode"];
-  const missing = requiredFields.find((field) => !form[field]);
-  if (missing) return toast.error(`${missing.replace(/([A-Z])/g, " $1")} is required.`);
+  const handleSubmit = async () => {
+    const requiredFields = ["FirstName", "LastName", "PhoneNumber", "Email", "ZipCode"];
+    const missing = requiredFields.find((field) => !form[field]);
+    if (missing) return toast.error(`${missing.replace(/([A-Z])/g, " $1")} is required.`);
 
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="))
-    ?.split("=")[1];
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
 
-  if (!token) return toast.error("Login session missing.");
+    if (!token) return toast.error("Login session missing.");
 
-  let userId;
-  try {
-    const decoded = jwtDecode(token);
-    userId = decoded?.id;
-    if (!userId) throw new Error("Invalid token payload.");
-  } catch (e) {
-    return toast.error("Invalid or expired session.");
-  }
+    let userId;
+    try {
+      const decoded = jwtDecode(token);
+      userId = decoded?.id;
+      if (!userId) throw new Error("Invalid token payload.");
+    } catch (e) {
+      return toast.error("Invalid or expired session.");
+    }
 
-  const payload = { ...form, userId };
+    const payload = { ...form, userId };
 
-  try {
-    const res = await fetch("/api/provider", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch("/api/provider", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-    toast.success("Provider saved");
-    router.push("/admin/dashboard");
-  } catch (err) {
-    toast.error(err.message || "Error saving provider");
-  }
-};
-
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      toast.success("Provider saved");
+      router.push("/admin/dashboard");
+    } catch (err) {
+      toast.error(err.message || "Error saving provider");
+    }
+  };
 
   const handleCancel = () => router.push("/care-provider/new");
 
@@ -136,7 +134,7 @@ export default function ManualAdd() {
                 <TextField label="Email Address" value={form.Email} onChange={handleChange("Email")} customStyle={customField} />
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", alignItems: "center", gridGap: "20px", width: "100%", margin: "20px 0" }}>
-                <DateSelector label="Date of Birth" placeholder="DD-MM-YYY" onChange={handleChange("DOB")} customStyle={customField} />
+                <DateSelector label="Date of Birth" placeholder="DD-MM-YYYY" onChange={handleChange("DOB")} customStyle={customField} />
                 <TextField label="NPI" value={form.NPI} onChange={handleChange("NPI")} customStyle={customField} />
                 <TextField label="Speciality" value={form.Remarks} onChange={handleChange("Remarks")} customStyle={customField} />
               </div>
