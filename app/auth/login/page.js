@@ -47,23 +47,23 @@ const handleSubmit = async (e) => {
       password,
     });
 
-    const { data } = response;
+    const data = response.data;
 
     if (!data?.token) {
-      console.error("❌ Token missing in response:", data);
+      console.error("Token missing in response:", data);
       toast.error("Login failed: token missing.");
       return;
     }
 
-    // 🔥 TEMP: Comment this to test if it blocks redirect
-    // await signIn(data.token, data.user);
-
     toast.success(data.message || "Login successful");
 
-    console.log("✅ Redirecting to dashboard...");
+    // 💡 Do NOT use signIn here for now
+    // Instead, rely solely on Set-Cookie from backend to handle auth
+
+    // ✅ Give browser a moment to register cookie
     setTimeout(() => {
-      window.location.href = "/admin/dashboard"; // ✅ use hard redirect as backup
-    }, 100);
+      window.location.href = "/admin/dashboard"; // Full page reload
+    }, 200);
   } catch (error) {
     console.error("Login error:", error);
     toast.error(error?.response?.data?.message || "Login failed");
