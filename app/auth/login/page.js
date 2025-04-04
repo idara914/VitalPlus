@@ -55,20 +55,20 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    toast.success(data.message || "Login successful");
+    // ✅ Remove signIn (already set server-side)
+    // await signIn(data.token, data.user);
 
-    // 💡 Do NOT use signIn here for now
-    // Instead, rely solely on Set-Cookie from backend to handle auth
+    toast.success("Login successful");
 
-    // ✅ Give browser a moment to register cookie
-    setTimeout(() => {
-      window.location.href = "/admin/dashboard"; // Full page reload
-    }, 200);
+    // ✅ Force full reload — bypass hydration/cache/rendering issues
+    window.location.href = "/admin/dashboard";
+
   } catch (error) {
     console.error("Login error:", error);
     toast.error(error?.response?.data?.message || "Login failed");
   }
 };
+
 
 
   return (
