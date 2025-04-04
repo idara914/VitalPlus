@@ -16,7 +16,28 @@ export async function OPTIONS() {
 
 export async function POST(req) {
   try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ message: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return new Response(JSON.stringify({ message: "Invalid token" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = decoded.id;
     const body = await req.json();
+
     const {
       FirstName,
       LastName,
@@ -33,7 +54,6 @@ export async function POST(req) {
       NPI,
       DOB,
       Remarks,
-      userId,
       AgencyId = 1,
       ClinicId = null,
     } = body;
@@ -43,9 +63,9 @@ export async function POST(req) {
 
     const { rows: inserted } = await pool.query(
       `INSERT INTO public."ServiceProvider" 
-      ("FirstName", "LastName", "MiddleInitial", "FullAddress", "City", "State", "ZipCode", "ContactNumber1", "FaxNumber", "Email", "Gender", "Code", "DOB", "Remarks", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "IsActive", "IsDeleted", "AgencyId", "ClinicId")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, true, false, $19, $20) 
-      RETURNING "Id";`,
+        ("FirstName", "LastName", "MiddleInitial", "FullAddress", "City", "State", "ZipCode", "ContactNumber1", "FaxNumber", "Email", "Gender", "Code", "DOB", "Remarks", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "IsActive", "IsDeleted", "AgencyId", "ClinicId")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, true, false, $19, $20) 
+        RETURNING "Id";`,
       [
         FirstName,
         LastName,
