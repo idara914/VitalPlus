@@ -150,11 +150,18 @@ async function loginUser({ email, password }) {
       { expiresIn: "1h" }
     );
 
+    // ✅ Set cookie server-side so middleware sees it immediately
+    const cookieHeader = `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`;
+
     return new Response(
-      JSON.stringify({ message: "Login successful", token, user }),
+      JSON.stringify({ message: "Login successful", user }), // no need to return token anymore
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+          "Set-Cookie": cookieHeader,
+        },
       }
     );
   } catch (error) {
@@ -165,3 +172,4 @@ async function loginUser({ email, password }) {
     });
   }
 }
+
