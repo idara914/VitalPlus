@@ -47,19 +47,23 @@ const handleSubmit = async (e) => {
       password,
     });
 
-    const data = response.data;
+    const { data } = response;
+
     if (!data?.token) {
-      console.error("Token missing in response:", data);
+      console.error("❌ Token missing in response:", data);
       toast.error("Login failed: token missing.");
       return;
     }
 
+    // 🔥 TEMP: Comment this to test if it blocks redirect
+    // await signIn(data.token, data.user);
+
     toast.success(data.message || "Login successful");
 
-    // ✅ Give time for the Set-Cookie to sync in browser
+    console.log("✅ Redirecting to dashboard...");
     setTimeout(() => {
-      window.location.href = "/admin/dashboard"; // hard redirect, avoids RSC cache
-    }, 300); // delay slightly longer just in case
+      window.location.href = "/admin/dashboard"; // ✅ use hard redirect as backup
+    }, 100);
   } catch (error) {
     console.error("Login error:", error);
     toast.error(error?.response?.data?.message || "Login failed");
