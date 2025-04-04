@@ -51,33 +51,32 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
 
-  if (emailError || passwordError) {
-    setError(emailError || passwordError);
-    return;
-  }
+    if (emailError || passwordError) {
+      setError(emailError || passwordError);
+      return;
+    }
 
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "login",
-      email,
-      password,
-    });
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "login",
+        email,
+        password,
+      });
 
-  if (response.status === 200) {
-  signIn(response.data.token, response.data.user); // <- pass both
-  toast.success(response.data.message);
-  router.push("/admin/dashboard");
-}
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Login failed");
-  }
-};
-
+      if (response.status === 200) {
+        signIn(response.data.token, response.data.user);
+        toast.success(response.data.message);
+        router.push("/admin/dashboard");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <AuthLayout
@@ -86,40 +85,45 @@ export default function Login() {
     >
       <section>
         <h1 className={styles.formHeading}>Welcome Back!</h1>
-      <form onSubmit={handleSubmit}>
-  <TextField
-    label="Email"
-    type="email"
-    placeholder="example@email.com"
-    value={email}
-    onChange={handleEmailChange}
-    customStyle={{ marginBottom: "20px" }}
-  />
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            type="email"
+            placeholder="example@email.com"
+            value={email}
+            onChange={handleEmailChange}
+            customStyle={{ marginBottom: "20px" }}
+          />
 
-  <TextField
-    label="Password"
-    type="password"
-    placeholder="********"
-    value={password}
-    onChange={handlePasswordChange}
-  />
+          <TextField
+            label="Password"
+            type="password"
+            placeholder="********"
+            value={password}
+            onChange={handlePasswordChange}
+          />
 
-  <p style={{ fontSize: "16px", color: "#425466", textAlign: "left", marginTop: "16px" }}>
-    <Link href={"/auth/forgot-password"} style={{ color: "#425466" }}>
-      Forgot Password?
-    </Link>
-  </p>
+          <p
+            style={{
+              fontSize: "16px",
+              color: "#425466",
+              textAlign: "left",
+              marginTop: "16px",
+            }}
+          >
+            <Link href={"/auth/forgot-password"} style={{ color: "#425466" }}>
+              Forgot Password?
+            </Link>
+          </p>
 
-  {error && <p style={{ color: "red" }}>{error}</p>}}
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-  <Button
-    text="Login"
-    type="submit"
-    customStyle={{ marginTop: "50px", width: "100%" }}
-  />
-</form> 
-
-
+          <Button
+            text="Login"
+            type="submit"
+            customStyle={{ marginTop: "50px", width: "100%" }}
+          />
+        </form>
 
         <Divider text="OR" />
         <p>
