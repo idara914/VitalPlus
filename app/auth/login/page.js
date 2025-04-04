@@ -47,8 +47,7 @@ const handleSubmit = async (e) => {
       password,
     });
 
-    const { data } = response;
-
+    const data = response.data;
     if (!data?.token) {
       console.error("Token missing in response:", data);
       toast.error("Login failed: token missing.");
@@ -57,8 +56,10 @@ const handleSubmit = async (e) => {
 
     toast.success(data.message || "Login successful");
 
-    // ✅ HARD REDIRECT so Set-Cookie works
-    window.location.href = "/admin/dashboard";
+    // ✅ Give time for the Set-Cookie to sync in browser
+    setTimeout(() => {
+      window.location.href = "/admin/dashboard"; // hard redirect, avoids RSC cache
+    }, 300); // delay slightly longer just in case
   } catch (error) {
     console.error("Login error:", error);
     toast.error(error?.response?.data?.message || "Login failed");
