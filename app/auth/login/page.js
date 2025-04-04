@@ -42,37 +42,37 @@ export default function Login() {
     }
 
     try {
-      const response = await instance.post("/api/auth", {
+      const res = await instance.post("/api/auth", {
         action: "login",
         email,
         password,
       });
 
-      const data = response.data;
+      const { token, user, message } = res.data;
 
-      if (!data.token) {
-        toast.error("Login failed: token missing from response.");
+      if (!token) {
+        console.error("Token missing in response:", res.data);
+        toast.error("Login failed: token missing.");
         return;
       }
 
-      await signIn(data.token, data.user); // 🔐 Sets cookie
+      await signIn(token, user);
 
-      // Ensure token is set before redirect
+      toast.success(message || "Login successful");
       setTimeout(() => {
-        toast.success(data.message);
         router.push("/admin/dashboard");
-      }, 500);
+      }, 100); // Let cookies settle before navigating
 
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error.response?.data?.message || "Login failed");
+      toast.error(error?.response?.data?.message || "Login failed");
     }
   };
 
   return (
     <AuthLayout
       heading="Welcome to"
-      text="Enhance proactive homecare and improve health outcomes with our solutions. We're here to support better health and well-being at home."
+      text="Enhance proactive homecare and improve health outcomes with our solutions."
     >
       <section>
         <h1 className={styles.formHeading}>Welcome Back!</h1>
@@ -100,34 +100,21 @@ export default function Login() {
             }}
           />
 
-          <p
-            style={{
-              fontSize: "16px",
-              color: "#425466",
-              textAlign: "left",
-              marginTop: "16px",
-            }}
-          >
-            <Link href="/auth/forgot-password" style={{ color: "#425466" }}>
-              Forgot Password?
-            </Link>
+          <p className={styles.forgotText}>
+            <Link href="/auth/forgot-password">Forgot Password?</Link>
           </p>
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <Button
-            text="Login"
-            type="submit"
-            customStyle={{ marginTop: "50px", width: "100%" }}
-          />
+          <Button text="Login" type="submit" customStyle={{ marginTop: "50px", width: "100%" }} />
         </form>
 
         <Divider text="OR" />
         <p>
-          Don&apos;t have an account? <Link href="/auth/register">Register</Link>
+          Don&apos;t have an account?{" "}
+          <Link href="/auth/register">Register</Link>
         </p>
       </section>
     </AuthLayout>
   );
 }
-
