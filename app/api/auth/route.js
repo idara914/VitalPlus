@@ -22,16 +22,10 @@ export async function POST(req) {
     if (action === "register") return await registerUser(body);
     if (action === "login") return await loginUser(body);
 
-    return new Response(JSON.stringify({ message: "Invalid action" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return errorResponse("Invalid action", 400);
   } catch (error) {
     console.error("AUTH API ERROR:", error);
-    return new Response(JSON.stringify({ message: error.message || "Internal server error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return errorResponse(error.message || "Internal server error", 500);
   }
 }
 
@@ -68,9 +62,9 @@ async function registerUser({ username, email, password }) {
 
   const { rows: inserted } = await pool.query(
     `INSERT INTO public."appUsers" 
-    ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
-    RETURNING "Id", "Email";`,
+     ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+     RETURNING "Id", "Email"`,
     [
       userData.FirstName,
       userData.LastName,
@@ -108,53 +102,70 @@ async function registerUser({ username, email, password }) {
 
 async function loginUser({ email, password }) {
   if (!email || !password) {
+    console.warn("Missing email or password");
     return errorResponse("Email and password are required", 400);
   }
 
   const normalizedEmail = email.toLowerCase().trim();
+  console.log("LOGIN ATTEMPT:", normalizedEmail);
 
-  const { rows } = await pool.query(
-    `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
-    [normalizedEmail]
-  );
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
+      [normalizedEmail]
+    );
 
-  if (rows.length === 0) {
-    return errorResponse("Invalid credentials", 401);
-  }
-
-  const user = rows[0];
-  const isMatch = await bcrypt.compare(password, user.PasswordHash);
-
-  if (!isMatch) {
-    return errorResponse("Invalid credentials", 401);
-  }
-
-  const token = generateToken(user.Id, user.Email);
-  const cookieHeader = getCookieHeader(token);
-
-  return new Response(
-    JSON.stringify({
-      message: "Login successful",
-      token, // ✅ token in response body
-      user: {
-        id: user.Id,
-        email: user.Email,
-        username: user.UserName,
-      },
-    }),
-    {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-        "Set-Cookie": cookieHeader, // ✅ cookie set too
-      },
+    if (rows.length === 0) {
+      console.warn("User not found:", normalizedEmail);
+      return errorResponse("Invalid credentials", 401);
     }
-  );
+
+    const user = rows[0];
+    const isMatch = await bcrypt.compare(password, user.PasswordHash);
+
+    if (!isMatch) {
+      console.warn("Incorrect password for:", normalizedEmail);
+      return errorResponse("Invalid credentials", 401);
+    }
+
+    const token = generateToken(user.Id, user.Email);
+    const cookieHeader = getCookieHeader(token);
+
+    console.log("LOGIN SUCCESS:", user.Email);
+
+    return new Response(
+      JSON.stringify({
+        message: "Login successful",
+        token, // ✅ still returned for fallback or debugging
+        user: {
+          id: user.Id,
+          email: user.Email,
+          username: user.UserName,
+        },
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+          "Set-Cookie": cookieHeader,
+        },
+      }
+    );
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    return errorResponse("Server error during login", 500);
+  }
 }
 
 function generateToken(id, email) {
-  return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("Missing JWT_SECRET!");
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
+
+  return jwt.sign({ id, email }, secret, { expiresIn: "1h" });
 }
 
 function getCookieHeader(token) {
