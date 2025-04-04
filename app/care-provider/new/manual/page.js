@@ -10,6 +10,8 @@ import DateSelector from "@/app/components/common/DateSelector/DateSelector";
 import Button from "@/app/components/common/Button/Button";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import jwtDecode from "jwt-decode"; 
+
 
 const customField = { backgroundColor: "#fff" };
 
@@ -81,7 +83,7 @@ export default function ManualAdd() {
 };
 
 
-  const handleCancel = () => router.push("/care-provider");
+  const handleCancel = () => router.push("/care-provider/new");
 
   return (
     <main>
