@@ -86,36 +86,39 @@ export default function Login() {
     >
       <section>
         <h1 className={styles.formHeading}>Welcome Back!</h1>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Email"
-            type="email"
-            placeholder="example@email.com"
-            value={email}
-            onChange={handleEmailChange}
-            customStyle={{ marginBottom: "20px" }}
-          />
+      <form onSubmit={handleSubmit}>
+  <TextField
+    label="Email"
+    type="email"
+    placeholder="example@email.com"
+    value={email}
+    onChange={handleEmailChange}
+    customStyle={{ marginBottom: "20px" }}
+  />
 
-          <TextField
-            label="Password"
-            type="password"
-            placeholder="********"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-          <p style={{ fontSize: "16px", color: "#425466", textAlign: "left", marginTop: "16px" }}>
-            <Link href={"/auth/forgot-password"} style={{ color: "#425466" }}>
-              Forgot Password?
-            </Link>
-          </p>
+  <TextField
+    label="Password"
+    type="password"
+    placeholder="********"
+    value={password}
+    onChange={handlePasswordChange}
+  />
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+  <p style={{ fontSize: "16px", color: "#425466", textAlign: "left", marginTop: "16px" }}>
+    <Link href={"/auth/forgot-password"} style={{ color: "#425466" }}>
+      Forgot Password?
+    </Link>
+  </p>
 
-         <Button
-  text="Login"
-  type="submit"
-  customStyle={{ marginTop: "50px", width: "100%" }}
-/>
+  {error && <p style={{ color: "red" }}>{error}</p>}}
+
+  <Button
+    text="Login"
+    type="submit"
+    customStyle={{ marginTop: "50px", width: "100%" }}
+  />
+</form> {/* ✅ This was missing */}
+
 
 
         <Divider text="OR" />
