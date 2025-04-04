@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import styles from "./SearchBox.module.css";
 import SearchBar from "@/app/components/common/SearchBar/SearchBar";
