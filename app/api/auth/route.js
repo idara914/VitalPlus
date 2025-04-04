@@ -27,7 +27,8 @@ export async function POST(req) {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ message: error.message }), {
+    console.error("AUTH API ERROR:", error); // Log for debugging
+    return new Response(JSON.stringify({ message: error.message || "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -35,10 +36,20 @@ export async function POST(req) {
 }
 
 async function registerUser({ username, email, password }) {
+  if (!username || !email || !password) {
+    return new Response(JSON.stringify({ message: "Username, email, and password are required" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
   const { rows } = await pool.query(
-    `SELECT * FROM public."appUsers" WHERE "Email" = $1`,
-    [email]
+    `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
+    [normalizedEmail]
   );
+
   if (rows.length > 0) {
     return new Response(JSON.stringify({ message: "User already exists" }), {
       status: 400,
@@ -47,6 +58,7 @@ async function registerUser({ username, email, password }) {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+
   const userData = {
     FirstName: username.split(" ")[0] || "",
     LastName: username.split(" ").slice(1).join(" ") || "",
@@ -54,8 +66,8 @@ async function registerUser({ username, email, password }) {
     ModifiedDT: new Date().toISOString(),
     UserName: username,
     NormalizedUserName: username.toLowerCase().trim(),
-    Email: email,
-    NormalizedEmail: email.toLowerCase().trim(),
+    Email: normalizedEmail,
+    NormalizedEmail: normalizedEmail,
     EmailConfirmed: false,
     PasswordHash: hashedPassword,
   };
@@ -85,52 +97,71 @@ async function registerUser({ username, email, password }) {
     { expiresIn: "1h" }
   );
 
- return new Response(
-  JSON.stringify({
-    message: "User registered",
-    token,
-    userId: inserted[0].Id,
-    email: inserted[0].Email,
-  }),
-  {
-    status: 201,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  }
-);
+  return new Response(
+    JSON.stringify({
+      message: "User registered",
+      token,
+      userId: inserted[0].Id,
+      email: inserted[0].Email,
+    }),
+    {
+      status: 201,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    }
+  );
 }
 
 async function loginUser({ email, password }) {
- const normalizedEmail = email.toLowerCase().trim();
-const { rows } = await pool.query(
-  `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
-  [normalizedEmail]
-);
-
-
-  if (rows.length === 0) {
-    return new Response(JSON.stringify({ message: "Invalid credentials" }), {
-      status: 401,
+  if (!email || !password) {
+    return new Response(JSON.stringify({ message: "Email and password are required" }), {
+      status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
-  const user = rows[0];
-  const isMatch = await bcrypt.compare(password, user.PasswordHash);
-  if (!isMatch) {
-    return new Response(JSON.stringify({ message: "Invalid credentials" }), {
-      status: 401,
+  const normalizedEmail = email.toLowerCase().trim();
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
+      [normalizedEmail]
+    );
+
+    if (rows.length === 0) {
+      return new Response(JSON.stringify({ message: "Invalid credentials" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const user = rows[0];
+    const isMatch = await bcrypt.compare(password, user.PasswordHash);
+
+    if (!isMatch) {
+      return new Response(JSON.stringify({ message: "Invalid credentials" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user.Id, email: user.Email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    return new Response(
+      JSON.stringify({ message: "Login successful", token, user }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    return new Response(JSON.stringify({ message: "Server error during login" }), {
+      status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-
-  const token = jwt.sign(
-    { id: user.Id, email: user.Email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-
- return new Response(
-  JSON.stringify({ message: "Login successful", token, user }), // <- include user
-  { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-);
 }
