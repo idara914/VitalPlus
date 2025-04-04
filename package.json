@@ -19,6 +19,7 @@
     "install": "^0.13.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "next": "14.2.5",
     "nodemailer": "^6.10.0",
     "npm": "^10.8.2",
