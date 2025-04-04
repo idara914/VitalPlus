@@ -47,7 +47,7 @@ export default function Login() {
         email,
         password,
       });
-
+console.log("Login API response:", response);
       // ✅ Use exact destructuring of returned response
       const { data } = response;
 
