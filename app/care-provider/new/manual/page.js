@@ -63,14 +63,16 @@ export default function ManualAdd() {
     const payload = { ...form, userId };
 
     try {
-      const res = await fetch("/api/provider", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+     const res = await fetch("/api/provider", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  credentials: "include", // ✅ Ensures cookie is attached
+  body: JSON.stringify(payload),
+});
+
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
