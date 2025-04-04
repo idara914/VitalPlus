@@ -29,37 +29,42 @@ export default function Login() {
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) {
-      setError(emailError || passwordError);
+  if (emailError || passwordError) {
+    setError(emailError || passwordError);
+    return;
+  }
+
+  try {
+    const response = await instance.post("/api/auth", {
+      action: "login",
+      email,
+      password,
+    });
+
+    const { data } = response;
+
+    if (!data?.token) {
+      console.error("Token missing in response:", data);
+      toast.error("Login failed: token missing.");
       return;
     }
 
-    try {
-      const response = await instance.post("/api/auth", {
-        action: "login",
-        email,
-        password,
-      });
+    toast.success(data.message || "Login successful");
 
-      const { data } = response;
+    // ✅ HARD REDIRECT so Set-Cookie works
+    window.location.href = "/admin/dashboard";
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error(error?.response?.data?.message || "Login failed");
+  }
+};
 
-      if (data?.message === "Login successful") {
-        toast.success("Login successful!");
-        router.push("/admin/dashboard");
-      } else {
-        toast.error("Login failed: No token received.");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error(error?.response?.data?.message || "Login failed");
-    }
-  };
 
   return (
     <AuthLayout
