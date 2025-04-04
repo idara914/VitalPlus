@@ -117,7 +117,7 @@ export default function Login() {
     type="submit"
     customStyle={{ marginTop: "50px", width: "100%" }}
   />
-</form> {/* ✅ This was missing */}
+</form> 
 
 
 
