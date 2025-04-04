@@ -19,10 +19,12 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   const validateEmail = (email) => {
-    if (!email) return "Please enter your email";
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return "Invalid email address";
-    return null;
-  };
+  const trimmed = email.trim();
+  if (!trimmed) return "Please enter your email";
+  const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+  return isValid ? null : "Invalid email address";
+};
+
 
   const validatePassword = (password) => {
     if (!password) return "Please enter your password";
