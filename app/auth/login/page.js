@@ -42,27 +42,27 @@ export default function Login() {
     }
 
     try {
-      const res = await instance.post("/api/auth", {
+      const response = await instance.post("/api/auth", {
         action: "login",
         email,
         password,
       });
 
-      const { token, user, message } = res.data;
+      // ✅ Use exact destructuring of returned response
+      const { data } = response;
 
-      if (!token) {
-        console.error("Token missing in response:", res.data);
+      if (!data?.token) {
+        console.error("Token missing in response:", data);
         toast.error("Login failed: token missing.");
         return;
       }
 
-      await signIn(token, user);
+      await signIn(data.token, data.user);
 
-      toast.success(message || "Login successful");
+      toast.success(data.message || "Login successful");
       setTimeout(() => {
         router.push("/admin/dashboard");
-      }, 100); // Let cookies settle before navigating
-
+      }, 100);
     } catch (error) {
       console.error("Login error:", error);
       toast.error(error?.response?.data?.message || "Login failed");
