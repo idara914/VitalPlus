@@ -68,11 +68,11 @@ export default function Login() {
       password,
     });
 
-    if (response.status === 200) {
-      signIn(response.data.token); // Optional: save user data
-      toast.success(response.data.message);
-      router.push("/admin/dashboard");
-    }
+  if (response.status === 200) {
+  signIn(response.data.token, response.data.user); // <- pass both
+  toast.success(response.data.message);
+  router.push("/admin/dashboard");
+}
   } catch (error) {
     toast.error(error.response?.data?.message || "Login failed");
   }
