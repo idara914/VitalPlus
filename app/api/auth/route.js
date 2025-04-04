@@ -27,7 +27,7 @@ export async function POST(req) {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("AUTH API ERROR:", error); // Log for debugging
+    console.error("AUTH API ERROR:", error);
     return new Response(JSON.stringify({ message: error.message || "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -37,10 +37,7 @@ export async function POST(req) {
 
 async function registerUser({ username, email, password }) {
   if (!username || !email || !password) {
-    return new Response(JSON.stringify({ message: "Username, email, and password are required" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return errorResponse("Username, email, and password are required", 400);
   }
 
   const normalizedEmail = email.toLowerCase().trim();
@@ -51,10 +48,7 @@ async function registerUser({ username, email, password }) {
   );
 
   if (rows.length > 0) {
-    return new Response(JSON.stringify({ message: "User already exists" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return errorResponse("User already exists", 400);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -91,11 +85,8 @@ async function registerUser({ username, email, password }) {
     ]
   );
 
-  const token = jwt.sign(
-    { id: inserted[0].Id, email: inserted[0].Email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  const token = generateToken(inserted[0].Id, inserted[0].Email);
+  const cookieHeader = getCookieHeader(token);
 
   return new Response(
     JSON.stringify({
@@ -106,70 +97,74 @@ async function registerUser({ username, email, password }) {
     }),
     {
       status: 201,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Set-Cookie": cookieHeader,
+      },
     }
   );
 }
 
 async function loginUser({ email, password }) {
   if (!email || !password) {
-    return new Response(JSON.stringify({ message: "Email and password are required" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return errorResponse("Email and password are required", 400);
   }
 
   const normalizedEmail = email.toLowerCase().trim();
 
-  try {
-    const { rows } = await pool.query(
-      `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
-      [normalizedEmail]
-    );
+  const { rows } = await pool.query(
+    `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
+    [normalizedEmail]
+  );
 
-    if (rows.length === 0) {
-      return new Response(JSON.stringify({ message: "Invalid credentials" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const user = rows[0];
-    const isMatch = await bcrypt.compare(password, user.PasswordHash);
-
-    if (!isMatch) {
-      return new Response(JSON.stringify({ message: "Invalid credentials" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const token = jwt.sign(
-      { id: user.Id, email: user.Email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    // ✅ Set cookie server-side so middleware sees it immediately
-    const cookieHeader = `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`;
-
-    return new Response(
-      JSON.stringify({ message: "Login successful", user }), // no need to return token anymore
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-          "Set-Cookie": cookieHeader,
-        },
-      }
-    );
-  } catch (error) {
-    console.error("LOGIN ERROR:", error);
-    return new Response(JSON.stringify({ message: "Server error during login" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  if (rows.length === 0) {
+    return errorResponse("Invalid credentials", 401);
   }
+
+  const user = rows[0];
+  const isMatch = await bcrypt.compare(password, user.PasswordHash);
+
+  if (!isMatch) {
+    return errorResponse("Invalid credentials", 401);
+  }
+
+  const token = generateToken(user.Id, user.Email);
+  const cookieHeader = getCookieHeader(token);
+
+  return new Response(
+    JSON.stringify({
+      message: "Login successful",
+      token, // ✅ token in response body
+      user: {
+        id: user.Id,
+        email: user.Email,
+        username: user.UserName,
+      },
+    }),
+    {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Set-Cookie": cookieHeader, // ✅ cookie set too
+      },
+    }
+  );
+}
+
+function generateToken(id, email) {
+  return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+}
+
+function getCookieHeader(token) {
+  return `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`;
+}
+
+function errorResponse(message, status = 500) {
+  return new Response(JSON.stringify({ message }), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 }
 
