@@ -1,8 +1,7 @@
-"use client";
-
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import { redirect } from "next/navigation";
 import MainLayout from "@/app/components/layouts/MainLayout";
-import React from "react";
-import styles from "./page.module.css";
 import Tabs from "@/app/components/common/Tabs/Tabs";
 import SearchBox from "./components/SearchBox";
 import Heading from "./components/Heading";
@@ -11,8 +10,24 @@ import Materials from "./TabsContent/Materials/Materials";
 import Visits from "./TabsContent/Visits/Visits";
 import Payments from "./TabsContent/Payments/Payments";
 import Tasks from "./TabsContent/Tasks/Tasks";
+import styles from "./page.module.css";
 
-function page() {
+export const runtime = "nodejs"; // ✅ ensures jwt works in Vercel
+
+export default async function DashboardPage() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) redirect("/auth/login");
+
+  let user;
+  try {
+    user = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    console.error("Invalid or expired token:", err.message);
+    redirect("/auth/login");
+  }
+
   const options = [
     {
       label: "Payments",
@@ -80,6 +95,7 @@ function page() {
       ),
     },
   ];
+
   return (
     <MainLayout isSignedIn={true}>
       <div className={styles.container}>
@@ -88,5 +104,3 @@ function page() {
     </MainLayout>
   );
 }
-
-export default page;
