@@ -117,6 +117,7 @@ export default function Login() {
   customStyle={{ marginTop: "50px", width: "100%" }}
 />
 
+
         <Divider text="OR" />
         <p>
           Don&apos;t have an account? <Link href={"/auth/register"}>Register</Link>
