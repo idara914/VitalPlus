@@ -129,8 +129,8 @@ const { rows } = await pool.query(
     { expiresIn: "1h" }
   );
 
-  return new Response(
-    JSON.stringify({ message: "Login successful", token }),
-    { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
+ return new Response(
+  JSON.stringify({ message: "Login successful", token, user }), // <- include user
+  { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+);
 }
