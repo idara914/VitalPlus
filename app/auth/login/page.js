@@ -41,26 +41,28 @@ const handleSubmit = async (e) => {
   }
 
   try {
-    const response = await instance.post(
-      "/api/auth",
-      {
-        action: "login",
-        email,
-        password,
-      },
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await instance.post("/api/auth", {
+      action: "login",
+      email,
+      password,
+    });
 
-    if (response.status === 200) {
-      toast.success("Login successful");
+    const { token, user, message } = response.data;
 
-      // ✅ This ensures middleware gets fresh cookie
-      window.location.href = "/admin/dashboard";
-    } else {
-      toast.error("Login failed");
+    if (!token) {
+      console.error("Token missing from response", response.data);
+      toast.error("Login failed: Token missing");
+      return;
     }
+
+    // 🔐 Optional: cache for UI (not needed for auth itself)
+    localStorage.setItem("userId", user.id);
+    localStorage.setItem("email", user.email);
+
+    toast.success(message || "Login successful");
+
+    // ✅ Force full redirect — triggers middleware properly
+    window.location.href = "/admin/dashboard";
   } catch (error) {
     console.error("Login error:", error);
     toast.error(error?.response?.data?.message || "Login failed");
