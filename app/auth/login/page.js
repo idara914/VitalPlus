@@ -49,20 +49,22 @@ const handleSubmit = async (e) => {
 
     const data = response.data;
 
-    if (!data.token) {
-      toast.error("Login failed: token missing.");
+    if (!data?.user?.id) {
+      toast.error("Login failed: user not found.");
       return;
     }
 
+    // ✅ Store user info in localStorage (simplified auth)
+    localStorage.setItem("userId", data.user.id);
+    localStorage.setItem("email", data.user.email);
+
     toast.success("Login successful");
 
-    // ✅ Wait briefly to ensure Set-Cookie is applied before redirect
-    setTimeout(() => {
-      window.location.href = "/admin/dashboard";
-    }, 300); // Not router.push (which doesn't reload)
+    // ✅ Redirect
+    window.location.href = "/admin/dashboard";
   } catch (err) {
     console.error("Login error:", err);
-    toast.error(err.response?.data?.message || "Login failed");
+    toast.error(err?.response?.data?.message || "Login failed");
   }
 };
 
