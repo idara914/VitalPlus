@@ -9,10 +9,8 @@ import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import instance from "@/services/axios";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -29,47 +27,44 @@ export default function Login() {
     return null;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
 
-  if (emailError || passwordError) {
-    setError(emailError || passwordError);
-    return;
-  }
-
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "login",
-      email,
-      password,
-    });
-
-    const { data } = response;
-
-    if (!data?.token) {
-      toast.error("Login failed: token missing.");
+    if (emailError || passwordError) {
+      setError(emailError || passwordError);
       return;
     }
 
-    const payload = JSON.parse(atob(data.token.split(".")[1]));
-    localStorage.setItem("userId", payload.id);
-    localStorage.setItem("email", payload.email);
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "login",
+        email,
+        password,
+      });
 
-    toast.success("Login successful");
+      const { token, user } = response.data;
 
-    // ✅ Hard redirect to avoid router hydration mismatch issues
-    window.location.href = "/admin/dashboard";
-  } catch (err) {
-    console.error("Login error:", err);
-    toast.error(err.response?.data?.message || "Login failed");
-  }
-};
+      if (!token) {
+        toast.error("Login failed: token missing.");
+        return;
+      }
 
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", user.id);
+      localStorage.setItem("email", user.email);
 
+      toast.success("Login successful");
 
+      // 🔥 GUARANTEED hard redirect
+      window.location.href = "/admin/dashboard";
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error(err.response?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <AuthLayout
@@ -119,3 +114,4 @@ const handleSubmit = async (e) => {
     </AuthLayout>
   );
 }
+
