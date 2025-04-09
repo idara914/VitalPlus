@@ -29,44 +29,46 @@ export default function Login() {
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) {
-      setError(emailError || passwordError);
+  if (emailError || passwordError) {
+    setError(emailError || passwordError);
+    return;
+  }
+
+  try {
+    const response = await instance.post("/api/auth", {
+      action: "login",
+      email,
+      password,
+    });
+
+    const { token, user, message } = response.data;
+
+    if (!token) {
+      toast.error("Login failed: token missing");
       return;
     }
 
-    try {
-      const response = await instance.post("/api/auth", {
-        action: "login",
-        email,
-        password,
-      });
+    // ✅ Save to localStorage (simple session)
+    localStorage.setItem("token", token);
+    localStorage.setItem("userId", user.id);
+    localStorage.setItem("email", user.email);
 
-      const { data } = response;
+    toast.success(message || "Login successful");
 
-      if (!data?.user?.id) {
-        toast.error("Login failed: invalid user data");
-        return;
-      }
+    // ✅ Force redirect
+    window.location.href = "/admin/dashboard";
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error(error?.response?.data?.message || "Login failed");
+  }
+};
 
-      // ✅ Store user info for simplified session
-      localStorage.setItem("userId", data.user.id);
-      localStorage.setItem("email", data.user.email);
-
-      toast.success("Login successful");
-
-      // ✅ Redirect manually
-      router.replace("/admin/dashboard");
-    } catch (err) {
-      console.error("Login failed:", err);
-      toast.error(err?.response?.data?.message || "Login error");
-    }
-  };
 
   return (
     <AuthLayout
