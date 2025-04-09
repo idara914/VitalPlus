@@ -29,41 +29,43 @@ export default function Login() {
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) {
-      setError(emailError || passwordError);
+  if (emailError || passwordError) {
+    setError(emailError || passwordError);
+    return;
+  }
+
+  try {
+    const response = await instance.post("/api/auth", {
+      action: "login",
+      email,
+      password,
+    });
+
+    const data = response.data;
+
+    if (!data.token) {
+      toast.error("Login failed: token missing.");
       return;
     }
 
-    try {
-      const response = await instance.post("/api/auth", {
-        action: "login",
-        email,
-        password,
-      });
+    toast.success("Login successful");
 
-      const data = response.data;
+    // ✅ Wait briefly to ensure Set-Cookie is applied before redirect
+    setTimeout(() => {
+      window.location.href = "/admin/dashboard";
+    }, 300); // Not router.push (which doesn't reload)
+  } catch (err) {
+    console.error("Login error:", err);
+    toast.error(err.response?.data?.message || "Login failed");
+  }
+};
 
-      if (!data.token) {
-        toast.error("Login failed: token missing.");
-        return;
-      }
-
-      toast.success("Login successful");
-
-      setTimeout(() => {
-        router.push("/admin/dashboard");
-      }, 300); // allow cookie propagation
-    } catch (err) {
-      console.error("Login error:", err);
-      toast.error(err.response?.data?.message || "Login failed");
-    }
-  };
 
   return (
     <AuthLayout
