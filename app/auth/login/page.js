@@ -49,25 +49,25 @@ const handleSubmit = async (e) => {
 
     const { data } = response;
 
-    if (!data?.user?.id) {
-      toast.error("Login failed: user not returned");
+    if (!data?.token) {
+      toast.error("Login failed: token missing.");
       return;
     }
 
-    // ✅ Store auth info in localStorage only
-    localStorage.setItem("userId", data.user.id);
-    localStorage.setItem("email", data.user.email);
-    localStorage.setItem("token", data.token);
+    const payload = JSON.parse(atob(data.token.split(".")[1]));
+    localStorage.setItem("userId", payload.id);
+    localStorage.setItem("email", payload.email);
 
     toast.success("Login successful");
 
-    // ✅ Use hard redirect (not router.push)
+    // ✅ Hard redirect to avoid router hydration mismatch issues
     window.location.href = "/admin/dashboard";
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error(error?.response?.data?.message || "Login failed");
+  } catch (err) {
+    console.error("Login error:", err);
+    toast.error(err.response?.data?.message || "Login failed");
   }
 };
+
 
 
 
