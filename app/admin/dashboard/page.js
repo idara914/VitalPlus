@@ -18,9 +18,9 @@ export default function DashboardPage() {
   const [userLoaded, setUserLoaded] = useState(false);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      window.location.href = "/auth/login"; // ⛳ hard redirect
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/auth/login"; // ✅ force redirect
     } else {
       setUserLoaded(true);
     }
@@ -104,3 +104,4 @@ export default function DashboardPage() {
     </MainLayout>
   );
 }
+
