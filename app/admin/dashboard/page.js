@@ -1,8 +1,7 @@
-export const dynamic = "force-dynamic";
+"use client";
 
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import MainLayout from "@/app/components/layouts/MainLayout";
 import Tabs from "@/app/components/common/Tabs/Tabs";
 import SearchBox from "./components/SearchBox";
@@ -14,21 +13,20 @@ import Payments from "./TabsContent/Payments/Payments";
 import Tasks from "./TabsContent/Tasks/Tasks";
 import styles from "./page.module.css";
 
-export const runtime = "nodejs"; // ✅ ensures jwt works in Vercel
+export default function DashboardPage() {
+  const router = useRouter();
+  const [userLoaded, setUserLoaded] = useState(false);
 
-export default async function DashboardPage() {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      router.replace("/auth/login");
+    } else {
+      setUserLoaded(true);
+    }
+  }, [router]);
 
-  if (!token) redirect("/auth/login");
-
-  let user;
-  try {
-    user = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    console.error("Invalid or expired token:", err.message);
-    redirect("/auth/login");
-  }
+  if (!userLoaded) return null; // Prevent flashing before user check
 
   const options = [
     {
@@ -72,37 +70,4 @@ export default async function DashboardPage() {
     },
     {
       label: "Tasks",
-      key: 3,
-      content: (
-        <div className={styles.contentContainer}>
-          <Heading text={"Tasks"} />
-          <div className={styles.contentInner}>
-            <Tasks />
-          </div>
-          <SearchBox />
-        </div>
-      ),
-    },
-    {
-      label: "Claims",
-      key: 4,
-      content: (
-        <div className={styles.contentContainer}>
-          <Heading text={"Claims"} />
-          <div className={styles.contentInner}>
-            <Claims />
-          </div>
-          <SearchBox />
-        </div>
-      ),
-    },
-  ];
-
-  return (
-    <MainLayout isSignedIn={true}>
-      <div className={styles.container}>
-        <Tabs options={options} />
-      </div>
-    </MainLayout>
-  );
-}
+      key
