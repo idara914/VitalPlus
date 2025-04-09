@@ -70,4 +70,38 @@ export default function DashboardPage() {
     },
     {
       label: "Tasks",
-      key
+      key: 3,
+      content: (
+        <div className={styles.contentContainer}>
+          <Heading text={"Tasks"} />
+          <div className={styles.contentInner}>
+            <Tasks />
+          </div>
+          <SearchBox />
+        </div>
+      ),
+    },
+    {
+      label: "Claims",
+      key: 4,
+      content: (
+        <div className={styles.contentContainer}>
+          <Heading text={"Claims"} />
+          <div className={styles.contentInner}>
+            <Claims />
+          </div>
+          <SearchBox />
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <MainLayout isSignedIn={true}>
+      <div className={styles.container}>
+        <Tabs options={options} />
+      </div>
+    </MainLayout>
+  );
+}
+
