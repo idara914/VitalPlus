@@ -29,45 +29,44 @@ export default function Login() {
     return null;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
 
-  if (emailError || passwordError) {
-    setError(emailError || passwordError);
-    return;
-  }
-
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "login",
-      email,
-      password,
-    });
-
-    const data = response.data;
-
-    if (!data?.user?.id) {
-      toast.error("Login failed: user not found.");
+    if (emailError || passwordError) {
+      setError(emailError || passwordError);
       return;
     }
 
-    // ✅ Store user info in localStorage (simplified auth)
-    localStorage.setItem("userId", data.user.id);
-    localStorage.setItem("email", data.user.email);
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "login",
+        email,
+        password,
+      });
 
-    toast.success("Login successful");
+      const { data } = response;
 
-    // ✅ Redirect
-    window.location.href = "/admin/dashboard";
-  } catch (err) {
-    console.error("Login error:", err);
-    toast.error(err?.response?.data?.message || "Login failed");
-  }
-};
+      if (!data?.user?.id) {
+        toast.error("Login failed: invalid user data");
+        return;
+      }
 
+      // ✅ Store user info for simplified session
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("email", data.user.email);
+
+      toast.success("Login successful");
+
+      // ✅ Redirect manually
+      router.replace("/admin/dashboard");
+    } catch (err) {
+      console.error("Login failed:", err);
+      toast.error(err?.response?.data?.message || "Login error");
+    }
+  };
 
   return (
     <AuthLayout
