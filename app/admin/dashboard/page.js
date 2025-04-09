@@ -20,13 +20,13 @@ export default function DashboardPage() {
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      router.replace("/auth/login");
+      window.location.href = "/auth/login"; // ⛳ hard redirect
     } else {
       setUserLoaded(true);
     }
-  }, [router]);
+  }, []);
 
-  if (!userLoaded) return null; // Prevent flashing before user check
+  if (!userLoaded) return null;
 
   const options = [
     {
@@ -104,4 +104,3 @@ export default function DashboardPage() {
     </MainLayout>
   );
 }
-
