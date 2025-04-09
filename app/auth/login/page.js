@@ -47,27 +47,22 @@ const handleSubmit = async (e) => {
       password,
     });
 
-    const { token, user, message } = response.data;
+    const data = response.data;
 
-    if (!token) {
-      toast.error("Login failed: token missing");
+    if (!data?.token) {
+      console.error("Token missing in response:", data);
+      toast.error("Login failed: token missing.");
       return;
     }
 
-    // ✅ Save to localStorage (simple session)
-    localStorage.setItem("token", token);
-    localStorage.setItem("userId", user.id);
-    localStorage.setItem("email", user.email);
-
-    toast.success(message || "Login successful");
-
-    // ✅ Force redirect
-    window.location.href = "/admin/dashboard";
+    toast.success("Login successful!");
+    window.location.href = "/admin/dashboard"; // ✅ use full redirect
   } catch (error) {
     console.error("Login error:", error);
     toast.error(error?.response?.data?.message || "Login failed");
   }
 };
+
 
 
   return (
