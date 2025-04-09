@@ -29,47 +29,41 @@ export default function Login() {
     return null;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
 
-  if (emailError || passwordError) {
-    setError(emailError || passwordError);
-    return;
-  }
-
-  try {
-    const response = await instance.post("/api/auth", {
-      action: "login",
-      email,
-      password,
-    });
-
-    const { token, user, message } = response.data;
-
-    if (!token) {
-      console.error("Token missing from response", response.data);
-      toast.error("Login failed: Token missing");
+    if (emailError || passwordError) {
+      setError(emailError || passwordError);
       return;
     }
 
-    // 🔐 Optional: cache for UI (not needed for auth itself)
-    localStorage.setItem("userId", user.id);
-    localStorage.setItem("email", user.email);
+    try {
+      const response = await instance.post("/api/auth", {
+        action: "login",
+        email,
+        password,
+      });
 
-    toast.success(message || "Login successful");
+      const data = response.data;
 
-    // ✅ Force full redirect — triggers middleware properly
-    window.location.href = "/admin/dashboard";
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error(error?.response?.data?.message || "Login failed");
-  }
-};
+      if (!data.token) {
+        toast.error("Login failed: token missing.");
+        return;
+      }
 
+      toast.success("Login successful");
 
+      setTimeout(() => {
+        router.push("/admin/dashboard");
+      }, 300); // allow cookie propagation
+    } catch (err) {
+      console.error("Login error:", err);
+      toast.error(err.response?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <AuthLayout
@@ -108,17 +102,12 @@ const handleSubmit = async (e) => {
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <Button
-            text="Login"
-            type="submit"
-            customStyle={{ marginTop: "50px", width: "100%" }}
-          />
+          <Button text="Login" type="submit" customStyle={{ marginTop: "50px", width: "100%" }} />
         </form>
 
         <Divider text="OR" />
         <p>
-          Don&apos;t have an account?{" "}
-          <Link href="/auth/register">Register</Link>
+          Don&apos;t have an account? <Link href="/auth/register">Register</Link>
         </p>
       </section>
     </AuthLayout>
