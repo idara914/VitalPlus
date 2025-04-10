@@ -63,7 +63,7 @@ export async function POST(req) {
 
     const { rows: inserted } = await pool.query(
       `INSERT INTO public."ServiceProvider" 
-        ("FirstName", "LastName", "MiddleInitial", "AddressLine1", "City", "State", "ZipCode", "ContactNumber1", "FaxNumber", "Email", "Gender", "Code", "DOB", "Remarks", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "IsActive", "IsDeleted", "AgencyId", "ClinicId")
+        ("FirstName", "LastName", "MiddleInitial", "AddressLine1", "City", "State", "ZipCode", "ContactNumber1", "FarNumber", "Email", "Gender", "Code", "DOB", "Remarks", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "IsActive", "IsDeleted", "AgencyId", "ClinicId")
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, true, false, $19, $20) 
         RETURNING "Id";`,
       [
