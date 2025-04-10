@@ -18,14 +18,12 @@ export default function ManualAdd() {
   const router = useRouter();
   const [userLoaded, setUserLoaded] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "/auth/login"; // ✅ Dev redirect
-    } else {
-      setUserLoaded(true);
-    }
-  }, []);
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  console.log("TOKEN:", token);
+  setUserLoaded(true); // ⚠️ force it to load for testing
+}, []);
+
 
   const [form, setForm] = useState({
     FirstName: "",
