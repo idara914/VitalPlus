@@ -89,7 +89,7 @@ useEffect(() => {
 
   const handleCancel = () => router.push("/care-provider/new");
 
-  if (!userLoaded) return null; // ✅ Block rendering until auth check passes
+  if (!userLoaded) return <p>Loading...</p>;
 
   return (
     <main>
