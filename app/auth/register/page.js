@@ -9,6 +9,7 @@ import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import instance from "@/services/axios"; // ✅ axios with credentials
 
 export default function Register() {
   const router = useRouter();
@@ -18,38 +19,33 @@ export default function Register() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const res = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    try {
+      const res = await instance.post("/api/auth", {
         action: "register",
         username: name,
         email: email,
         password: password,
-      }),
-    });
+      });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Registration failed");
+      const data = res.data;
 
-    // ✅ Store for use on /account/update
-    localStorage.setItem("userId", data.userId);
-    localStorage.setItem("email", email);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("email", email);
+      localStorage.setItem("token", data.token); // ✅ store token for dev mode access
 
-    toast.success(data.message);
-    router.push("/account/update");
-  } catch (error) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      toast.success("Account created");
+      router.push("/account/update");
+    } catch (err) {
+      console.error("Registration error:", err);
+      toast.error(err.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AuthLayout
