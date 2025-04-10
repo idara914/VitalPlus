@@ -20,8 +20,13 @@ export default function ManualAdd() {
 
 useEffect(() => {
   const token = localStorage.getItem("token");
-  console.log("TOKEN:", token);
-  setUserLoaded(true); // ⚠️ force it to load for testing
+  console.log("TOKEN FROM LOCAL STORAGE:", token);
+
+  if (!token) {
+    window.location.href = "/auth/login";
+  } else {
+    setUserLoaded(true);
+  }
 }, []);
 
 
@@ -89,7 +94,8 @@ useEffect(() => {
 
   const handleCancel = () => router.push("/care-provider/new");
 
-  if (!userLoaded) return <p>Loading...</p>;
+  if (!userLoaded) return <p style={{ padding: "2rem" }}>Checking login...</p>;
+
 
   return (
     <main>
