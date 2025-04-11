@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+""import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import pool from "@/config/db";
 
@@ -42,8 +42,8 @@ async function updateProfile(body) {
     state,
     zipCode,
     agencyType,
-    email, // now required from frontend
-    userId, // now required from frontend
+    email,
+    userId,
   } = body;
 
   if (!email || !userId) {
@@ -104,20 +104,22 @@ async function updateProfile(body) {
     ]
   );
 
-  if (inserted.length > 0) {
-    await pool.query(
-      `UPDATE public."appUsers" SET "CompanyId" = $2, "ModifiedBy" = $3, "ModifiedDT" = $4 WHERE "Id" = $1;`,
-      [userId, inserted[0].Id, userId, formattedNow]
-    );
+  const newAgencyId = inserted[0]?.Id;
 
+  if (!newAgencyId) {
     return new Response(
-      JSON.stringify({ message: "User profile updated successfully" }),
-      { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } else {
-    return new Response(
-      JSON.stringify({ message: "Failed to update user profile" }),
+      JSON.stringify({ message: "Agency ID not returned" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
+
+  await pool.query(
+    `UPDATE public."appUsers" SET "CompanyId" = $2, "ModifiedBy" = $3, "ModifiedDT" = $4 WHERE "Id" = $1;`,
+    [userId, newAgencyId, userId, formattedNow]
+  );
+
+  return new Response(
+    JSON.stringify({ message: "User profile updated successfully" }),
+    { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
 }
