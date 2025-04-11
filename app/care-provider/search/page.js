@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import MainLayout from "../../components/Layouts/MainLayout";
 import styles from "../../assets/care-provider.module.css";
-import { Avatar, DatePicker, List } from "antd";
+import { Avatar, List } from "antd";
 import Button from "@/app/components/common/Button/Button";
 import TextField from "../../components/common/TextField/TextField";
 import SelectField from "../../components/common/SelectField/SelectField";
@@ -10,26 +11,59 @@ import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import DateSelector from "../../components/common/DateSelector/DateSelector";
 import StatusBar from "../../components/common/StatusBar/StatusBar";
 import Link from "next/link";
+import instance from "@/services/axios";
 
 const cssPrefix = "careProvider";
+
 export default function Features() {
-  const mockData = {
-    profiles: [
-      {
-        imageUrl: "https://via.placeholder.com/150",
-        name: "John Doe",
-        number: "1234567890",
-        type: "Doctor",
-        joined: "2021-09-01",
-        status: "Available",
-      },
-    ],
-  };
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    providerCode: "",
+    speciality: "",
+    dob: "",
+    npi: "",
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const customFieldStyle = {
     backgroundColor: "#fff",
     padding: "10px",
     height: "40px",
   };
+
+  const handleChange = (key) => (e) => {
+    const value = e?.target?.value ?? e;
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const { data } = await instance.post("/api/searchprovider", form);
+      setResults(data.results);
+    } catch (err) {
+      console.error("Search failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setForm({
+      firstName: "",
+      lastName: "",
+      middleName: "",
+      providerCode: "",
+      speciality: "",
+      dob: "",
+      npi: "",
+    });
+    setResults([]);
+  };
+
   return (
     <main>
       <MainLayout isSignedIn={true}>
@@ -39,98 +73,48 @@ export default function Features() {
               <SearchOutlined /> Search service provider
             </h1>
             <div className={styles[`${cssPrefix}SearchContainerFirst`]}>
-              <TextField
-                placeholder={"First Name"}
-                customStyle={customFieldStyle}
-              />
-              <TextField
-                placeholder={"Last Name"}
-                customStyle={customFieldStyle}
-              />
-              <TextField
-                placeholder={"Middle Name"}
-                customStyle={customFieldStyle}
-              />
-              <TextField
-                placeholder={"Provider ID"}
-                customStyle={customFieldStyle}
-              />
-              <TextField
-                placeholder={"Speciality"}
-                customStyle={customFieldStyle}
-              />
-              <DateSelector
-                customStyle={customFieldStyle}
-                placeholder={"Date of Birth"}
-                onChange={(date) => console.log("date", date)}
-              />
-
-              <DateSelector
-                customStyle={customFieldStyle}
-                placeholder={"Date Range"}
-                onChange={(date) => console.log("date", date)}
-              />
-
-              <SelectField
-                placeholder={"Available (Y/N)"}
-                options={[{ Id: "y", Name: "Yes" }]}
-                customStyle={customFieldStyle}
-              />
-              <TextField placeholder={"NPI"} customStyle={customFieldStyle} />
-              <TextField
-                placeholder={"Patient Name"}
-                customStyle={customFieldStyle}
-              />
-              <TextField
-                placeholder={"Patient Middle Name"}
-                customStyle={customFieldStyle}
-              />
-              <TextField
-                placeholder={"Patient Last Name"}
-                customStyle={customFieldStyle}
-              />
+              <TextField placeholder="First Name" value={form.firstName} onChange={handleChange("firstName")} customStyle={customFieldStyle} />
+              <TextField placeholder="Last Name" value={form.lastName} onChange={handleChange("lastName")} customStyle={customFieldStyle} />
+              <TextField placeholder="Middle Name" value={form.middleName} onChange={handleChange("middleName")} customStyle={customFieldStyle} />
+              <TextField placeholder="Provider ID" value={form.providerCode} onChange={handleChange("providerCode")} customStyle={customFieldStyle} />
+              <TextField placeholder="Speciality" value={form.speciality} onChange={handleChange("speciality")} customStyle={customFieldStyle} />
+              <DateSelector placeholder="Date of Birth" onChange={(date) => handleChange("dob")({ target: { value: date } })} customStyle={customFieldStyle} />
+              <TextField placeholder="NPI" value={form.npi} onChange={handleChange("npi")} customStyle={customFieldStyle} />
             </div>
             <div className={styles[`${cssPrefix}SearchContainerSecond`]}>
               <Button
-                text={"Reset"}
-                customStyle={{
-                  height: "40px",
-                  fontSize: "14px",
-                  padding: "0 20px",
-                  marginRight: "10px",
-                  backgroundColor: "#fff",
-                  color: "#000",
-                }}
+                text="Reset"
+                onClick={handleReset}
+                customStyle={{ height: "40px", fontSize: "14px", padding: "0 20px", marginRight: "10px", backgroundColor: "#fff", color: "#000" }}
               />
               <Button
-                text={"Search"}
-                customStyle={{
-                  height: "40px",
-                  fontSize: "14px",
-                  padding: "0 20px",
-                }}
+                text={loading ? "Searching..." : "Search"}
+                onClick={handleSearch}
+                customStyle={{ height: "40px", fontSize: "14px", padding: "0 20px" }}
+                disabled={loading}
               />
             </div>
           </div>
           <div className={styles[`${cssPrefix}List`]}>
             <List
               pagination={{ position: "bottom", align: "center" }}
-              dataSource={mockData.profiles}
-              renderItem={(item, index) => (
-                <Link href="/care-provider/1234">
+              dataSource={results}
+              locale={{ emptyText: "No providers found" }}
+              renderItem={(item) => (
+                <Link href={`/care-provider/${item.Id}`} key={item.Id}>
                   <List.Item style={{ cursor: "pointer" }}>
                     <List.Item.Meta
-                      avatar={<Avatar src={item.imageUrl} size={"large"} />}
-                      title={item.name}
+                      avatar={<Avatar src="https://via.placeholder.com/150" size="large" />}
+                      title={`${item.FirstName} ${item.LastName}`}
                       description={
                         <div className={styles[`${cssPrefix}ListAbout`]}>
-                          <span>{item.number}</span>
+                          <span>{item.ServiceProviderCode || item.Code}</span>
                           <span className="small-circle"></span>
-                          <span>{item.type}</span>
+                          <span>{item.Remarks || "Speciality N/A"}</span>
                           <span className="small-circle"></span>
-                          <span>{item.joined}</span>
+                          <span>{item.DOB || "DOB N/A"}</span>
                           <span className="small-circle"></span>
-                          <StatusBar status={item.status} type="Success" />
+                          <StatusBar status="Available" type="Success" />
                         </div>
                       }
                     />
@@ -144,3 +128,4 @@ export default function Features() {
     </main>
   );
 }
+
