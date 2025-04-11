@@ -72,7 +72,6 @@ async function updateProfile(body) {
     CreatedDT: formattedNow,
     ModifiedBy: userId,
     ModifiedDT: formattedNow,
-    CountryId: 1,
     AgencyType: agencyType,
   };
 console.log("🧠 userId received:", userId);
@@ -80,8 +79,8 @@ console.log("🧠 userId received:", userId);
     `INSERT INTO public."Agency" (
       "Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber",
       "City", "State", "ZipCode", "Email", "IsActive", "IsDeleted",
-      "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "CountryId", "AgencyType"
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+      "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "AgencyType"
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
     RETURNING "Id";`,
     [
       agencyData.Name,
@@ -99,7 +98,6 @@ console.log("🧠 userId received:", userId);
       agencyData.CreatedDT,
       agencyData.ModifiedBy,
       agencyData.ModifiedDT,
-      agencyData.CountryId,
       agencyData.AgencyType,
     ]
   );
