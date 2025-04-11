@@ -75,7 +75,7 @@ async function updateProfile(body) {
     CountryId: 1,
     AgencyType: agencyType,
   };
-
+console.log("🧠 userId received:", userId);
   const { rows: inserted } = await pool.query(
     `INSERT INTO public."Agency" (
       "Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber",
