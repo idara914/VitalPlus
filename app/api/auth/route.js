@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import pool from "@/config/db";
@@ -8,7 +7,7 @@ dotenv.config();
 const corsHeaders = {
   "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_ORIGIN || "https://www.vital-plus.xyz",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export async function OPTIONS() {
@@ -18,164 +17,107 @@ export async function OPTIONS() {
 export async function POST(req) {
   try {
     const { action, ...body } = await req.json();
+    if (action === "updateProfile") return await updateProfile(body);
 
-    if (action === "register") return await registerUser(body);
-    if (action === "login") return await loginUser(body);
-
-    return errorResponse("Invalid action", 400);
+    return new Response(JSON.stringify({ message: "Invalid action" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error("AUTH API ERROR:", error);
-    return errorResponse(error.message || "Internal server error", 500);
+    return new Response(JSON.stringify({ message: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 }
 
-async function registerUser({ username, email, password }) {
-  if (!username || !email || !password) {
-    return errorResponse("Username, email, and password are required", 400);
+async function updateProfile(body) {
+  const {
+    orgName,
+    contactNumber,
+    faxNumber,
+    taxNumber,
+    address,
+    city,
+    state,
+    zipCode,
+    agencyType,
+    email, // now required from frontend
+    userId, // now required from frontend
+  } = body;
+
+  if (!email || !userId) {
+    return new Response(
+      JSON.stringify({ message: "Missing email or user ID" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 
-  const normalizedEmail = email.toLowerCase().trim();
+  const now = new Date();
+  const formattedNow = now.toISOString();
 
-  const { rows } = await pool.query(
-    `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
-    [normalizedEmail]
-  );
-
-  if (rows.length > 0) {
-    return errorResponse("User already exists", 400);
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const userData = {
-    FirstName: username.split(" ")[0] || "",
-    LastName: username.split(" ").slice(1).join(" ") || "",
-    CreatedDT: new Date().toISOString(),
-    ModifiedDT: new Date().toISOString(),
-    UserName: username,
-    NormalizedUserName: username.toLowerCase().trim(),
-    Email: normalizedEmail,
-    NormalizedEmail: normalizedEmail,
-    EmailConfirmed: false,
-    PasswordHash: hashedPassword,
+  const agencyData = {
+    Name: orgName,
+    FullAddress: address,
+    ContactNumber1: contactNumber,
+    FaxNumber: faxNumber,
+    TaxNumber: taxNumber,
+    City: city,
+    State: state,
+    ZipCode: zipCode,
+    Email: email,
+    IsActive: true,
+    IsDeleted: false,
+    CreatedBy: userId,
+    CreatedDT: formattedNow,
+    ModifiedBy: userId,
+    ModifiedDT: formattedNow,
+    CountryId: 1,
+    AgencyType: agencyType,
   };
 
   const { rows: inserted } = await pool.query(
-    `INSERT INTO public."appUsers" 
-     ("FirstName", "LastName", "CreatedDT", "ModifiedDT", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", "PasswordHash")
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-     RETURNING "Id", "Email"`,
+    `INSERT INTO public."Agency" (
+      "Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber",
+      "City", "State", "ZipCode", "Email", "IsActive", "IsDeleted",
+      "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "CountryId", "AgencyType"
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+    RETURNING "Id";`,
     [
-      userData.FirstName,
-      userData.LastName,
-      userData.CreatedDT,
-      userData.ModifiedDT,
-      userData.UserName,
-      userData.NormalizedUserName,
-      userData.Email,
-      userData.NormalizedEmail,
-      userData.EmailConfirmed,
-      userData.PasswordHash,
+      agencyData.Name,
+      agencyData.FullAddress,
+      agencyData.ContactNumber1,
+      agencyData.FaxNumber,
+      agencyData.TaxNumber,
+      agencyData.City,
+      agencyData.State,
+      agencyData.ZipCode,
+      agencyData.Email,
+      agencyData.IsActive,
+      agencyData.IsDeleted,
+      agencyData.CreatedBy,
+      agencyData.CreatedDT,
+      agencyData.ModifiedBy,
+      agencyData.ModifiedDT,
+      agencyData.CountryId,
+      agencyData.AgencyType,
     ]
   );
 
-  const token = generateToken(inserted[0].Id, inserted[0].Email);
-  const cookieHeader = getCookieHeader(token);
-
-  return new Response(
-    JSON.stringify({
-      message: "User registered",
-      token,
-      userId: inserted[0].Id,
-      email: inserted[0].Email,
-    }),
-    {
-      status: 201,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-        "Set-Cookie": cookieHeader,
-      },
-    }
-  );
-}
-
-async function loginUser({ email, password }) {
-  if (!email || !password) {
-    console.warn("Missing email or password");
-    return errorResponse("Email and password are required", 400);
-  }
-
-  const normalizedEmail = email.toLowerCase().trim();
-  console.log("LOGIN ATTEMPT:", normalizedEmail);
-
-  try {
-    const { rows } = await pool.query(
-      `SELECT * FROM public."appUsers" WHERE "NormalizedEmail" = $1`,
-      [normalizedEmail]
+  if (inserted.length > 0) {
+    await pool.query(
+      `UPDATE public."appUsers" SET "CompanyId" = $2, "ModifiedBy" = $3, "ModifiedDT" = $4 WHERE "Id" = $1;`,
+      [userId, inserted[0].Id, userId, formattedNow]
     );
-
-    if (rows.length === 0) {
-      console.warn("User not found:", normalizedEmail);
-      return errorResponse("Invalid credentials", 401);
-    }
-
-    const user = rows[0];
-    const isMatch = await bcrypt.compare(password, user.PasswordHash);
-
-    if (!isMatch) {
-      console.warn("Incorrect password for:", normalizedEmail);
-      return errorResponse("Invalid credentials", 401);
-    }
-
-    const token = generateToken(user.Id, user.Email);
-    const cookieHeader = getCookieHeader(token);
-
-    console.log("LOGIN SUCCESS:", user.Email);
 
     return new Response(
-      JSON.stringify({
-        message: "Login successful",
-        token, // ✅ still returned for fallback or debugging
-        user: {
-          id: user.Id,
-          email: user.Email,
-          username: user.UserName,
-        },
-      }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-          "Set-Cookie": cookieHeader,
-        },
-      }
+      JSON.stringify({ message: "User profile updated successfully" }),
+      { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    return errorResponse("Server error during login", 500);
+  } else {
+    return new Response(
+      JSON.stringify({ message: "Failed to update user profile" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 }
-
-function generateToken(id, email) {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("Missing JWT_SECRET!");
-    throw new Error("JWT_SECRET is not defined in environment variables");
-  }
-
-  return jwt.sign({ id, email }, secret, { expiresIn: "1h" });
-}
-
-function getCookieHeader(token) {
-  return `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`;
-}
-
-function errorResponse(message, status = 500) {
-  return new Response(JSON.stringify({ message }), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
-
