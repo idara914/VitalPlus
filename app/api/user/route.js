@@ -1,4 +1,4 @@
-""import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import pool from "@/config/db";
 
