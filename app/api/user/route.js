@@ -42,13 +42,13 @@ async function updateProfile(body) {
     state,
     zipCode,
     agencyType,
-    email,
-    userId,
+    email, // now required from frontend
+    userId, // now required from frontend
   } = body;
 
-  if (!email || !userId || !orgName) {
+  if (!email || !userId) {
     return new Response(
-      JSON.stringify({ message: "Missing required fields" }),
+      JSON.stringify({ message: "Missing email or user ID" }),
       { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
@@ -56,49 +56,54 @@ async function updateProfile(body) {
   const now = new Date();
   const formattedNow = now.toISOString();
 
-  // 🔡 Generate ID prefix
-  const shortId = orgName.slice(0, 4).toLowerCase();
+  const agencyData = {
+    Name: orgName,
+    FullAddress: address,
+    ContactNumber1: contactNumber,
+    FaxNumber: faxNumber,
+    TaxNumber: taxNumber,
+    City: city,
+    State: state,
+    ZipCode: zipCode,
+    Email: email,
+    IsActive: true,
+    IsDeleted: false,
+    CreatedBy: userId,
+    CreatedDT: formattedNow,
+    ModifiedBy: userId,
+    ModifiedDT: formattedNow,
+    CountryId: 1,
+    AgencyType: agencyType,
+  };
 
-  // 🔢 Count how many already exist with that prefix
-  const { rows: existing } = await pool.query(
-    `SELECT COUNT(*) FROM public."Agency" WHERE "Id" LIKE $1`,
-    [`${shortId}%`]
-  );
-
-  const agencyCount = parseInt(existing[0]?.count || 0, 10);
-  const agencyId = `${shortId}${String(agencyCount + 1).padStart(2, "0")}`;
-
-  // 🏢 Insert new agency
   const { rows: inserted } = await pool.query(
     `INSERT INTO public."Agency" (
-      "Id", "Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber",
+      "Name", "FullAddress", "ContactNumber1", "FaxNumber", "TaxNumber",
       "City", "State", "ZipCode", "Email", "IsActive", "IsDeleted",
       "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "CountryId", "AgencyType"
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
     RETURNING "Id";`,
     [
-      agencyId,
-      orgName,
-      address,
-      contactNumber,
-      faxNumber,
-      taxNumber,
-      city,
-      state,
-      zipCode,
-      email,
-      true,
-      false,
-      userId,
-      formattedNow,
-      userId,
-      formattedNow,
-      1, // CountryId
-      agencyType,
+      agencyData.Name,
+      agencyData.FullAddress,
+      agencyData.ContactNumber1,
+      agencyData.FaxNumber,
+      agencyData.TaxNumber,
+      agencyData.City,
+      agencyData.State,
+      agencyData.ZipCode,
+      agencyData.Email,
+      agencyData.IsActive,
+      agencyData.IsDeleted,
+      agencyData.CreatedBy,
+      agencyData.CreatedDT,
+      agencyData.ModifiedBy,
+      agencyData.ModifiedDT,
+      agencyData.CountryId,
+      agencyData.AgencyType,
     ]
   );
 
-  // 👤 Link agency to user
   if (inserted.length > 0) {
     await pool.query(
       `UPDATE public."appUsers" SET "CompanyId" = $2, "ModifiedBy" = $3, "ModifiedDT" = $4 WHERE "Id" = $1;`,
@@ -116,4 +121,3 @@ async function updateProfile(body) {
     );
   }
 }
-
