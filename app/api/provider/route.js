@@ -39,70 +39,77 @@ export async function POST(req) {
     const body = await req.json();
 
     const {
-  FirstName,
-  LastName,
-  MiddleInitial,
-  AddressLine1,
-  AddressLine2,
-  City,
-  State,
-  ZipCode,
-  PhoneNumber,
-  Gender,
-  Email,
-  FaxNumber,
-  NPI,
-  DOB,
-  Remarks,
-} = body;
+      FirstName,
+      LastName,
+      MiddleInitial,
+      AddressLine1,
+      AddressLine2,
+      City,
+      State,
+      ZipCode,
+      PhoneNumber,
+      Gender,
+      Email,
+      FaxNumber,
+      NPI,
+      DOB,
+      Remarks,
+    } = body;
 
-// ✅ pull agency from user's CompanyId
-const { rows: userRows } = await pool.query(
-  `SELECT "CompanyId" FROM public."appUsers" WHERE "Id" = $1`,
-  [userId]
-);
+    // ✅ Normalize Gender to 1 (Male) or 2 (Female)
+    let normalizedGender = Gender;
+    if (typeof Gender === "string") {
+      if (Gender.toLowerCase() === "male") normalizedGender = 1;
+      else if (Gender.toLowerCase() === "female") normalizedGender = 2;
+    }
 
-if (userRows.length === 0) {
-  return new Response(JSON.stringify({ message: "User not found" }), {
-    status: 404,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
-}
+    // ✅ pull agency from user's CompanyId
+    const { rows: userRows } = await pool.query(
+      `SELECT "CompanyId" FROM public."appUsers" WHERE "Id" = $1`,
+      [userId]
+    );
 
-const AgencyId = userRows[0].CompanyId;
-const ClinicId = null; // still required for insert, but set to null
+    if (userRows.length === 0) {
+      return new Response(JSON.stringify({ message: "User not found" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-const CreatedDT = new Date().toISOString();
-const ModifiedDT = CreatedDT;
+    const AgencyId = userRows[0].CompanyId;
+    const ClinicId = null;
 
-const { rows: inserted } = await pool.query(
-  `INSERT INTO public."ServiceProvider" 
-    ("FirstName", "LastName", "MiddleInitial", "AddressLine1", "City", "State", "ZipCode", "ContactNumber1", "FarNumber", "Email", "Gender", "Code", "DOB", "Remarks", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "IsActive", "IsDeleted", "AgencyId", "ClinicId")
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, true, false, $19, $20) 
-    RETURNING "Id";`,
-  [
-    FirstName,
-    LastName,
-    MiddleInitial,
-    `${AddressLine1} ${AddressLine2 || ""}`.trim(),
-    City,
-    State,
-    ZipCode,
-    PhoneNumber,
-    FaxNumber,
-    Email,
-    Gender,
-    NPI,
-    DOB,
-    Remarks,
-    userId,
-    CreatedDT,
-    userId,
-    ModifiedDT,
-    AgencyId,
-    ClinicId,
-  ]
-);
+    const CreatedDT = new Date().toISOString();
+    const ModifiedDT = CreatedDT;
+
+    const { rows: inserted } = await pool.query(
+      `INSERT INTO public."ServiceProvider" 
+        ("FirstName", "LastName", "MiddleInitial", "AddressLine1", "City", "State", "ZipCode", "ContactNumber1", "FarNumber", "Email", "Gender", "Code", "DOB", "Remarks", "CreatedBy", "CreatedDT", "ModifiedBy", "ModifiedDT", "IsActive", "IsDeleted", "AgencyId", "ClinicId")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, true, false, $19, $20) 
+        RETURNING "Id";`,
+      [
+        FirstName,
+        LastName,
+        MiddleInitial,
+        `${AddressLine1} ${AddressLine2 || ""}`.trim(),
+        City,
+        State,
+        ZipCode,
+        PhoneNumber,
+        FaxNumber,
+        Email,
+        normalizedGender,
+        NPI,
+        DOB,
+        Remarks,
+        userId,
+        CreatedDT,
+        userId,
+        ModifiedDT,
+        AgencyId,
+        ClinicId,
+      ]
+    );
 
     return new Response(
       JSON.stringify({ message: "Provider added successfully", id: inserted[0].Id }),
