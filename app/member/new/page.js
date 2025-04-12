@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -10,10 +9,10 @@ import Button from "@/app/components/common/Button/Button";
 import styles from "@/app/assets/member.module.css";
 
 const steps = [
-  "Personal Info",
-  "Contact Details",
-  "Membership",
-  "Emergency Contact",
+  "Patient Info",
+  "Demographics",
+  "Insurance Payor",
+  "Contact",
 ];
 
 export default function NewMemberForm() {
@@ -21,20 +20,43 @@ export default function NewMemberForm() {
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
-    dob: "",
+    timeIn: "",
+    timeOut: "",
+    startDate: "",
+    patientId: "",
     gender: "",
-    email: "",
+    dob: "",
     phone: "",
     address: "",
-    city: "",
     state: "",
     zip: "",
-    membershipType: "",
-    startDate: "",
-    endDate: "",
+    // demographics
+    ethnicity: [],
+    languageSpoken: "",
+    languageWritten: "",
+    preference: "",
+    // insurance
+    payorName: "",
+    cobPolicy: "",
+    career: "",
+    responsibility: "",
+    insAddress: "",
+    insState: "",
+    insCity: "",
+    insZip: "",
+    effDate: "",
+    termDate: "",
+    insPhone: "",
+    // emergency
     emergencyContact: "",
     emergencyRelation: "",
     emergencyPhone: "",
+    secondaryPhysician: "",
+    secondaryPhysicianNumber: "",
+    emergencyState: "",
+    emergencyCity: "",
+    emergencyZip: "",
+    emergencyAddress: "",
   });
 
   const handleChange = (key) => (e) => {
@@ -46,7 +68,10 @@ export default function NewMemberForm() {
   const handleBack = () => setCurrentStep((s) => Math.max(s - 1, 0));
 
   const handleSubmit = async () => {
-    console.log("Submitting", form);
+    const required = ["firstName", "lastName", "dob", "gender"];
+    const missing = required.find((f) => !form[f]);
+    if (missing) return alert(`${missing} is required`);
+    console.log("Submitting:", form);
   };
 
   return (
@@ -73,56 +98,63 @@ export default function NewMemberForm() {
               <>
                 <TextField label="First Name" value={form.firstName} onChange={handleChange("firstName")} />
                 <TextField label="Last Name" value={form.lastName} onChange={handleChange("lastName")} />
-                <DateSelector label="Date of Birth" onChange={handleChange("dob")} />
+                <TextField label="Time In" value={form.timeIn} onChange={handleChange("timeIn")} />
+                <TextField label="Time Out" value={form.timeOut} onChange={handleChange("timeOut")} />
+                <DateSelector label="Start of Care Date" onChange={handleChange("startDate")} />
+                <TextField label="Patient ID" value={form.patientId} onChange={handleChange("patientId")} />
                 <SelectField
                   label="Gender"
-                  options={[
-                    { Id: "male", Name: "Male" },
-                    { Id: "female", Name: "Female" },
-                    { Id: "other", Name: "Other" },
-                  ]}
+                  options={[{ Id: "male", Name: "Male" }, { Id: "female", Name: "Female" }]}
                   onChange={handleChange("gender")}
                 />
+                <DateSelector label="Date of Birth" onChange={handleChange("dob")} />
+                <TextField label="Phone Number" value={form.phone} onChange={handleChange("phone")} />
+                <TextField label="Address" value={form.address} onChange={handleChange("address")} />
+                <TextField label="State" value={form.state} onChange={handleChange("state")} />
+                <TextField label="Zip Code" value={form.zip} onChange={handleChange("zip")} />
               </>
             )}
+
             {currentStep === 1 && (
               <>
-                <TextField label="Email Address" value={form.email} onChange={handleChange("email")} />
-                <TextField label="Phone Number" value={form.phone} onChange={handleChange("phone")} />
-                <TextField label="Street Address" value={form.address} onChange={handleChange("address")} />
-                <TextField label="City" value={form.city} onChange={handleChange("city")} />
+                <TextField label="Language Spoken" value={form.languageSpoken} onChange={handleChange("languageSpoken")} />
+                <TextField label="Language Written" value={form.languageWritten} onChange={handleChange("languageWritten")} />
+                <DateSelector label="Date of Birth" onChange={handleChange("dob")} />
                 <SelectField
-                  label="State"
-                  options={[
-                    { Id: "TX", Name: "Texas" },
-                    { Id: "CA", Name: "California" },
-                    { Id: "NY", Name: "New York" },
-                  ]}
-                  onChange={handleChange("state")}
+                  label="Patient Preference"
+                  options={[{ Id: "family", Name: "Family" }, { Id: "friend", Name: "Friend" }, { Id: "professional", Name: "Professional" }]}
+                  onChange={handleChange("preference")}
                 />
-                <TextField label="ZIP Code" value={form.zip} onChange={handleChange("zip")} />
               </>
             )}
+
             {currentStep === 2 && (
               <>
-                <SelectField
-                  label="Membership Type"
-                  options={[
-                    { Id: "basic", Name: "Basic" },
-                    { Id: "premium", Name: "Premium" },
-                    { Id: "vip", Name: "VIP" },
-                  ]}
-                  onChange={handleChange("membershipType")}
-                />
-                <DateSelector label="Start Date" onChange={handleChange("startDate")} />
-                <DateSelector label="End Date" onChange={handleChange("endDate")} />
+                <TextField label="Payor Name" value={form.payorName} onChange={handleChange("payorName")} />
+                <TextField label="COB Policy" value={form.cobPolicy} onChange={handleChange("cobPolicy")} />
+                <TextField label="Career" value={form.career} onChange={handleChange("career")} />
+                <TextField label="Payor Responsibility" value={form.responsibility} onChange={handleChange("responsibility")} />
+                <TextField label="Address" value={form.insAddress} onChange={handleChange("insAddress")} />
+                <TextField label="State" value={form.insState} onChange={handleChange("insState")} />
+                <TextField label="City" value={form.insCity} onChange={handleChange("insCity")} />
+                <TextField label="Zip Code" value={form.insZip} onChange={handleChange("insZip")} />
+                <DateSelector label="EFF Date" onChange={handleChange("effDate")} />
+                <DateSelector label="Term Date" onChange={handleChange("termDate")} />
+                <TextField label="Phone" value={form.insPhone} onChange={handleChange("insPhone")} />
               </>
             )}
+
             {currentStep === 3 && (
               <>
                 <TextField label="Emergency Contact Name" value={form.emergencyContact} onChange={handleChange("emergencyContact")} />
                 <TextField label="Relationship" value={form.emergencyRelation} onChange={handleChange("emergencyRelation")} />
-                <TextField label="Emergency Phone" value={form.emergencyPhone} onChange={handleChange("emergencyPhone")} />
+                <TextField label="Contact" value={form.emergencyPhone} onChange={handleChange("emergencyPhone")} />
+                <TextField label="Address" value={form.emergencyAddress} onChange={handleChange("emergencyAddress")} />
+                <TextField label="Secondary Physician" value={form.secondaryPhysician} onChange={handleChange("secondaryPhysician")} />
+                <TextField label="Secondary Physician Number" value={form.secondaryPhysicianNumber} onChange={handleChange("secondaryPhysicianNumber")} />
+                <TextField label="State" value={form.emergencyState} onChange={handleChange("emergencyState")} />
+                <TextField label="City" value={form.emergencyCity} onChange={handleChange("emergencyCity")} />
+                <TextField label="Zip Code" value={form.emergencyZip} onChange={handleChange("emergencyZip")} />
               </>
             )}
           </div>
