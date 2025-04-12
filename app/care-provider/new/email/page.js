@@ -21,7 +21,7 @@ export default function EmailAdd() {
     }
 
     try {
-      const res = await fetch("/api/send-provider-invite", {
+      const res = await fetch("/api/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
