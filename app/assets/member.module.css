@@ -1,50 +1,74 @@
-.memberContainer {
-  width: 100%;
-  padding: var(--common-body-padding);
+.memberFormWrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
 .memberHeader {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-size: 1.75rem;
+  font-weight: 700;
   color: #111827;
+  margin-bottom: 0.25rem;
 }
 
 .memberSubtext {
   color: #6b7280;
-  margin-bottom: 24px;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.memberStepper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.stepButton {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: border 0.2s, color 0.2s;
+}
+
+.stepButton:hover {
+  color: #111827;
+}
+
+.activeStep {
+  color: #111827;
+  border-color: #2563eb;
+}
+
+.memberFormCard {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .memberFormGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.memberFormSection {
-  background-color: #f3f4f6;
-  padding: 28px;
-  border-radius: 16px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .memberActions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 32px;
+  gap: 1rem;
 }
 
-.memberActions button {
-  height: 40px;
-  font-size: 14px;
-  padding: 0 24px;
-  border-radius: 8px;
-}
-
-@media screen and (max-width: 768px) {
-  .memberContainer {
-    padding: var(--common-body-padding-sm);
+@media (max-width: 640px) {
+  .stepButton {
+    font-size: 0.8rem;
+    padding: 0.5rem;
   }
   .memberFormGrid {
     grid-template-columns: 1fr;
@@ -52,14 +76,5 @@
   .memberActions {
     flex-direction: column;
     align-items: stretch;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .memberHeader {
-    font-size: 20px;
-  }
-  .memberFormSection {
-    padding: 20px;
   }
 }
