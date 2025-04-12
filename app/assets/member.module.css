@@ -1,0 +1,65 @@
+.memberContainer {
+  width: 100%;
+  padding: var(--common-body-padding);
+}
+
+.memberHeader {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.memberSubtext {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.memberFormGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.memberFormSection {
+  background-color: #f3f4f6;
+  padding: 28px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.memberActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.memberActions button {
+  height: 40px;
+  font-size: 14px;
+  padding: 0 24px;
+  border-radius: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .memberContainer {
+    padding: var(--common-body-padding-sm);
+  }
+  .memberFormGrid {
+    grid-template-columns: 1fr;
+  }
+  .memberActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .memberHeader {
+    font-size: 20px;
+  }
+  .memberFormSection {
+    padding: 20px;
+  }
+}
