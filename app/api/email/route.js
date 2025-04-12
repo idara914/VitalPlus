@@ -14,12 +14,15 @@ export async function POST(req) {
     const formLink = `https://www.vital-plus.xyz/care-provider/new/manual`;
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+  host: "smtp.hostinger.com",  // ✅ Hostinger SMTP server
+  port: 465,                   // ✅ SSL port
+  secure: true,                // ✅ true for port 465
+  auth: {
+    user: process.env.SMTP_USER, // your Hostinger email address
+    pass: process.env.SMTP_PASS, // your email password (not Gmail app password)
+  },
+});
+
 
     await transporter.sendMail({
       from: `"Vital Plus" <${process.env.SMTP_USER}>`,
