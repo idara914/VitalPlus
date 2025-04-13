@@ -9,7 +9,7 @@ import styles from "../../assets/auth.module.css";
 import AuthLayout from "@/app/components/layouts/AuthLayout";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import instance from "@/services/axios"; // ✅ axios with credentials
+import instance from "@/services/axios";
 
 export default function Register() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function Register() {
 
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("email", email);
-      localStorage.setItem("token", data.token); // ✅ store token for dev mode access
+      localStorage.setItem("token", data.token);
 
       toast.success("Account created");
       router.push("/account/update");
@@ -49,7 +49,11 @@ export default function Register() {
 
   return (
     <AuthLayout
-      heading="Get Registered"
+      heading={
+        <Link href="https://www.vital-plus.xyz/" style={{ textDecoration: "none", color: "#000" }}>
+          Get Registered - <strong>Vital +</strong>
+        </Link>
+      }
       text="Enhance proactive homecare and improve health outcomes with our solutions. We're here to support better health and well-being at home."
     >
       <section>
@@ -98,3 +102,4 @@ export default function Register() {
     </AuthLayout>
   );
 }
+
