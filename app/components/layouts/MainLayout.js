@@ -1,9 +1,27 @@
+"use client";
+
 import styles from "../../assets/landing.module.css";
 import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export default function MainLayout({ children, isSignedIn = false }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded);
+      } catch (err) {
+        console.error("Invalid token", err);
+      }
+    }
+  }, []);
+
   return (
     <ConfigProvider
       theme={{
@@ -13,13 +31,12 @@ export default function MainLayout({ children, isSignedIn = false }) {
         components: {
           Dropdown: {
             paddingBlock: 10,
-            /* here is your component tokens */
           },
         },
       }}
     >
       <div>
-        <Navbar isSignedIn={isSignedIn} />
+        <Navbar isSignedIn={isSignedIn} user={user} />
         {children && (
           <div className={styles.containerRightInner}>{children}</div>
         )}
