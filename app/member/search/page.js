@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import MainLayout from "../../components/Layouts/MainLayout";
+import MainLayout from "../../components/layouts/MainLayout";
 import styles from "../../assets/care-provider.module.css";
 import { Avatar, List } from "antd";
 import Button from "@/app/components/common/Button/Button";
