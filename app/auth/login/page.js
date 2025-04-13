@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
@@ -52,10 +52,11 @@ export default function Login() {
         return;
       }
 
-      localStorage.setItem("token", token);
+          localStorage.setItem("token", token);
       localStorage.setItem("userId", user.id);
       localStorage.setItem("email", user.email);
-      localStorage.setItem("firstName", user.firstName); // ✅ store first name
+      localStorage.setItem("firstName", user.firstName); // ✅ new line
+
 
       toast.success("Login successful");
 
@@ -69,11 +70,7 @@ export default function Login() {
 
   return (
     <AuthLayout
-      heading={
-        <Link href="https://www.vital-plus.xyz/" style={{ textDecoration: "none", color: "#000" }}>
-          Welcome to <strong>Vital +</strong>
-        </Link>
-      }
+      heading="Welcome to"
       text="Enhance proactive homecare and improve health outcomes with our solutions."
     >
       <section>
@@ -108,11 +105,7 @@ export default function Login() {
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          <Button
-            text="Login"
-            type="submit"
-            customStyle={{ marginTop: "50px", width: "100%" }}
-          />
+          <Button text="Login" type="submit" customStyle={{ marginTop: "50px", width: "100%" }} />
         </form>
 
         <Divider text="OR" />
