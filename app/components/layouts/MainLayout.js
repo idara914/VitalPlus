@@ -8,14 +8,14 @@ import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 export default function MainLayout({ children, isSignedIn = false }) {
-  const [user, setUser] = useState(null);
+  const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded);
+        if (decoded?.firstName) setFirstName(decoded.firstName);
       } catch (err) {
         console.error("Invalid token", err);
       }
@@ -36,7 +36,7 @@ export default function MainLayout({ children, isSignedIn = false }) {
       }}
     >
       <div>
-        <Navbar isSignedIn={isSignedIn} user={user} />
+        <Navbar isSignedIn={isSignedIn} firstName={firstName} />
         {children && (
           <div className={styles.containerRightInner}>{children}</div>
         )}
@@ -46,3 +46,4 @@ export default function MainLayout({ children, isSignedIn = false }) {
     </ConfigProvider>
   );
 }
+
