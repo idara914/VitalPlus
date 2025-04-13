@@ -5,28 +5,15 @@ import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function MainLayout({ children, isSignedIn = false }) {
   const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) return;
-
-    axios
-      .post("/api/user", {
-        action: "getUserById",
-        userId,
-      })
-      .then((res) => {
-        if (res.data?.firstName) {
-          setFirstName(res.data.firstName);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch user first name:", err);
-      });
+    const storedName = localStorage.getItem("firstName");
+    if (storedName) {
+      setFirstName(storedName);
+    }
   }, []);
 
   return (
