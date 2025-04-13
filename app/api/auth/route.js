@@ -141,6 +141,7 @@ async function loginUser({ email, password }) {
           id: user.Id,
           email: user.Email,
           username: user.UserName,
+          firstName: user.FirstName,
         },
       }),
       {
