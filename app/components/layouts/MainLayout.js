@@ -1,4 +1,3 @@
-
 "use client";
 
 import styles from "../../assets/landing.module.css";
@@ -6,33 +5,28 @@ import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
 import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
 export default function MainLayout({ children, isSignedIn = false }) {
   const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
-    const fetchUserFirstName = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
 
-      try {
-        const decoded = jwtDecode(token);
-        const userId = decoded?.id;
-
-        if (!userId) return;
-
-        const res = await axios.post("/api/user-info", { userId });
+    axios
+      .post("/api/user", {
+        action: "getUserById",
+        userId,
+      })
+      .then((res) => {
         if (res.data?.firstName) {
           setFirstName(res.data.firstName);
         }
-      } catch (err) {
-        console.error("Error fetching user first name:", err);
-      }
-    };
-
-    fetchUserFirstName();
+      })
+      .catch((err) => {
+        console.error("Failed to fetch user first name:", err);
+      });
   }, []);
 
   return (
@@ -49,7 +43,7 @@ export default function MainLayout({ children, isSignedIn = false }) {
       }}
     >
       <div>
-        <Navbar isSignedIn={isSignedIn} firstName={firstName} />
+        <Navbar isSignedIn={isSignedIn} user={{ FirstName: firstName }} />
         {children && (
           <div className={styles.containerRightInner}>{children}</div>
         )}
