@@ -52,11 +52,10 @@ export default function Login() {
         return;
       }
 
-          localStorage.setItem("token", token);
+      localStorage.setItem("token", token);
       localStorage.setItem("userId", user.id);
       localStorage.setItem("email", user.email);
-      localStorage.setItem("firstName", user.firstName); // ✅ new line
-
+      localStorage.setItem("firstName", user.firstName); // ✅ store first name
 
       toast.success("Login successful");
 
@@ -68,56 +67,50 @@ export default function Login() {
     }
   };
 
- return (
-  <AuthLayout
-    heading={
-      <Link href="https://www.vital-plus.xyz/" style={{ color: "#000", textDecoration: "none" }}>
-        Welcome to <strong>Vital +</strong>
-      </Link>
-    }
-    text="Enhance proactive homecare and improve health outcomes with our solutions."
-  >
-    <section>
-      <h1 className={styles.formHeading}>Welcome Back!</h1>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Email"
-          type="email"
-          placeholder="example@email.com"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setError(validateEmail(e.target.value));
-          }}
-          customStyle={{ marginBottom: "20px" }}
-        />
+  return (
+    <AuthLayout
+      heading={
+        <Link href="https://www.vital-plus.xyz/" style={{ textDecoration: "none", color: "#000" }}>
+          Welcome to <strong>Vital +</strong>
+        </Link>
+      }
+      text="Enhance proactive homecare and improve health outcomes with our solutions."
+    >
+      <section>
+        <h1 className={styles.formHeading}>Welcome Back!</h1>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            type="email"
+            placeholder="example@email.com"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(validateEmail(e.target.value));
+            }}
+            customStyle={{ marginBottom: "20px" }}
+          />
 
-        <TextField
-          label="Password"
-          type="password"
-          placeholder="********"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setError(validatePassword(e.target.value));
-          }}
-        />
+          <TextField
+            label="Password"
+            type="password"
+            placeholder="********"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError(validatePassword(e.target.value));
+            }}
+          />
 
-        <p className={styles.forgotText}>
-          <Link href="/auth/forgot-password">Forgot Password?</Link>
-        </p>
+          <p className={styles.forgotText}>
+            <Link href="/auth/forgot-password">Forgot Password?</Link>
+          </p>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <Button text="Login" type="submit" customStyle={{ marginTop: "50px", width: "100%" }} />
-      </form>
+          <Button
+            text="Login"
+            type="submit"
+            customStyle={{ marginTop: "50px
 
-      <Divider text="OR" />
-      <p>
-        Don&apos;t have an account? <Link href="/auth/register">Register</Link>
-      </p>
-    </section>
-  </AuthLayout>
-);
-}
 
