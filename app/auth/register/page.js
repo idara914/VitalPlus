@@ -1,4 +1,4 @@
-"use client";
+"use client"; 
 
 import { useState } from "react";
 import TextField from "../../components/common/TextField/TextField";
@@ -49,19 +49,7 @@ export default function Register() {
 
   return (
     <AuthLayout
-      heading={
-        <>
-          Get Registered
-          <br />
-          <a href="https://www.vital-plus.xyz/" target="_blank" rel="noopener noreferrer">
-            <img
-              src="/path/to/vital-plus-logo.png"
-              alt="Vital Plus Logo"
-              style={{ marginTop: "10px", cursor: "pointer", maxWidth: "120px" }}
-            />
-          </a>
-        </>
-      }
+      heading="Get Registered"
       text="Enhance proactive homecare and improve health outcomes with our solutions. We're here to support better health and well-being at home."
     >
       <section>
@@ -110,4 +98,7 @@ export default function Register() {
     </AuthLayout>
   );
 }
+
+
+
 
