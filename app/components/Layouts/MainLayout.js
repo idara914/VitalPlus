@@ -3,7 +3,7 @@ import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
 
-export default function MainLayout({ children, isSignedIn = false }) {
+export default function MainLayout({ children, isSignedIn = false, user = null }) {
   return (
     <ConfigProvider
       theme={{
@@ -13,13 +13,12 @@ export default function MainLayout({ children, isSignedIn = false }) {
         components: {
           Dropdown: {
             paddingBlock: 10,
-            /* here is your component tokens */
           },
         },
       }}
     >
       <div>
-        <Navbar isSignedIn={isSignedIn} />
+        <Navbar isSignedIn={isSignedIn} user={user} />
         {children && (
           <div className={styles.containerRightInner}>{children}</div>
         )}
