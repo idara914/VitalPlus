@@ -105,10 +105,17 @@ const Navbar = ({ isSignedIn, user }) => {
   }, [isSignedIn]);
 
   const signOutUser = async () => {
-    await signOut();
-    toast.success("Log out successfully");
-    router.push("/auth/login");
-  };
+  // Clear local storage session values
+  localStorage.removeItem("token");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("email");
+  localStorage.removeItem("firstName");
+
+  toast.success("Logged out successfully");
+
+  // Redirect to login page
+  window.location.href = "/auth/login";
+};
 
   const toggleMobileMenu = () => {
     setIsMobile(!isMobile);
@@ -116,9 +123,10 @@ const Navbar = ({ isSignedIn, user }) => {
 
   return (
     <nav className={styles.nav}>
-      <Link href={"/"}>
-        <Image src={Logo} alt="vitalplus" />
-      </Link>
+      <Link href={typeof window !== "undefined" && localStorage.getItem("token") ? "/admin/dashboard" : "/"}>
+  <Image src={Logo} alt="vitalplus" />
+</Link>
+
       {isLoggedIn ? (
         <LoggedInNavOptions
           isMobile={isMobile}
