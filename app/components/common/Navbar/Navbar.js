@@ -22,18 +22,13 @@ import { signOut } from "@/app/user";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+// 👇 Displayed when not signed in
 const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   <>
     <div className={styles.navOptions}>
-      <Link href="/aboutus" onClick={toggleMobileMenu}>
-        About
-      </Link>
-      <Link href="/features" onClick={toggleMobileMenu}>
-        Feature
-      </Link>
-      <Link href="/contact-us" onClick={toggleMobileMenu}>
-        Contact Us
-      </Link>
+      <Link href="/aboutus" onClick={toggleMobileMenu}>About</Link>
+      <Link href="/features" onClick={toggleMobileMenu}>Feature</Link>
+      <Link href="/contact-us" onClick={toggleMobileMenu}>Contact Us</Link>
     </div>
     <Link href="/auth/register" onClick={toggleMobileMenu}>
       <Button text={"Get Started"} customStyle={{ padding: "10px 14px" }} />
@@ -41,89 +36,46 @@ const LoggedOutNavOptions = ({ isMobile, toggleMobileMenu }) => (
   </>
 );
 
-const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute, signOutUser }) => (
+// 👇 Displayed when signed in
+const LoggedInNavOptions = ({
+  isMobile,
+  toggleMobileMenu,
+  signOutUser,
+  user,
+}) => (
   <>
     <div className={styles.navOptions}>
-      <Dropdown
-        menu={{
-          items: memberItems,
-        }}
-      >
-        <Link href="#" onClick={toggleMobileMenu}>
-          Member
-        </Link>
+      <Dropdown menu={{ items: memberItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Member</Link>
       </Dropdown>
-      <Dropdown
-        menu={{
-          items: careProviderItems,
-        }}
-      >
-        <Link h href="#" onClick={toggleMobileMenu}>
-          Care Provider
-        </Link>
+      <Dropdown menu={{ items: careProviderItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Care Provider</Link>
       </Dropdown>
-      <Dropdown
-        menu={{
-          items: visitItems,
-        }}
-      >
-        <Link href="#" onClick={toggleMobileMenu}>
-          Visit
-        </Link>
+      <Dropdown menu={{ items: visitItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Visit</Link>
       </Dropdown>
-      <Dropdown
-        menu={{
-          items: billingItems,
-        }}
-      >
-        <Link href="#" onClick={toggleMobileMenu}>
-          Billing
-        </Link>
+      <Dropdown menu={{ items: billingItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Billing</Link>
       </Dropdown>
-      <Dropdown
-        menu={{
-          items: actionItems,
-        }}
-      >
-        <Link href="#" onClick={toggleMobileMenu}>
-          Action
-        </Link>
+      <Dropdown menu={{ items: actionItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Action</Link>
       </Dropdown>
-      <Dropdown
-        menu={{
-          items: reportItems,
-        }}
-      >
-        <Link href="#" onClick={toggleMobileMenu}>
-          Report
-        </Link>
+      <Dropdown menu={{ items: reportItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Report</Link>
       </Dropdown>
-      <Dropdown
-        menu={{
-          items: resourseItems,
-        }}
-      >
-        <Link href="#" onClick={toggleMobileMenu}>
-          Resources
-        </Link>
+      <Dropdown menu={{ items: resourseItems }}>
+        <Link href="#" onClick={toggleMobileMenu}>Resources</Link>
       </Dropdown>
     </div>
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <Dropdown
-        menu={{
-          items: adminItems,
-        }}
-      >
-        <Link
-          href="#"
-          onClick={toggleMobileMenu}
-          style={{ marginRight: "10px" }}
-        >
+
+    <div style={{ display: "flex", alignItems: "center" }}>
+      {user?.FirstName && (
+        <span style={{ marginRight: "15px", fontWeight: 500, color: "#374151" }}>
+          Hi, {user.FirstName}
+        </span>
+      )}
+      <Dropdown menu={{ items: adminItems }}>
+        <Link href="#" onClick={toggleMobileMenu} style={{ marginRight: "10px" }}>
           <Button text={"Admin"} customStyle={{ padding: "10px 14px" }} />
         </Link>
       </Dropdown>
@@ -131,11 +83,9 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute, signOutUs
         menu={{
           items: [
             {
-              label: (
-                <Link href={"#"} onClick={() => { signOutUser() }}>Log Out</Link>
-              ),
+              label: <Link href="#" onClick={() => signOutUser()}>Log Out</Link>,
               key: "0",
-            }
+            },
           ],
         }}
       >
@@ -145,7 +95,7 @@ const LoggedInNavOptions = ({ isMobile, toggleMobileMenu, pushToRoute, signOutUs
   </>
 );
 
-const Navbar = ({ isSignedIn }) => {
+const Navbar = ({ isSignedIn, user }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
@@ -157,8 +107,8 @@ const Navbar = ({ isSignedIn }) => {
   const signOutUser = async () => {
     await signOut();
     toast.success("Log out successfully");
-    router.push('/auth/login');
-  }
+    router.push("/auth/login");
+  };
 
   const toggleMobileMenu = () => {
     setIsMobile(!isMobile);
@@ -174,6 +124,7 @@ const Navbar = ({ isSignedIn }) => {
           isMobile={isMobile}
           toggleMobileMenu={toggleMobileMenu}
           signOutUser={signOutUser}
+          user={user}
         />
       ) : (
         <LoggedOutNavOptions
