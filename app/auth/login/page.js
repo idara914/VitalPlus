@@ -52,9 +52,11 @@ export default function Login() {
         return;
       }
 
-      localStorage.setItem("token", token);
+          localStorage.setItem("token", token);
       localStorage.setItem("userId", user.id);
       localStorage.setItem("email", user.email);
+      localStorage.setItem("firstName", user.firstName); // ✅ new line
+
 
       toast.success("Login successful");
 
