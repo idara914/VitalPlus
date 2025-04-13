@@ -111,6 +111,16 @@ export default function Login() {
           <Button
             text="Login"
             type="submit"
-            customStyle={{ marginTop: "50px
+            customStyle={{ marginTop: "50px", width: "100%" }}
+          />
+        </form>
 
+        <Divider text="OR" />
+        <p>
+          Don&apos;t have an account? <Link href="/auth/register">Register</Link>
+        </p>
+      </section>
+    </AuthLayout>
+  );
+}
 
