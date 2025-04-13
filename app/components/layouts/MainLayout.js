@@ -1,3 +1,4 @@
+
 "use client";
 
 import styles from "../../assets/landing.module.css";
@@ -6,20 +7,32 @@ import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 export default function MainLayout({ children, isSignedIn = false }) {
   const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const fetchUserFirstName = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
       try {
         const decoded = jwtDecode(token);
-        if (decoded?.firstName) setFirstName(decoded.firstName);
+        const userId = decoded?.id;
+
+        if (!userId) return;
+
+        const res = await axios.post("/api/user-info", { userId });
+        if (res.data?.firstName) {
+          setFirstName(res.data.firstName);
+        }
       } catch (err) {
-        console.error("Invalid token", err);
+        console.error("Error fetching user first name:", err);
       }
-    }
+    };
+
+    fetchUserFirstName();
   }, []);
 
   return (
@@ -46,4 +59,3 @@ export default function MainLayout({ children, isSignedIn = false }) {
     </ConfigProvider>
   );
 }
-
