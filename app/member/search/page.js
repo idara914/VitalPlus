@@ -27,6 +27,7 @@ export default function MemberSearch() {
   });
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false); // 🆕 track if search was made
 
   const handleChange = (key) => (e) => {
     const value = e?.target?.value ?? e;
@@ -38,6 +39,7 @@ export default function MemberSearch() {
     try {
       const { data } = await instance.post("/api/search-clinic-patient", form);
       setResults(data.results);
+      setHasSearched(true); // ✅ flag search complete
     } catch (err) {
       console.error("Search failed:", err);
     } finally {
@@ -57,6 +59,7 @@ export default function MemberSearch() {
       isActive: "",
     });
     setResults([]);
+    setHasSearched(false); // 🔄 reset flag on clear
   };
 
   const fieldStyle = {
@@ -99,7 +102,7 @@ export default function MemberSearch() {
           <List
             pagination={{ position: "bottom", align: "center" }}
             dataSource={results}
-            locale={{ emptyText: "No members found" }}
+            locale={hasSearched ? { emptyText: "No members found" } : {}}
             renderItem={(item) => (
               <List.Item key={item.Id} style={{ cursor: "pointer" }}>
                 <List.Item.Meta
