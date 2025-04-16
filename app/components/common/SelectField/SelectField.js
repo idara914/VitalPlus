@@ -9,10 +9,11 @@ const SelectField = ({
   value,
   onChange,
   customStyle,
+  containerStyle,
 }) => {
   return (
-    <div className={styles.container}>
-      <label className={styles.label}>{label}</label>
+    <div className={styles.container} style={containerStyle}>
+      {label && <label className={styles.label}>{label}</label>}
       <Select
         className={styles.input}
         value={value}

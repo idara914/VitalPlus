@@ -1,6 +1,13 @@
 import styles from "./Button.module.css";
 
-const Button = ({ text, onClick, customStyle = {}, disabled = false, type = "submit" }) => {
+const Button = ({
+  text,
+  onClick,
+  customStyle = {},
+  disabled = false,
+  type = "submit",
+  ...others
+}) => {
   return (
     <button
       className={styles.btn}
@@ -8,6 +15,7 @@ const Button = ({ text, onClick, customStyle = {}, disabled = false, type = "sub
       onClick={onClick}
       disabled={disabled}
       type={type}
+      {...others}
     >
       {text}
     </button>
