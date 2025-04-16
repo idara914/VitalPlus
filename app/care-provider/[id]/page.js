@@ -6,18 +6,20 @@ import { Avatar, Table, Tag } from "antd";
 import Button from "@/app/components/common/Button/Button";
 import CardCalendar from "@/app/components/common/CardCalendar/CardCalendar";
 import Link from "next/link";
-import CsvIcon from "../../../public/icons/icons8-excel-50.png";
+import PdfIcon from "../../../public/icons/pdf-icon.svg";
+import CsvIcon from "../../../public/icons/csv-icon.svg";
 import Image from "next/image";
+import NewTabIcon from "../../../public/icons/new-tab.svg";
 
 const cssPrefix = "careProviderProfile";
 export default function Features() {
   const mockData = {
     name: "John Doe",
-    imageUrl: "https://via.placeholder.com/150",
+    imageUrl: "https://fakeimg.pl/600x400",
     number: "1234567890",
     type: "Doctor",
-    joined: "2021-09-01",
-    status: "ACTIVE",
+    joined: "28 December 1980",
+    status: "Active",
     contact: {
       email: "john.doe@gmail.com",
       number: "1234567890",
@@ -81,11 +83,24 @@ export default function Features() {
       key: "notes",
     },
     {
-      title: "Follow Up",
+      title: "Follow-Up",
       dataIndex: "followUp",
       key: "followUp",
       render: () => {
-        return <Tag color={"green"}>Yes</Tag>;
+        return (
+          <Tag
+            style={{
+              background: "#ECFDF3",
+              borderWidth: "2px",
+              color: "#067647",
+              borderColor: "#ABEFC6",
+              fontSize: "12px",
+              fontWeight: 500,
+            }}
+          >
+            Yes
+          </Tag>
+        );
       },
     },
   ];
@@ -93,8 +108,9 @@ export default function Features() {
     backgroundColor: "#fff",
     fontSize: "14px",
     color: "#000",
-    padding: "10px",
+    padding: "8px 10px",
     border: "1px solid #D0D5DD",
+    boxShadow: "none",
   };
   return (
     <main>
@@ -111,9 +127,10 @@ export default function Features() {
                   size={64}
                   src={mockData.imageUrl}
                   style={{
-                    border: "3px solid #fff",
+                    border: "5px solid #fff",
                     height: "160px",
                     width: "160px",
+                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
                   }}
                 />
                 <div>
@@ -123,6 +140,8 @@ export default function Features() {
                       style={{
                         color: "#4B5565",
                         fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "20px",
                       }}
                     >
                       {mockData.number}
@@ -132,6 +151,8 @@ export default function Features() {
                       style={{
                         color: "#4B5565",
                         fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "20px",
                       }}
                     >
                       {mockData.type}
@@ -141,19 +162,27 @@ export default function Features() {
                       style={{
                         color: "#4B5565",
                         fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "20px",
                       }}
                     >
                       {mockData.joined}
                     </span>
                     <span className="small-circle"></span>
-                    <span
+
+                    <Tag
                       style={{
-                        color: "#4B5565",
-                        fontSize: "14px",
+                        background: "#fff",
+                        borderWidth: "2px",
+                        color: "#027A48",
+                        borderColor: "#027A48",
+                        fontSize: "12px",
+                        fontWeight: 500,
                       }}
                     >
+                      {" "}
                       {mockData.status}
-                    </span>
+                    </Tag>
                   </div>
                 </div>
               </div>
@@ -167,6 +196,8 @@ export default function Features() {
                     backgroundColor: "#fff",
                     color: "#000",
                     marginRight: "10px",
+                    boxShadow: "none",
+                    border: "1px solid #D0D5DD",
                   }}
                 />
                 <Button
@@ -175,6 +206,7 @@ export default function Features() {
                     height: "40px",
                     fontSize: "14px",
                     padding: "0 20px",
+                    boxShadow: "none",
                   }}
                 />
               </div>
@@ -192,9 +224,19 @@ export default function Features() {
                         style={{
                           color: "#7f3dff",
                           marginTop: "5px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
-                        {mockData.contact.number}
+                        <span>{mockData.contact.number}</span>
+                        <Image
+                          src={NewTabIcon}
+                          alt="csv"
+                          style={{
+                            marginLeft: "5px",
+                          }}
+                        />
                       </p>
                     </span>
                     <span>
@@ -203,9 +245,19 @@ export default function Features() {
                         style={{
                           color: "#7f3dff",
                           marginTop: "5px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
-                        {mockData.contact.email}
+                        <span>{mockData.contact.email}</span>
+                        <Image
+                          src={NewTabIcon}
+                          alt="csv"
+                          style={{
+                            marginLeft: "5px",
+                          }}
+                        />
                       </p>
                     </span>
                   </span>
@@ -240,7 +292,15 @@ export default function Features() {
                     margin: "20px 0",
                   }}
                 >
-                  <h1>Forms</h1>
+                  <h1
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "semi-bold",
+                      color: "#101828",
+                    }}
+                  >
+                    Forms
+                  </h1>
                   <div
                     style={{
                       display: "grid",
@@ -252,7 +312,7 @@ export default function Features() {
                       className={styles[`${cssPrefix}ContainerMidSecondDoc`]}
                     >
                       <span>
-                        <Image src={CsvIcon} alt="csv" />
+                        <Image src={PdfIcon} alt="csv" />
                         <span style={{ fontSize: "16px", marginLeft: "8px" }}>
                           General Medical Report
                         </span>
@@ -281,11 +341,21 @@ export default function Features() {
               <CardCalendar />
             </div>
             <div className={styles[`${cssPrefix}Table`]}>
-              <h1>Visit Log</h1>
+              <h1
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "semi-bold",
+                  color: "#101828",
+                }}
+              >
+                Visit Log
+              </h1>
               <Table
                 className={styles[`${cssPrefix}TableInside`]}
                 dataSource={mockData.visitLogs}
                 columns={columns}
+                pagination={false}
+                footer={false}
               />
             </div>
           </div>

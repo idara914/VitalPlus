@@ -1,0 +1,15 @@
+.mainContainer {
+}
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.heading {
+  font-size: #3c3f44;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 20px;
+  text-align: left;
+  margin-bottom: 20px;
+}
