@@ -5,10 +5,11 @@ import UnselectedIcon from "../../../../public/icons/step-unselected.svg";
 import StepCompletedIcon from "../../../../public/icons/step-completed.svg";
 import Image from "next/image";
 
-function Stepper({ steps, currentStep }) {
+function Stepper({ steps, currentStep, onChange }) {
   return (
     <AntdStepper
       labelPlacement="vertical"
+      onChange={onChange}
       items={steps.map((step, index) => ({
         title: (
           <p
@@ -18,6 +19,12 @@ function Stepper({ steps, currentStep }) {
               fontSize: "14px",
               lineHeight: "20px",
               marginTop: "-10px",
+            }}
+            onClick={() => {
+              if (index <= currentStep) {
+                // Handle click event for steps that are not completed
+                console.log(`Clicked on step: ${step.title}`);
+              }
             }}
           >
             {step.title}

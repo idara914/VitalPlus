@@ -24,6 +24,13 @@ export default function NewMemberForm() {
       console.error("Validation failed:", error);
     }
   };
+
+  const onChange = (current) => {
+    if (current < currentStep) {
+      setCurrentStep(current);
+      return;
+    }
+  };
   return (
     <MainLayout isSignedIn={true}>
       <div className={styles.container}>
@@ -55,6 +62,7 @@ export default function NewMemberForm() {
             },
           ]}
           currentStep={currentStep}
+          onChange={onChange}
         />
         <div className={styles.containerCard}>
           <Form layout="vertical" form={form}>
