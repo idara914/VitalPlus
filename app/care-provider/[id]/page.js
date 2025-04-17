@@ -95,9 +95,9 @@ export default function Features() {
   const effectiveDate = provider?.EffOt?.split("T")[0] || "N/A";
   const terminationDate = provider?.TermOt?.split("T")[0] || "N/A";
   const status =
-    provider?.IsActive === 'true'
+    provider?.IsActive === "true"
       ? "Active"
-      : provider?.IsActive === 'false'
+      : provider?.IsActive === "false"
       ? "Inactive"
       : "Unknown";
 
