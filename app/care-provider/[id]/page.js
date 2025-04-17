@@ -58,6 +58,26 @@ export default function Features() {
     ],
   };
 
+  const columns = [
+    { title: "Date", dataIndex: "date", key: "date" },
+    { title: "Patient Name", dataIndex: "patientName", key: "patientName" },
+    { title: "Type", dataIndex: "type", key: "type" },
+    { title: "Visit ID", dataIndex: "visitId", key: "visitId" },
+    { title: "Diagnosis", dataIndex: "diagnosis", key: "diagnosis" },
+    { title: "Notes", dataIndex: "notes", key: "notes" },
+    {
+      title: "Follow-Up",
+      dataIndex: "followUp",
+      key: "followUp",
+      render: (val) =>
+        val ? (
+          <Tag style={{ background: "#ECFDF3", color: "#067647" }}>Yes</Tag>
+        ) : (
+          <Tag color="red">No</Tag>
+        ),
+    },
+  ];
+
   useEffect(() => {
     if (id) {
       instance
@@ -266,23 +286,18 @@ export default function Features() {
                       gridGap: "10px",
                     }}
                   >
-                    <div
-                      className={styles[`${cssPrefix}ContainerMidSecondDoc`]}
-                    >
+                    <div className={styles[`${cssPrefix}ContainerMidSecondDoc`]}>
                       <span>
                         <Image src={PdfIcon} alt="csv" />
                         <span style={{ fontSize: "16px", marginLeft: "8px" }}>
                           General Medical Report
                         </span>
                       </span>
-
                       <Link href={mockData.forms.generalMedicalReport}>
                         <Button text={"Preview"} customStyle={customButton} />
                       </Link>
                     </div>
-                    <div
-                      className={styles[`${cssPrefix}ContainerMidSecondDoc`]}
-                    >
+                    <div className={styles[`${cssPrefix}ContainerMidSecondDoc`]}>
                       <span>
                         <Image src={CsvIcon} alt="csv" />
                         <span style={{ fontSize: "16px", marginLeft: "8px" }}>
@@ -299,15 +314,7 @@ export default function Features() {
               <CardCalendar />
             </div>
             <div className={styles[`${cssPrefix}Table`]}>
-              <h1
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "semi-bold",
-                  color: "#101828",
-                }}
-              >
-                Visit Log
-              </h1>
+              <h1>Visit Log</h1>
               <Table
                 className={styles[`${cssPrefix}TableInside`]}
                 dataSource={mockData.visitLogs}
