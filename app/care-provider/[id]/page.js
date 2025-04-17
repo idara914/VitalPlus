@@ -52,7 +52,7 @@ export default function Features() {
   useEffect(() => {
     if (id) {
       instance
-        .get(`/api/ProviderDetail/${id}`)
+        .get(`/api/provider-detail/${id}`)
         .then((res) => setProvider(res.data))
         .catch((err) => console.error("Failed to load provider", err));
     }
@@ -104,6 +104,7 @@ export default function Features() {
                     border: "5px solid #fff",
                     height: "160px",
                     width: "160px",
+                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
                   }}
                 />
                 <div>
@@ -126,16 +127,39 @@ export default function Features() {
             </div>
 
             <div className={styles[`${cssPrefix}ContainerMid`]}>
-              <div className={styles[`${cssPrefix}ContainerMidFirst`]}>
+              <div
+                className={styles[`${cssPrefix}ContainerMidFirst`]}
+                style={{ marginRight: "20px" }}
+              >
                 <div className={styles[`${cssPrefix}ContainerMidFirstInfo`]}>
                   <span>
                     <span>
                       <p style={{ fontSize: "12px" }}>Contact</p>
-                      <p>{provider?.PhoneNumber || "N/A"}</p>
+                      <p
+                        style={{
+                          color: "#7f3dff",
+                          marginTop: "5px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>{provider?.PhoneNumber || "N/A"}</span>
+                        <Image src={NewTabIcon} alt="contact" style={{ marginLeft: "5px" }} />
+                      </p>
                     </span>
                     <span>
                       <p style={{ fontSize: "12px" }}>Email</p>
-                      <p>{provider?.Email || "N/A"}</p>
+                      <p
+                        style={{
+                          color: "#7f3dff",
+                          marginTop: "5px",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>{provider?.Email || "N/A"}</span>
+                        <Image src={NewTabIcon} alt="email" style={{ marginLeft: "5px" }} />
+                      </p>
                     </span>
                   </span>
                   <span>
@@ -150,13 +174,24 @@ export default function Features() {
                   </span>
                 </div>
 
-                <div className={styles[`${cssPrefix}ContainerMidSecond`]}>
+                <div
+                  className={styles[`${cssPrefix}ContainerMidSecond`]}
+                  style={{ margin: "20px 0" }}
+                >
                   <h1>Forms</h1>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gridGap: "10px",
+                    }}
+                  >
                     <div className={styles[`${cssPrefix}ContainerMidSecondDoc`]}>
                       <span>
                         <Image src={PdfIcon} alt="pdf" />
-                        <span style={{ marginLeft: "8px" }}>General Medical Report</span>
+                        <span style={{ fontSize: "16px", marginLeft: "8px" }}>
+                          General Medical Report
+                        </span>
                       </span>
                       <Link href={mockData.forms.generalMedicalReport}>
                         <Button text="Preview" customStyle={customButton} />
@@ -165,7 +200,9 @@ export default function Features() {
                     <div className={styles[`${cssPrefix}ContainerMidSecondDoc`]}>
                       <span>
                         <Image src={CsvIcon} alt="csv" />
-                        <span style={{ marginLeft: "8px" }}>Annual Physical Exam</span>
+                        <span style={{ fontSize: "16px", marginLeft: "8px" }}>
+                          Annual Physical Exam
+                        </span>
                       </span>
                       <Link href={mockData.forms.annualPhysicalExam}>
                         <Button text="Preview" customStyle={customButton} />
@@ -191,4 +228,3 @@ export default function Features() {
     </main>
   );
 }
-
