@@ -16,6 +16,15 @@ import instance from "@/services/axios";
 
 const cssPrefix = "careProviderProfile";
 
+const customButton = {
+  backgroundColor: "#fff",
+  fontSize: "14px",
+  color: "#000",
+  padding: "8px 10px",
+  border: "1px solid #D0D5DD",
+  boxShadow: "none",
+};
+
 export default function Features() {
   const { id } = useParams();
   const [provider, setProvider] = useState(null);
@@ -182,5 +191,4 @@ export default function Features() {
     </main>
   );
 }
-
 
