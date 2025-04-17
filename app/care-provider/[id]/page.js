@@ -90,16 +90,11 @@ export default function Features() {
   const displayName = provider ? `${provider.FirstName} ${provider.LastName}` : "John Doe";
   const topDate = provider?.DOB?.split("T")[0] || "N/A";
   const topNumber = provider?.ServiceProviderCode || "N/A";
-  const phone = provider?.PhoneNumber || "N/A";
+  const phone = provider?.ContacrNumber1 || "N/A";
   const email = provider?.Email || "N/A";
   const effectiveDate = provider?.EffOt?.split("T")[0] || "N/A";
   const terminationDate = provider?.TermOt?.split("T")[0] || "N/A";
-  const status =
-    provider?.IsActive === "true"
-      ? "Active"
-      : provider?.IsActive === "false"
-      ? "Inactive"
-      : "Unknown";
+  const status = provider?.IsActive === true ? "Active" : "Inactive";
 
   return (
     <main>
