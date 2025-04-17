@@ -88,12 +88,12 @@ export default function Features() {
   }, [id]);
 
   const displayName = provider ? `${provider.FirstName} ${provider.LastName}` : "John Doe";
-  const joined = provider?.EffOt?.split("T")[0] || "28 December 1980";
-  const serviceCode = provider?.ServiceProviderCode || "1234567890";
-  const email = provider?.Email || "john.doe@gmail.com";
-  const phone = provider?.PhoneNumber || "1234567890";
-  const terminationDate = provider?.TermOt?.split("T")[0] || "2021-09-01";
-  const effectiveDate = provider?.EffOt?.split("T")[0] || "2021-09-01";
+  const topDate = provider?.DOB?.split("T")[0] || "N/A";
+  const topNumber = provider?.ServiceProviderCode || "N/A";
+  const phone = provider?.PhoneNumber || "N/A";
+  const email = provider?.Email || "N/A";
+  const effectiveDate = provider?.EffOt?.split("T")[0] || "N/A";
+  const terminationDate = provider?.TermOt?.split("T")[0] || "N/A";
   const status =
     provider?.IsActive === 1
       ? "Active"
@@ -133,7 +133,7 @@ export default function Features() {
                         lineHeight: "20px",
                       }}
                     >
-                      {serviceCode}
+                      {topNumber}
                     </span>
                     <span className="small-circle"></span>
                     <span
@@ -155,10 +155,9 @@ export default function Features() {
                         lineHeight: "20px",
                       }}
                     >
-                      {joined}
+                      {topDate}
                     </span>
                     <span className="small-circle"></span>
-
                     <Tag
                       style={{
                         background: "#fff",
@@ -221,9 +220,7 @@ export default function Features() {
                         <Image
                           src={NewTabIcon}
                           alt="csv"
-                          style={{
-                            marginLeft: "5px",
-                          }}
+                          style={{ marginLeft: "5px" }}
                         />
                       </p>
                     </span>
@@ -242,9 +239,7 @@ export default function Features() {
                         <Image
                           src={NewTabIcon}
                           alt="csv"
-                          style={{
-                            marginLeft: "5px",
-                          }}
+                          style={{ marginLeft: "5px" }}
                         />
                       </p>
                     </span>
@@ -266,17 +261,9 @@ export default function Features() {
                 </div>
                 <div
                   className={styles[`${cssPrefix}ContainerMidSecond`]}
-                  style={{
-                    margin: "20px 0",
-                  }}
+                  style={{ margin: "20px 0" }}
                 >
-                  <h1
-                    style={{
-                      fontSize: "20px",
-                      fontWeight: "semi-bold",
-                      color: "#101828",
-                    }}
-                  >
+                  <h1 style={{ fontSize: "20px", fontWeight: "semi-bold", color: "#101828" }}>
                     Forms
                   </h1>
                   <div
@@ -329,3 +316,4 @@ export default function Features() {
     </main>
   );
 }
+
