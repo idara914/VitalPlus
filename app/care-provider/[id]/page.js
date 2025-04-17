@@ -52,7 +52,7 @@ export default function Features() {
   useEffect(() => {
     if (id) {
       instance
-        .get(`/api/ProviderDetail`)
+        .get(`/api/ProviderDetail/${id}`)
         .then((res) => setProvider(res.data))
         .catch((err) => console.error("Failed to load provider", err));
     }
