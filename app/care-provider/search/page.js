@@ -101,12 +101,11 @@ export default function Features() {
               dataSource={results}
               locale={{ emptyText: "No providers found" }}
               renderItem={(item) => (
-                <Link href={`/care-provider/${item.Id}`} key={item.Id}>
-                  <List.Item style={{ cursor: "pointer" }}>
-                    <List.Item.Meta
-                      avatar={<Avatar src="https://via.placeholder.com/150" size="large" />}
-                      title={`${item.FirstName} ${item.LastName}`}
-                      description={
+  <Link href={`/care-provider/${item.Id}`}>
+    <List.Item style={{ cursor: "pointer" }}>
+      <List.Item.Meta
+        title={`${item.FirstName} ${item.LastName}`}
+        description={
                         <div className={styles[`${cssPrefix}ListAbout`]}>
                           <span>{item.ServiceProviderCode || item.Code}</span>
                           <span className="small-circle"></span>
