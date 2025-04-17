@@ -46,46 +46,38 @@ export default function Features() {
         notes: "Prescribed Tylenol",
         followUp: true,
       },
+      {
+        date: "2021-09-01",
+        patientName: "Jane Doe",
+        type: "In-Person",
+        visitId: "123456",
+        diagnosis: "Fever",
+        notes: "Prescribed Tylenol",
+        followUp: false,
+      },
     ],
   };
 
   useEffect(() => {
     if (id) {
       instance
-        .get(`/api/provider-detail/${id}`)
+        .get(`/api/ProviderDetail/${id}`)
         .then((res) => setProvider(res.data))
         .catch((err) => console.error("Failed to load provider", err));
     }
   }, [id]);
 
-  const columns = [
-    { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Patient Name", dataIndex: "patientName", key: "patientName" },
-    { title: "Type", dataIndex: "type", key: "type" },
-    { title: "Visit ID", dataIndex: "visitId", key: "visitId" },
-    { title: "Diagnosis", dataIndex: "diagnosis", key: "diagnosis" },
-    { title: "Notes", dataIndex: "notes", key: "notes" },
-    {
-      title: "Follow-Up",
-      dataIndex: "followUp",
-      key: "followUp",
-      render: (val) =>
-        val ? (
-          <Tag style={{ background: "#ECFDF3", color: "#067647" }}>Yes</Tag>
-        ) : (
-          <Tag color="red">No</Tag>
-        ),
-    },
-  ];
-
-  const displayName = provider
-    ? `${provider.FirstName} ${provider.LastName}`
-    : "Loading...";
-
+  const displayName = provider ? `${provider.FirstName} ${provider.LastName}` : "John Doe";
+  const joined = provider?.EffOt?.split("T")[0] || "28 December 1980";
+  const serviceCode = provider?.ServiceProviderCode || "1234567890";
+  const email = provider?.Email || "john.doe@gmail.com";
+  const phone = provider?.PhoneNumber || "1234567890";
+  const terminationDate = provider?.TermOt?.split("T")[0] || "2021-09-01";
+  const effectiveDate = provider?.EffOt?.split("T")[0] || "2021-09-01";
   const status =
     provider?.IsActive === 1
       ? "Active"
-      : provider?.IsActive === 2
+      : provider?.IsActive === 0
       ? "Inactive"
       : "Unknown";
 
@@ -95,7 +87,10 @@ export default function Features() {
         <div className={styles[`${cssPrefix}Container`]}>
           <div className={styles[`${cssPrefix}ContainerInner`]}>
             <div className={styles[`${cssPrefix}ContainerTop`]}></div>
-            <div className={styles[`${cssPrefix}ContainerHeader`]}>
+            <div
+              className={styles[`${cssPrefix}ContainerHeader`]}
+              style={{ marginBottom: "20px" }}
+            >
               <div className={styles[`${cssPrefix}ContainerHeaderBasic`]}>
                 <Avatar
                   size={64}
@@ -110,22 +105,80 @@ export default function Features() {
                 <div>
                   <h1>{displayName}</h1>
                   <div>
-                    <span>{provider?.ServiceProviderCode || "—"}</span>
-                    <span className="small-circle" />
-                    <span>{mockData.type}</span>
-                    <span className="small-circle" />
-                    <span>{provider?.EffOt?.split("T")[0]}</span>
-                    <span className="small-circle" />
-                    <Tag>{status}</Tag>
+                    <span
+                      style={{
+                        color: "#4B5565",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      {serviceCode}
+                    </span>
+                    <span className="small-circle"></span>
+                    <span
+                      style={{
+                        color: "#4B5565",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      {mockData.type}
+                    </span>
+                    <span className="small-circle"></span>
+                    <span
+                      style={{
+                        color: "#4B5565",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "20px",
+                      }}
+                    >
+                      {joined}
+                    </span>
+                    <span className="small-circle"></span>
+
+                    <Tag
+                      style={{
+                        background: "#fff",
+                        borderWidth: "2px",
+                        color: "#027A48",
+                        borderColor: "#027A48",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {status}
+                    </Tag>
                   </div>
                 </div>
               </div>
               <div style={{ marginTop: "20px" }}>
-                <Button text="Print Visit" />
-                <Button text="Assign Visit" />
+                <Button
+                  text={"Print Visit"}
+                  customStyle={{
+                    height: "40px",
+                    fontSize: "14px",
+                    padding: "0 20px",
+                    backgroundColor: "#fff",
+                    color: "#000",
+                    marginRight: "10px",
+                    boxShadow: "none",
+                    border: "1px solid #D0D5DD",
+                  }}
+                />
+                <Button
+                  text={"Assign Visit"}
+                  customStyle={{
+                    height: "40px",
+                    fontSize: "14px",
+                    padding: "0 20px",
+                    boxShadow: "none",
+                  }}
+                />
               </div>
             </div>
-
             <div className={styles[`${cssPrefix}ContainerMid`]}>
               <div
                 className={styles[`${cssPrefix}ContainerMidFirst`]}
@@ -139,12 +192,19 @@ export default function Features() {
                         style={{
                           color: "#7f3dff",
                           marginTop: "5px",
+                          cursor: "pointer",
                           display: "flex",
                           alignItems: "center",
                         }}
                       >
-                        <span>{provider?.PhoneNumber || "N/A"}</span>
-                        <Image src={NewTabIcon} alt="contact" style={{ marginLeft: "5px" }} />
+                        <span>{phone}</span>
+                        <Image
+                          src={NewTabIcon}
+                          alt="csv"
+                          style={{
+                            marginLeft: "5px",
+                          }}
+                        />
                       </p>
                     </span>
                     <span>
@@ -153,32 +213,52 @@ export default function Features() {
                         style={{
                           color: "#7f3dff",
                           marginTop: "5px",
+                          cursor: "pointer",
                           display: "flex",
                           alignItems: "center",
                         }}
                       >
-                        <span>{provider?.Email || "N/A"}</span>
-                        <Image src={NewTabIcon} alt="email" style={{ marginLeft: "5px" }} />
+                        <span>{email}</span>
+                        <Image
+                          src={NewTabIcon}
+                          alt="csv"
+                          style={{
+                            marginLeft: "5px",
+                          }}
+                        />
                       </p>
                     </span>
                   </span>
                   <span>
                     <span>
                       <p style={{ fontSize: "12px" }}>Termination Date</p>
-                      <p>{provider?.TermOt?.split("T")[0] || "N/A"}</p>
+                      <p style={{ color: "#344054", marginTop: "5px" }}>
+                        {terminationDate}
+                      </p>
                     </span>
                     <span>
                       <p style={{ fontSize: "12px" }}>Effective Date</p>
-                      <p>{provider?.EffOt?.split("T")[0] || "N/A"}</p>
+                      <p style={{ color: "#344054", marginTop: "5px" }}>
+                        {effectiveDate}
+                      </p>
                     </span>
                   </span>
                 </div>
-
                 <div
                   className={styles[`${cssPrefix}ContainerMidSecond`]}
-                  style={{ margin: "20px 0" }}
+                  style={{
+                    margin: "20px 0",
+                  }}
                 >
-                  <h1>Forms</h1>
+                  <h1
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "semi-bold",
+                      color: "#101828",
+                    }}
+                  >
+                    Forms
+                  </h1>
                   <div
                     style={{
                       display: "grid",
@@ -186,26 +266,31 @@ export default function Features() {
                       gridGap: "10px",
                     }}
                   >
-                    <div className={styles[`${cssPrefix}ContainerMidSecondDoc`]}>
+                    <div
+                      className={styles[`${cssPrefix}ContainerMidSecondDoc`]}
+                    >
                       <span>
-                        <Image src={PdfIcon} alt="pdf" />
+                        <Image src={PdfIcon} alt="csv" />
                         <span style={{ fontSize: "16px", marginLeft: "8px" }}>
                           General Medical Report
                         </span>
                       </span>
+
                       <Link href={mockData.forms.generalMedicalReport}>
-                        <Button text="Preview" customStyle={customButton} />
+                        <Button text={"Preview"} customStyle={customButton} />
                       </Link>
                     </div>
-                    <div className={styles[`${cssPrefix}ContainerMidSecondDoc`]}>
+                    <div
+                      className={styles[`${cssPrefix}ContainerMidSecondDoc`]}
+                    >
                       <span>
                         <Image src={CsvIcon} alt="csv" />
                         <span style={{ fontSize: "16px", marginLeft: "8px" }}>
-                          Annual Physical Exam
+                          Annual Physical Examination
                         </span>
                       </span>
                       <Link href={mockData.forms.annualPhysicalExam}>
-                        <Button text="Preview" customStyle={customButton} />
+                        <Button text={"Preview"} customStyle={customButton} />
                       </Link>
                     </div>
                   </div>
@@ -213,13 +298,22 @@ export default function Features() {
               </div>
               <CardCalendar />
             </div>
-
             <div className={styles[`${cssPrefix}Table`]}>
-              <h1>Visit Log</h1>
+              <h1
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "semi-bold",
+                  color: "#101828",
+                }}
+              >
+                Visit Log
+              </h1>
               <Table
+                className={styles[`${cssPrefix}TableInside`]}
                 dataSource={mockData.visitLogs}
                 columns={columns}
                 pagination={false}
+                footer={false}
               />
             </div>
           </div>
