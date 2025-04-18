@@ -15,6 +15,7 @@ export default function Update() {
   const [contactNumber, setContactNumber] = useState("");
   const [faxNumber, setFaxNumber] = useState("");
   const [taxNumber, setTaxNumber] = useState("");
+  const [npi, setNpi] = useState(""); // ✅ added
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -39,6 +40,7 @@ export default function Update() {
       contactNumber,
       faxNumber,
       taxNumber,
+      npi, // ✅ added
       address,
       city,
       state,
@@ -78,6 +80,7 @@ export default function Update() {
           <TextField label="Contact Number" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} />
           <TextField label="Fax Number" value={faxNumber} onChange={(e) => setFaxNumber(e.target.value)} />
           <TextField label="Tax Number" value={taxNumber} onChange={(e) => setTaxNumber(e.target.value)} />
+          <TextField label="NPI Number" value={npi} onChange={(e) => setNpi(e.target.value)} /> {/* ✅ added */}
           <TextField label="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
           <TextField label="City" value={city} onChange={(e) => setCity(e.target.value)} />
           <TextField label="State" value={state} onChange={(e) => setState(e.target.value)} />
