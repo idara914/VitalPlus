@@ -1,6 +1,6 @@
 // /pages/api/verify-insurance.js
 import axios from "axios";
- import db from "../../../lib/db";
+import pool from "@/config/db";
  // adjust if using a different database utility
 import { decode } from "jsonwebtoken";
 
