@@ -1,5 +1,5 @@
 // /api/insurance-companies.js
-+ import db from "../../../lib/db";
+ import db from "../../../lib/db";
  // adjust for your actual DB utility
 
 export default async function handler(req, res) {
