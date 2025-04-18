@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Form, Input, Button, AutoComplete, Radio } from "antd";
 import axios from "axios";
-import styles from "../../../assets/member.module.css";
+import styles from "../../assets/member.module.css";
 
 export default function InsurancePayor({ onClick }) {
   const [form] = Form.useForm();
