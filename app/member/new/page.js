@@ -1,87 +1,99 @@
 "use client";
 
-import { useState } from "react";
-import MainLayout from "@/app/components/layouts/MainLayout";
-import styles from "@/app/assets/member.module.css";
-import Stepper from "@/app/components/common/Stepper/Stepper";
-import { Form } from "antd";
-import PatientInfoForm from "./components/PatientInfoForm";
-import DemographicForm from "./components/Demographics";
-import InsurancePayor from "./components/InsurancePayor";
-import Contact from "./components/Contact";
+import { useEffect, useState } from "react";
+import { Form, Input, Button, AutoComplete, Radio } from "antd";
+import axios from "axios";
+import styles from "../../../assets/member.module.css";
 
-export default function NewMemberForm() {
-  const [currentStep, setCurrentStep] = useState(0);
+export default function InsurancePayor({ onClick }) {
   const [form] = Form.useForm();
+  const [insuranceCompanies, setInsuranceCompanies] = useState([]);
+  const [hasInsurance, setHasInsurance] = useState(null);
+  const [verifying, setVerifying] = useState(false);
+  const [verificationResult, setVerificationResult] = useState(null);
 
-  const handleFormSubmit = async (e) => {
+  useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const res = await axios.get("/api/insurance-companies");
+        setInsuranceCompanies(res.data);
+      } catch (error) {
+        console.error("Error fetching insurance companies:", error);
+      }
+    }
+    fetchCompanies();
+  }, []);
+
+  const handleVerify = async () => {
     try {
+      setVerifying(true);
       const values = await form.validateFields();
-      console.log("Form values:", values);
-      // Handle form submission logic here
-      // For example, send the data to your API or perform any other actions
+      const response = await axios.post("/api/verify-insurance", values);
+      setVerificationResult(response.data);
     } catch (error) {
-      console.error("Validation failed:", error);
+      console.error("Verification failed:", error);
+      setVerificationResult({ error: "Unable to verify insurance." });
+    } finally {
+      setVerifying(false);
     }
   };
 
-  const onChange = (current) => {
-    if (current < currentStep) {
-      setCurrentStep(current);
-      return;
-    }
-  };
   return (
-    <MainLayout isSignedIn={true}>
-      <div className={styles.container}>
-        {currentStep === 0 && (
-          <h1 className={styles.heading}>Patient Information</h1>
-        )}
-        {currentStep === 1 && (
-          <h1 className={styles.heading}>Patient Demographics</h1>
-        )}{" "}
-        {currentStep === 2 && (
-          <h1 className={styles.heading}>Insurance Payor</h1>
-        )}
-        {currentStep === 3 && (
-          <h1 className={styles.heading}>Emergency Contact</h1>
-        )}
-        <Stepper
-          steps={[
-            {
-              title: "Patient Info",
-            },
-            {
-              title: "Demographics",
-            },
-            {
-              title: "Insurance Payor",
-            },
-            {
-              title: "Contact",
-            },
-          ]}
-          currentStep={currentStep}
-          onChange={onChange}
-        />
-        <div className={styles.containerCard}>
-          <Form layout="vertical" form={form}>
-            {currentStep === 0 && (
-              <PatientInfoForm onClick={() => setCurrentStep(1)} />
-            )}
-            {currentStep === 1 && (
-              <DemographicForm onClick={() => setCurrentStep(2)} />
-            )}
-            {currentStep === 2 && (
-              <InsurancePayor onClick={() => setCurrentStep(3)} />
-            )}
+    <div>
+      <Form layout="vertical" form={form} className={styles.formGroup}>
+        <Form.Item label="Do they have insurance?" name="hasInsurance">
+          <Radio.Group onChange={(e) => setHasInsurance(e.target.value)}>
+            <Radio value={true}>Yes</Radio>
+            <Radio value={false}>No</Radio>
+          </Radio.Group>
+        </Form.Item>
 
-            {currentStep === 3 && (
-              <Contact onClick={() => handleFormSubmit()} />
+        {hasInsurance && (
+          <>
+            <Form.Item
+              label="Insurance Company"
+              name="insuranceCompanyName"
+              rules={[{ required: true, message: "Please enter insurance company name" }]}
+            >
+              <AutoComplete
+                options={insuranceCompanies.map((c) => ({ value: c.name }))}
+                placeholder="Start typing..."
+                filterOption={(inputValue, option) =>
+                  option?.value.toLowerCase().includes(inputValue.toLowerCase())
+                }
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Member ID"
+              name="memberId"
+              rules={[{ required: true, message: "Please enter Member ID" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Button type="primary" onClick={handleVerify} loading={verifying}>
+              Verify
+            </Button>
+
+            {verificationResult && (
+              <div className={styles.result}>
+                {verificationResult.error ? (
+                  <p style={{ color: "red" }}>{verificationResult.error}</p>
+                ) : (
+                  <pre>{JSON.stringify(verificationResult, null, 2)}</pre>
+                )}
+              </div>
             )}
-          </Form>
-        </div>
-      </div>
-    </MainLayout>
+          </>
+        )}
+
+        <Form.Item>
+          <Button type="primary" onClick={onClick} className={styles.nextBtn}>
+            Continue
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 }
