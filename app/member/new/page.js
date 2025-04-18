@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Form, Input, Button, AutoComplete, Radio } from "antd";
+import { Form, Input, Button, AutoComplete, Radio, DatePicker } from "antd";
 import axios from "axios";
 import styles from "../../assets/member.module.css";
 
@@ -28,7 +28,15 @@ export default function InsurancePayor({ onClick }) {
     try {
       setVerifying(true);
       const values = await form.validateFields();
-      const response = await axios.post("/api/verify-insurance", values);
+      const formattedValues = {
+        ...values,
+        patientBirthDate: values.patientBirthDate.format("YYYY-MM-DD")
+      };
+      const response = await axios.post("/api/verify-insurance", formattedValues, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       setVerificationResult(response.data);
     } catch (error) {
       console.error("Verification failed:", error);
@@ -70,6 +78,30 @@ export default function InsurancePayor({ onClick }) {
               rules={[{ required: true, message: "Please enter Member ID" }]}
             >
               <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Patient First Name"
+              name="patientFirstName"
+              rules={[{ required: true, message: "Please enter first name" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Patient Last Name"
+              name="patientLastName"
+              rules={[{ required: true, message: "Please enter last name" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Patient Date of Birth"
+              name="patientBirthDate"
+              rules={[{ required: true, message: "Please select birth date" }]}
+            >
+              <DatePicker style={{ width: "100%" }} />
             </Form.Item>
 
             <Button type="primary" onClick={handleVerify} loading={verifying}>
