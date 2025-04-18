@@ -1,131 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Form, Input, Button, AutoComplete, Radio, DatePicker } from "antd";
-import axios from "axios";
-import styles from "../../assets/member.module.css";
+import { useState } from "react";
+import MainLayout from "@/app/components/layouts/MainLayout";
+import styles from "@/app/assets/member.module.css";
+import Stepper from "@/app/components/common/Stepper/Stepper";
+import { Form } from "antd";
+import PatientInfoForm from "./components/PatientInfoForm";
+import DemographicForm from "./components/Demographics";
+import InsurancePayor from "./components/InsurancePayor";
+import Contact from "./components/Contact";
 
-export default function InsurancePayor({ onClick }) {
+export default function NewMemberForm() {
+  const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
-  const [insuranceCompanies, setInsuranceCompanies] = useState([]);
-  const [hasInsurance, setHasInsurance] = useState(null);
-  const [verifying, setVerifying] = useState(false);
-  const [verificationResult, setVerificationResult] = useState(null);
 
-  useEffect(() => {
-    async function fetchCompanies() {
-      try {
-        const res = await axios.get("/api/insurance-companies");
-        setInsuranceCompanies(res.data);
-      } catch (error) {
-        console.error("Error fetching insurance companies:", error);
-      }
-    }
-    fetchCompanies();
-  }, []);
-
-  const handleVerify = async () => {
+  const handleFormSubmit = async (e) => {
     try {
-      setVerifying(true);
       const values = await form.validateFields();
-      const formattedValues = {
-        ...values,
-        patientBirthDate: values.patientBirthDate.format("YYYY-MM-DD")
-      };
-      const response = await axios.post("/api/verify-insurance", formattedValues, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      });
-      setVerificationResult(response.data);
+      console.log("Form values:", values);
+      // Handle form submission logic here
     } catch (error) {
-      console.error("Verification failed:", error);
-      setVerificationResult({ error: "Unable to verify insurance." });
-    } finally {
-      setVerifying(false);
+      console.error("Validation failed:", error);
+    }
+  };
+
+  const onChange = (current) => {
+    if (current < currentStep) {
+      setCurrentStep(current);
+      return;
     }
   };
 
   return (
-    <div>
-      <Form layout="vertical" form={form} className={styles.formGroup}>
-        <Form.Item label="Do they have insurance?" name="hasInsurance">
-          <Radio.Group onChange={(e) => setHasInsurance(e.target.value)}>
-            <Radio value={true}>Yes</Radio>
-            <Radio value={false}>No</Radio>
-          </Radio.Group>
-        </Form.Item>
-
-        {hasInsurance && (
-          <>
-            <Form.Item
-              label="Insurance Company"
-              name="insuranceCompanyName"
-              rules={[{ required: true, message: "Please enter insurance company name" }]}
-            >
-              <AutoComplete
-                options={insuranceCompanies.map((c) => ({ value: c.name }))}
-                placeholder="Start typing..."
-                filterOption={(inputValue, option) =>
-                  option?.value.toLowerCase().includes(inputValue.toLowerCase())
-                }
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Member ID"
-              name="memberId"
-              rules={[{ required: true, message: "Please enter Member ID" }]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Patient First Name"
-              name="patientFirstName"
-              rules={[{ required: true, message: "Please enter first name" }]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Patient Last Name"
-              name="patientLastName"
-              rules={[{ required: true, message: "Please enter last name" }]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Patient Date of Birth"
-              name="patientBirthDate"
-              rules={[{ required: true, message: "Please select birth date" }]}
-            >
-              <DatePicker style={{ width: "100%" }} />
-            </Form.Item>
-
-            <Button type="primary" onClick={handleVerify} loading={verifying}>
-              Verify
-            </Button>
-
-            {verificationResult && (
-              <div className={styles.result}>
-                {verificationResult.error ? (
-                  <p style={{ color: "red" }}>{verificationResult.error}</p>
-                ) : (
-                  <pre>{JSON.stringify(verificationResult, null, 2)}</pre>
-                )}
-              </div>
-            )}
-          </>
+    <MainLayout isSignedIn={true}>
+      <div className={styles.container}>
+        {currentStep === 0 && (
+          <h1 className={styles.heading}>Patient Information</h1>
         )}
-
-        <Form.Item>
-          <Button type="primary" onClick={onClick} className={styles.nextBtn}>
-            Continue
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+        {currentStep === 1 && (
+          <h1 className={styles.heading}>Patient Demographics</h1>
+        )}
+        {currentStep === 2 && (
+          <h1 className={styles.heading}>Insurance Payor</h1>
+        )}
+        {currentStep === 3 && (
+          <h1 className={styles.heading}>Emergency Contact</h1>
+        )}
+        <Stepper
+          steps={[
+            { title: "Patient Info" },
+            { title: "Demographics" },
+            { title: "Insurance Payor" },
+            { title: "Contact" },
+          ]}
+          currentStep={currentStep}
+          onChange={onChange}
+        />
+        <div className={styles.containerCard}>
+          <Form layout="vertical" form={form}>
+            {currentStep === 0 && (
+              <PatientInfoForm onClick={() => setCurrentStep(1)} />
+            )}
+            {currentStep === 1 && (
+              <DemographicForm onClick={() => setCurrentStep(2)} />
+            )}
+            {currentStep === 2 && (
+              <InsurancePayor onClick={() => setCurrentStep(3)} />
+            )}
+            {currentStep === 3 && (
+              <Contact onClick={() => handleFormSubmit()} />
+            )}
+          </Form>
+        </div>
+      </div>
+    </MainLayout>
   );
 }
+
