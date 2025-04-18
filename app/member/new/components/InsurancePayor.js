@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; 
 import { DatePicker, Form, Input } from "antd";
 import styles from "./InsurancePayor.module.css";
 import Button from "@/app/components/common/Button/Button";
@@ -17,26 +17,31 @@ function InsurancePayor({ onClick }) {
         <Form.Item label="COB Policy" name="cob">
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Form.Item label="Career" name="career" style={customStyle}>
+        <Form.Item label="Coverage Details" name="coverageDetails" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Form.Item label="Payor Responsibility" name="payorResponsibility">
+        <Form.Item label="Coverage Status" name="coverageStatus">
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Form.Item label="Address" name="address" style={customStyle}>
+        <Form.Item label="Level Code" name="coverageLevelCode" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Form.Item label="State" name="state">
+        <Form.Item label="Authorization Required" name="authorizationRequired">
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Form.Item label="City" name="city" style={customStyle}>
+        <Form.Item label="Copay Amount" name="copayAmount" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Form.Item label="Zip Code" name="zipCode">
+        <Form.Item label="Deductible Amount" name="deductibleAmount">
           <Input placeholder="Enter here" />
         </Form.Item>
-
-        <Form.Item label="EFF Date" name="effDate" style={customStyle}>
+        <Form.Item label="Out of Pocket Limit" name="outOfPocketLimit" style={customStyle}>
+          <Input placeholder="Enter here" />
+        </Form.Item>
+        <Form.Item label="Plan Name" name="planName">
+          <Input placeholder="Enter here" />
+        </Form.Item>
+        <Form.Item label="Eligibility Start Date" name="eligibilityStartDate" style={customStyle}>
           <DatePicker
             placeholder="Enter here"
             style={{
@@ -46,7 +51,7 @@ function InsurancePayor({ onClick }) {
             }}
           />
         </Form.Item>
-        <Form.Item label="Term Date" name="termDate">
+        <Form.Item label="Eligibility End Date" name="eligibilityEndDate">
           <DatePicker
             placeholder="Enter here"
             style={{
