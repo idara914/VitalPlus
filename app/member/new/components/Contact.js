@@ -1,12 +1,28 @@
 import React from "react";
 import { Form, Input } from "antd";
+import { useFormInstance } from "antd/es/form/context";
+import axios from "axios";
 import styles from "./Contact.module.css";
 import Button from "@/app/components/common/Button/Button";
 
 const customStyle = {
   marginRight: "10px",
 };
-function Contact({ onClick }) {
+
+function Contact() {
+  const form = useFormInstance();
+
+  const handleSave = async () => {
+    const values = form.getFieldsValue(true);
+    try {
+      await axios.post("/api/save-patient", values);
+      alert("Saved successfully");
+    } catch (e) {
+      console.error("Failed to save", e);
+      alert("Failed to save");
+    }
+  };
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.gridContainer}>
@@ -55,10 +71,11 @@ function Contact({ onClick }) {
           <Input placeholder="Enter here" />
         </Form.Item>
       </div>
+
       <Form.Item>
         <Button
           htmltype="submit"
-          onClick={onClick}
+          onClick={handleSave}
           text={"Save"}
           customStyle={{
             width: "100%",
@@ -70,3 +87,4 @@ function Contact({ onClick }) {
 }
 
 export default Contact;
+
