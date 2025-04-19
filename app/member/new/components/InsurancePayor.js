@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { DatePicker, Form, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { DatePicker, Form, Input, Select, message } from "antd";
 import styles from "./InsurancePayor.module.css";
 import Button from "@/app/components/common/Button/Button";
 import axios from "axios";
@@ -11,11 +11,40 @@ const customStyle = {
 };
 
 function InsurancePayor({ onClick, form }) {
+  const [insuranceOptions, setInsuranceOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchInsuranceCompanies = async () => {
+      try {
+        const res = await axios.get("/api/insurance-companies");
+        setInsuranceOptions(res.data || []);
+      } catch (err) {
+        console.error("❌ Failed to load insurance companies:", err);
+      }
+    };
+
+    fetchInsuranceCompanies();
+  }, []);
+
+  const handleCompanySelect = (companyName) => {
+    const selected = insuranceOptions.find(c => c.name === companyName);
+    if (selected) {
+      form.setFieldsValue({ payerId: selected.payerId });
+    }
+  };
+
   const handleVerify = async () => {
+    if (!form) return;
+
     const values = form.getFieldsValue();
+    console.log("🔍 Submitting for verification:", values);
 
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        message.error("Token not found.");
+        return;
+      }
 
       const res = await axios.post("/api/verify-insurance", values, {
         headers: {
@@ -40,9 +69,14 @@ function InsurancePayor({ onClick, form }) {
           eligibilityStartDate: plan.eligibilityStartDate,
           eligibilityEndDate: plan.eligibilityEndDate,
         });
+
+        message.success("Insurance verified.");
+      } else {
+        message.warning("No benefits found for this member.");
       }
     } catch (err) {
-      console.error("Error verifying coverage", err);
+      console.error("❌ Verification failed:", err.response?.data || err);
+      message.error("Verification failed.");
     }
   };
 
@@ -50,9 +84,26 @@ function InsurancePayor({ onClick, form }) {
     <div className={styles.mainContainer}>
       <h1 className={styles.heading}>Insurance Payor</h1>
       <div className={styles.gridContainer}>
-        <Form.Item label="Payor Name" style={customStyle} name="payorName">
-          <Input placeholder="Enter here" />
+        <Form.Item label="Payor Name" name="payorName" style={customStyle}>
+          <Select
+            showSearch
+            placeholder="Select insurance company"
+            options={insuranceOptions.map((item) => ({
+              label: item.name,
+              value: item.name,
+            }))}
+            onSelect={handleCompanySelect}
+            filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase())
+            }
+          />
         </Form.Item>
+
+        {/* Hidden payerId sent with the form */}
+        <Form.Item name="payerId" hidden>
+          <Input />
+        </Form.Item>
+
         <Form.Item label="COB Policy" name="cob">
           <Input placeholder="Enter here" />
         </Form.Item>
