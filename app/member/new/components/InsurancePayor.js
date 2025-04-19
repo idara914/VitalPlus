@@ -5,20 +5,17 @@ import { DatePicker, Form, Input } from "antd";
 import styles from "./InsurancePayor.module.css";
 import Button from "@/app/components/common/Button/Button";
 import axios from "axios";
-import { useFormInstance } from "antd/es/form/context";
 
 const customStyle = {
   marginRight: "10px",
 };
 
-function InsurancePayor({ onClick }) {
-  const form = useFormInstance();
-
+function InsurancePayor({ onClick, form }) {
   const handleVerify = async () => {
     const values = form.getFieldsValue();
 
     try {
-      const token = localStorage.getItem("token"); // ✅ use token from localStorage
+      const token = localStorage.getItem("token");
 
       const res = await axios.post("/api/verify-insurance", values, {
         headers: {
@@ -84,44 +81,16 @@ function InsurancePayor({ onClick }) {
           <Input placeholder="Enter here" />
         </Form.Item>
         <Form.Item label="Coverage Start Date" name="coverageStartDate" style={customStyle}>
-          <DatePicker
-            placeholder="Enter here"
-            style={{
-              width: "100%",
-              borderRadius: "8px",
-              padding: "8px",
-            }}
-          />
+          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
         </Form.Item>
         <Form.Item label="Coverage End Date" name="coverageEndDate">
-          <DatePicker
-            placeholder="Enter here"
-            style={{
-              width: "100%",
-              borderRadius: "8px",
-              padding: "8px",
-            }}
-          />
+          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
         </Form.Item>
         <Form.Item label="Eligibility Start Date" name="eligibilityStartDate" style={customStyle}>
-          <DatePicker
-            placeholder="Enter here"
-            style={{
-              width: "100%",
-              borderRadius: "8px",
-              padding: "8px",
-            }}
-          />
+          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
         </Form.Item>
         <Form.Item label="Eligibility End Date" name="eligibilityEndDate">
-          <DatePicker
-            placeholder="Enter here"
-            style={{
-              width: "100%",
-              borderRadius: "8px",
-              padding: "8px",
-            }}
-          />
+          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
         </Form.Item>
       </div>
 
@@ -151,4 +120,3 @@ function InsurancePayor({ onClick }) {
 }
 
 export default InsurancePayor;
-
