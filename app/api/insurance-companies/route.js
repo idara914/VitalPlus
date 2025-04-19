@@ -1,16 +1,22 @@
 // /api/insurance-companies.js
 import pool from "@/config/db";
- // adjust for your actual DB utility
 
 export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
-    const companies = await db.insuranceCompanies.findMany({
-      select: { name: true, payerId: true },
-      where: { isActive: true },
-    });
-    res.status(200).json(companies);
+    const result = await pool.query(
+      `SELECT "CompanyName" AS name, "PayerId" AS "payerId"
+       FROM "InsuranceCompanies"
+       WHERE "IsActive" = TRUE
+       ORDER BY "CompanyName"`
+    );
+
+    res.status(200).json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching insurance companies:", err);
     res.status(500).json({ error: "Failed to load insurance companies" });
   }
 }
