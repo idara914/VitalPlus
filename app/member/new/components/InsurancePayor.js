@@ -146,27 +146,27 @@ function InsurancePayor({ onClick, form }) {
       </div>
 
       <div style={{ display: "flex", alignItems: "flex-end", gap: "10px" }}>
-        <Form.Item label="Phone" name="phone" style={{ flex: 1 }}>
-          <Input placeholder="Enter here" />
-        </Form.Item>
-        <Button
-          text="Verify"
-          onClick={handleVerify}
-          customStyle={{
-            height: "40px",
-            marginBottom: "10px",
-          }}
-        />
-      </div>
+        <Form.Item label="Phone" style={{ marginBottom: "24px" }}>
+  <div style={{ display: "flex", gap: "10px" }}>
+    <Form.Item name="phone" noStyle>
+      <Input placeholder="Enter here" style={{ height: "40px", borderRadius: "8px" }} />
+    </Form.Item>
+    <Button
+      text="Verify"
+      onClick={handleVerify}
+      customStyle={{
+        height: "40px",
+        padding: "0 20px",
+        fontWeight: "500",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "8px",
+      }}
+    />
+  </div>
+</Form.Item>
 
-      <Button
-        onClick={onClick}
-        text={"Save"}
-        customStyle={{
-          width: "100%",
-        }}
-      />
-    </div>
   );
 }
 
