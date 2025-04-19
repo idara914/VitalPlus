@@ -1,6 +1,7 @@
 import pool from "@/config/db";
 import { v4 as uuidv4 } from "uuid";
 import { NextResponse } from "next/server";
+import axios from "axios";
 
 export async function POST(req) {
   try {
@@ -57,9 +58,49 @@ export async function POST(req) {
       ]
     );
 
+    // Optional mock Availity coverage lookup (development only)
+    const tokenRes = await axios.post(
+      "https://api.availity.com/availity/v1/token",
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: process.env.AV_CLIENT_ID,
+        client_secret: process.env.AV_CLIENT_SECRET,
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const accessToken = tokenRes.data.access_token;
+
+    const mockCoverageRes = await axios.post(
+      "https://api.availity.com/availity/development-partner/v1/coverages",
+      new URLSearchParams({
+        payerId: "60054",
+        providerNpi: "1234567893",
+        providerFirstName: "Test",
+        providerLastName: "Provider",
+        providerType: "individual",
+        providerTaxId: "123456789",
+        memberId: data.memberId,
+        patientFirstName: data.firstName,
+        patientLastName: data.lastName,
+        patientBirthDate: data.dob,
+        serviceType: "30",
+        asOfDate: new Date().toISOString().split("T")[0]
+      }),
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-Api-Mock-Scenario-ID": "Coverages-Complete-i"
+        }
+      }
+    );
+
+    const coverage = mockCoverageRes.data?.plans?.[0] || {};
+    const benefit = coverage.benefits?.[0] || {};
+
     const insuranceId = uuidv4();
 
-    // Insert or update Clinical_PatientInsurances
     await pool.query(
       `INSERT INTO "Clinical_PatientInsurances" (
         "Id", "PatientId", "CoverageStartDate", "CoverageEndDate", "CoverageDetails",
@@ -85,22 +126,22 @@ export async function POST(req) {
       [
         insuranceId,
         patientId,
-        data.coverageStartDate,
-        data.coverageEndDate,
-        data.coverageDetails,
-        data.coverageStatus,
-        data.coverageLevelCode,
-        data.authorizationRequired,
-        data.copayAmount,
-        data.deductibleAmount,
-        data.outOfPocketLimit,
-        data.planName,
-        data.eligibilityStartDate,
-        data.eligibilityEndDate,
+        coverage.coverageStartDate,
+        coverage.coverageEndDate,
+        coverage.description,
+        coverage.status,
+        benefit.levelCode,
+        benefit.authorizationRequired,
+        benefit.copaymentAmount,
+        benefit.deductibleAmount,
+        benefit.outOfPocketLimit,
+        coverage.planName || coverage.description,
+        coverage.eligibilityStartDate,
+        coverage.eligibilityEndDate,
       ]
     );
 
-    return NextResponse.json({ status: "OK" });
+    return NextResponse.json({ status: "OK", coverage });
   } catch (error) {
     console.error("Error saving patient/insurance:", error);
     return NextResponse.json({ error: "Save failed" }, { status: 500 });
