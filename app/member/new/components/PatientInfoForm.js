@@ -56,9 +56,10 @@ function PatientInfoForm({ onClick }) {
             }}
           />
         </Form.Item>
-        <Form.Item label="Patient ID" name="patientId">
-          <Input placeholder="Enter here" />
-        </Form.Item>
+     <Form.Item label="SSN" name="patientId">
+  <Input placeholder="Enter here" />
+</Form.Item>
+
       </div>
       <Form.Item
         label="Gender"
