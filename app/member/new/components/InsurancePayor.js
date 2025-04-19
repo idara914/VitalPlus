@@ -2,6 +2,8 @@ import React from "react";
 import { DatePicker, Form, Input } from "antd";
 import styles from "./InsurancePayor.module.css";
 import Button from "@/app/components/common/Button/Button";
+import axios from "axios";
+import { useFormInstance } from "antd/es/form/context";
 
 const customStyle = {
   marginRight: "10px",
@@ -87,14 +89,42 @@ function InsurancePayor({ onClick }) {
         <Form.Item label="Phone" name="phone" style={{ flex: 1 }}>
           <Input placeholder="Enter here" />
         </Form.Item>
-        <Button
-          text="Verify"
-          customStyle={{
-            height: "40px",
-            marginBottom: "10px",
-          }}
-        />
-      </div>
+       const form = useFormInstance();
+
+<Button
+  text="Verify"
+  onClick={async () => {
+    const values = form.getFieldsValue();
+    try {
+      const res = await axios.post("/api/verify-insurance", values);
+      const plan = res.data.plans?.[0];
+
+      if (plan) {
+        form.setFieldsValue({
+          coverageStartDate: plan.coverageStartDate,
+          coverageEndDate: plan.coverageEndDate,
+          coverageDetails: plan.description,
+          coverageStatus: plan.status,
+          coverageLevelCode: plan.benefits?.[0]?.levelCode,
+          authorizationRequired: plan.benefits?.[0]?.authorizationRequired,
+          copayAmount: plan.benefits?.[0]?.copaymentAmount,
+          deductibleAmount: plan.benefits?.[0]?.deductibleAmount,
+          outOfPocketLimit: plan.benefits?.[0]?.outOfPocketLimit,
+          planName: plan.planName,
+          eligibilityStartDate: plan.eligibilityStartDate,
+          eligibilityEndDate: plan.eligibilityEndDate,
+        });
+      }
+    } catch (err) {
+      console.error("Error verifying coverage", err);
+    }
+  }}
+  customStyle={{
+    height: "40px",
+    marginBottom: "10px",
+  }}
+/>
+
 
       <Button
         onClick={onClick}
