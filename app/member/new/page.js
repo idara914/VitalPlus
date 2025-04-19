@@ -57,20 +57,20 @@ export default function NewMemberForm() {
           onChange={onChange}
         />
         <div className={styles.containerCard}>
-          <Form layout="vertical" form={form}>
-            {currentStep === 0 && (
-              <PatientInfoForm onClick={() => setCurrentStep(1)} />
-            )}
-            {currentStep === 1 && (
-              <DemographicForm onClick={() => setCurrentStep(2)} />
-            )}
-            {currentStep === 2 && (
-              <InsurancePayor onClick={() => setCurrentStep(3)} />
-            )}
-            {currentStep === 3 && (
-              <Contact onClick={() => handleFormSubmit()} />
-            )}
-          </Form>
+         <Form layout="vertical" form={form}>
+  {currentStep === 0 && (
+    <PatientInfoForm onClick={() => setCurrentStep(1)} />
+  )}
+  {currentStep === 1 && (
+    <DemographicForm onClick={() => setCurrentStep(2)} />
+  )}
+  {currentStep === 2 && (
+    <InsurancePayor form={form} onClick={() => setCurrentStep(3)} />
+  )}
+  {currentStep === 3 && (
+    <Contact onClick={() => handleFormSubmit()} />
+  )}
+</Form>
         </div>
       </div>
     </MainLayout>
