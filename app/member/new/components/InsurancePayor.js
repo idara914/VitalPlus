@@ -41,6 +41,26 @@ function InsurancePayor({ onClick }) {
         <Form.Item label="Plan Name" name="planName">
           <Input placeholder="Enter here" />
         </Form.Item>
+        <Form.Item label="Coverage Start Date" name="coverageStartDate" style={customStyle}>
+          <DatePicker
+            placeholder="Enter here"
+            style={{
+              width: "100%",
+              borderRadius: "8px",
+              padding: "8px",
+            }}
+          />
+        </Form.Item>
+        <Form.Item label="Coverage End Date" name="coverageEndDate">
+          <DatePicker
+            placeholder="Enter here"
+            style={{
+              width: "100%",
+              borderRadius: "8px",
+              padding: "8px",
+            }}
+          />
+        </Form.Item>
         <Form.Item label="Eligibility Start Date" name="eligibilityStartDate" style={customStyle}>
           <DatePicker
             placeholder="Enter here"
@@ -62,9 +82,19 @@ function InsurancePayor({ onClick }) {
           />
         </Form.Item>
       </div>
-      <Form.Item label="Phone" name="phone">
-        <Input placeholder="Enter here" />
-      </Form.Item>
+
+      <div style={{ display: "flex", alignItems: "flex-end", gap: "10px" }}>
+        <Form.Item label="Phone" name="phone" style={{ flex: 1 }}>
+          <Input placeholder="Enter here" />
+        </Form.Item>
+        <Button
+          text="Verify"
+          customStyle={{
+            height: "40px",
+            marginBottom: "10px",
+          }}
+        />
+      </div>
 
       <Button
         onClick={onClick}
@@ -78,3 +108,4 @@ function InsurancePayor({ onClick }) {
 }
 
 export default InsurancePayor;
+
