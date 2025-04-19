@@ -1,11 +1,7 @@
-// /api/insurance-companies.js
+// /app/api/insurance-companies/route.js
 import pool from "@/config/db";
 
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+export async function GET(req) {
   try {
     const result = await pool.query(
       `SELECT "CompanyName" AS name, "PayerId" AS "payerId"
@@ -14,9 +10,14 @@ export default async function handler(req, res) {
        ORDER BY "CompanyName"`
     );
 
-    res.status(200).json(result.rows);
+    return new Response(JSON.stringify(result.rows), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err) {
     console.error("Error fetching insurance companies:", err);
-    res.status(500).json({ error: "Failed to load insurance companies" });
+    return new Response(JSON.stringify({ error: "Failed to load insurance companies" }), {
+      status: 500,
+    });
   }
 }
