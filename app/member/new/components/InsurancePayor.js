@@ -27,7 +27,7 @@ function InsurancePayor({ onClick, form }) {
   }, []);
 
   const handleCompanySelect = (companyName) => {
-    const selected = insuranceOptions.find(c => c.name === companyName);
+    const selected = insuranceOptions.find((c) => c.name === companyName);
     if (selected) {
       form.setFieldsValue({ payerId: selected.payerId });
     }
@@ -99,7 +99,6 @@ function InsurancePayor({ onClick, form }) {
           />
         </Form.Item>
 
-        {/* Hidden payerId sent with the form */}
         <Form.Item name="payerId" hidden>
           <Input />
         </Form.Item>
@@ -147,26 +146,35 @@ function InsurancePayor({ onClick, form }) {
 
       <div style={{ display: "flex", alignItems: "flex-end", gap: "10px" }}>
         <Form.Item label="Phone" style={{ marginBottom: "24px" }}>
-  <div style={{ display: "flex", gap: "10px" }}>
-    <Form.Item name="phone" noStyle>
-      <Input placeholder="Enter here" style={{ height: "40px", borderRadius: "8px" }} />
-    </Form.Item>
-    <Button
-      text="Verify"
-      onClick={handleVerify}
-      customStyle={{
-        height: "40px",
-        padding: "0 20px",
-        fontWeight: "500",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "8px",
-      }}
-    />
-  </div>
-</Form.Item>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Form.Item name="phone" noStyle>
+              <Input placeholder="Enter here" style={{ height: "40px", borderRadius: "8px" }} />
+            </Form.Item>
+            <Button
+              text="Verify"
+              onClick={handleVerify}
+              customStyle={{
+                height: "40px",
+                padding: "0 20px",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "8px",
+              }}
+            />
+          </div>
+        </Form.Item>
+      </div>
 
+      <Button
+        onClick={onClick}
+        text={"Save"}
+        customStyle={{
+          width: "100%",
+        }}
+      />
+    </div>
   );
 }
 
