@@ -13,14 +13,8 @@ const SignUp = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar translucent={true} backgroundColor={"transparent"} barStyle="dark-content" />
-      <KeyboardAvoidingView 
-        style={styles.keyboardAvoidingView} 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <ScrollView 
-          contentContainerStyle={styles.container} 
-          keyboardShouldPersistTaps="handled"
-        >
+      <ScrollView style={{ flex: 1 }}>
+        <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === "ios" ? "padding" : "height"}>
           <Image source={Icons.logo2} resizeMode="contain" style={styles.logo} />
           <View style={styles.formContainer}>
             <View style={styles.formBox}>
@@ -47,19 +41,17 @@ const SignUp = () => {
               </View>
             </View>
           </View>
-
-          <View style={styles.buttonWrapper}>
-            <CustomButton title="Sign Up" onPress={() => {}} />
-            <View style={styles.loginLinkWrapper}>
-              <Text style={styles.loginText}>Already have an account?</Text>
-              <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('SignIn')}>
-                <Text style={styles.loginButton}>Login</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </ScrollView>
+      <View style={styles.buttonWrapper}>
+        <CustomButton title="Sign Up" onPress={() => {}} />
+        <View style={styles.loginLinkWrapper}>
+          <Text style={styles.loginText}>Already have an account?</Text>
+          <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate("SignIn")}>
+            <Text style={styles.loginButton}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -84,10 +76,12 @@ const styles = StyleSheet.create({
   logo: {
     width: RFPercentage(40),
     height: RFPercentage(10),
+    alignSelf: "center",
   },
   formContainer: {
-    width: "100%",
+    width: "90%",
     marginTop: RFPercentage(3.5),
+    alignSelf: "center",
   },
   formBox: {
     width: "100%",
@@ -112,8 +106,9 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     alignSelf: "center",
-    width: "100%",
-    marginTop: RFPercentage(14),
+    width: "90%",
+    position: "absolute",
+    bottom: RFPercentage(4),
   },
   loginLinkWrapper: {
     flexDirection: "row",
