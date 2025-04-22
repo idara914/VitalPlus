@@ -16,14 +16,14 @@ export async function POST(req) {
     }
 
     const token = authHeader.split(" ")[1];
-    let agencyId;
+    let userId;
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET); // replace with your secret
-      agencyId = decoded.AgencyId;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = decoded.UserId;
 
-      if (!agencyId) {
-        return new Response(JSON.stringify({ message: "Invalid token: No AgencyId" }), {
+      if (!userId) {
+        return new Response(JSON.stringify({ message: "Invalid token: No UserId" }), {
           status: 403,
           headers: { "Content-Type": "application/json" },
         });
@@ -35,6 +35,21 @@ export async function POST(req) {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    // 🔍 Get AgencyId from AppUser table
+    const agencyResult = await pool.query(
+      `SELECT "AgencyId" FROM public."AppUser" WHERE "Id" = $1`,
+      [userId]
+    );
+
+    if (agencyResult.rowCount === 0) {
+      return new Response(JSON.stringify({ message: "User not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const agencyId = agencyResult.rows[0].AgencyId;
 
     const {
       firstName,
