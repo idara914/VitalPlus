@@ -1,10 +1,40 @@
 "use server";
 
 import pool from "@/config/db";
+import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
     const body = await req.json();
+    const authHeader = req.headers.get("authorization");
+
+    if (!authHeader) {
+      return new Response(JSON.stringify({ message: "Missing auth token" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+    let agencyId;
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // replace with your secret
+      agencyId = decoded.AgencyId;
+
+      if (!agencyId) {
+        return new Response(JSON.stringify({ message: "Invalid token: No AgencyId" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    } catch (err) {
+      console.error("JWT error:", err);
+      return new Response(JSON.stringify({ message: "Invalid token" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     const {
       firstName,
@@ -16,9 +46,9 @@ export async function POST(req) {
       providerCode,
     } = body;
 
-    const filters = [];
-    const values = [];
-    let paramIndex = 1;
+    const filters = [`"AgencyId" = $1`];
+    const values = [agencyId];
+    let paramIndex = 2;
 
     if (firstName) {
       filters.push(`"FirstName" ILIKE $${paramIndex++}`);
@@ -49,7 +79,7 @@ export async function POST(req) {
       values.push(`%${providerCode}%`);
     }
 
-    const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
+    const whereClause = `WHERE ${filters.join(" AND ")}`;
 
     const query = `
       SELECT "Id", "FirstName", "LastName", "MiddleInitial", "DOB", "Remarks", "Code", "ServiceProviderCode"
@@ -73,3 +103,4 @@ export async function POST(req) {
     });
   }
 }
+
