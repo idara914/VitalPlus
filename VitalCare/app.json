@@ -3,6 +3,7 @@
     "name": "VitalCare",
     "slug": "VitalCare",
     "version": "1.0.0",
+    "sdkVersion": "52.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,6 +26,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "platforms": ["ios", "android"],
+    "extra": {
+      "eas": {
+        "projectId": "3688cb43-9a9d-4052-954a-e4a6bab67798"
+      }
     }
   }
+}
+
 }
