@@ -19,7 +19,7 @@ export default function MyTabs() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           if (route.name === "Menu") {
-            return <FontAwesome name="plus" size={RFPercentage(2.5)} color={color} />;
+            return <FontAwesome name="plus" size={RFPercentage(3)} color={color} />;
           } else if (route.name === "Account") {
             return <FontAwesome6 name="user" size={RFPercentage(2.5)} color={color} />;
           } else if (route.name === "Notification") {
@@ -43,7 +43,7 @@ export default function MyTabs() {
           <TouchableWithoutFeedback onPress={props.onPress}>
             <View style={props.style}>{props.children}</View>
           </TouchableWithoutFeedback>
-        )
+        ),
       })}
     >
       <Tab.Screen name="Menu" component={Menu} />
@@ -52,3 +52,4 @@ export default function MyTabs() {
     </Tab.Navigator>
   );
 }
+
