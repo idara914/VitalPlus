@@ -21,42 +21,19 @@ function Contact({ form, onClick }) {
           <Input placeholder="Enter here" />
         </Form.Item>
 
-        <Form.Item label="Relationship" name="relationship">
-          <Input placeholder="Enter here" />
-        </Form.Item>
-
-        <Form.Item label="Contact" name="contact" style={customStyle}>
-          <Input placeholder="Enter here" />
-        </Form.Item>
-
-        <Form.Item label="Address" name="address">
-          <Input placeholder="Enter here" />
-        </Form.Item>
-
         <Form.Item
-          label="Secondary Physician"
-          name="secondaryPhysician"
+          label="Relationship"
+          name="relationship"
           style={customStyle}
         >
           <Input placeholder="Enter here" />
         </Form.Item>
 
         <Form.Item
-          label="Secondary Physician Number"
-          name="secondaryPhysicianNumber"
+          label="Contact"
+          name="contact"
+          style={customStyle}
         >
-          <Input placeholder="Enter here" />
-        </Form.Item>
-
-        <Form.Item label="State" name="state" style={customStyle}>
-          <Input placeholder="Enter here" />
-        </Form.Item>
-
-        <Form.Item label="City" name="city">
-          <Input placeholder="Enter here" />
-        </Form.Item>
-
-        <Form.Item label="Zip Code" name="zip" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
       </div>
@@ -76,4 +53,3 @@ function Contact({ form, onClick }) {
 }
 
 export default Contact;
-
