@@ -1,14 +1,11 @@
 "use client";
 
 import React from "react";
-import { DatePicker, Form, Input, Radio } from "antd";
+import { DatePicker, Form, Input, Radio, Select } from "antd"; // Use native Select from Ant Design
 import styles from "./PatientInfoForm.module.css";
 import Button from "@/app/components/common/Button/Button";
-import SelectField from "@/app/components/common/SelectField/SelectField";
 
-const customStyle = {
-  marginRight: "10px",
-};
+const customStyle = { marginRight: "10px" };
 
 const stateOptions = [
   { label: "Alabama", value: "AL" },
@@ -148,16 +145,16 @@ function PatientInfoForm({ onClick, form }) {
         </Form.Item>
 
         <Form.Item label="State" name="state" style={customStyle}>
-          <SelectField
+          <Select
             options={stateOptions}
-            placeholder={"Select here"}
-            containerStyle={{ backgroundColor: "#fff" }}
-            customStyle={{
-              backgroundColor: "#fff",
-              border: "1px solid #d0d3d7",
+            placeholder="Select here"
+            style={{
+              width: "100%",
+              borderRadius: "8px",
               padding: "2px",
               height: "39px",
               textAlign: "left",
+              backgroundColor: "#fff",
             }}
           />
         </Form.Item>
@@ -175,7 +172,7 @@ function PatientInfoForm({ onClick, form }) {
 
       <Button
         onClick={onClick}
-        text={"Save"}
+        text="Save"
         customStyle={{ width: "100%" }}
       />
     </div>
