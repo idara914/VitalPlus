@@ -6,7 +6,8 @@ import Button from "@/app/components/common/Button/Button";
 const customStyle = {
   marginRight: "10px",
 };
-function DemographicForm({ onClick }) {
+
+function DemographicForm({ onClick, form }) {
   return (
     <div className={styles.mainContainer}>
       <h1 className={styles.heading}>Ethnicity</h1>
@@ -21,25 +22,24 @@ function DemographicForm({ onClick }) {
           }}
         >
           <Checkbox>No, not of Hispanic, Latino or Spanish</Checkbox>
-          <Checkbox>No, not of Hispanic, Latino or Spanish</Checkbox>
           <Checkbox>Yes, Mexican, Mexican American</Checkbox>
-          <Checkbox>Yes, Mexican, Mexican American</Checkbox>
+          <Checkbox>Yes, Cuban</Checkbox>
+          <Checkbox>Other Hispanic, Latino or Spanish origin</Checkbox>
         </div>
       </Form.Item>
 
       <Form.Item
         label="Gender"
         name="gender"
-        style={{
-          textAlign: "left",
-        }}
-        required={true}
+        rules={[{ required: true, message: "Please select gender!" }]}
+        style={{ textAlign: "left" }}
       >
         <Radio.Group>
           <Radio value="Male">Male</Radio>
           <Radio value="Female">Female</Radio>
         </Radio.Group>
       </Form.Item>
+
       <div className={styles.gridContainer}>
         <Form.Item
           label="Language Spoken"
@@ -52,6 +52,7 @@ function DemographicForm({ onClick }) {
           <Input placeholder="Enter here" />
         </Form.Item>
       </div>
+
       <Form.Item label="Date Of Birth" name="dob">
         <DatePicker
           placeholder="Enter here"
@@ -63,13 +64,10 @@ function DemographicForm({ onClick }) {
         />
       </Form.Item>
 
-      <h1 className={styles.heading}>Patient preference</h1>
+      <h1 className={styles.heading}>Patient Preference</h1>
       <Form.Item
-        label=""
         name="patientPreference"
-        style={{
-          textAlign: "left",
-        }}
+        style={{ textAlign: "left" }}
       >
         <Radio.Group>
           <Radio value="Family">Family</Radio>
@@ -77,9 +75,10 @@ function DemographicForm({ onClick }) {
           <Radio value="Professional">Professional</Radio>
         </Radio.Group>
       </Form.Item>
+
       <Button
         onClick={onClick}
-        text={"Save"}
+        text="Save"
         customStyle={{
           width: "100%",
         }}
@@ -89,4 +88,5 @@ function DemographicForm({ onClick }) {
 }
 
 export default DemographicForm;
+
 
