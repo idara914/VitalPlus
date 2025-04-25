@@ -13,11 +13,11 @@ export async function POST(req) {
       `INSERT INTO "ClinicPatient" (
         "Id", "ZZno", "FirstName", "LastName", "CreatedDT", "Gender", "DateOfBirth",
         "ContactNumber1", "FullAddress", "Status", "ZipCode", "Ethnicity",
-        "LanguageSpoken", "LanguageWritten", "Relationship", "ContactNumber2",
-        "State", "City", "IsActive"
+        "LanguageSpoken", "LanguageWritten", "Race", "EmergencyContactName",
+        "Relationship", "ContactNumber2", "State", "City", "IsActive"
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-        $11, $12, $13, $14, $15, $16, $17, $18, TRUE
+        $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, TRUE
       )
       ON CONFLICT ("Id") DO UPDATE SET
         "ZZno" = $2,
@@ -33,15 +33,17 @@ export async function POST(req) {
         "Ethnicity" = $12,
         "LanguageSpoken" = $13,
         "LanguageWritten" = $14,
-        "Relationship" = $15,
-        "ContactNumber2" = $16,
-        "State" = $17,
-        "City" = $18,
+        "Race" = $15,
+        "EmergencyContactName" = $16,
+        "Relationship" = $17,
+        "ContactNumber2" = $18,
+        "State" = $19,
+        "City" = $20,
         "IsActive" = TRUE
       `,
       [
         id,
-        data.ZZno, // ✅ This is your SSN/patient number
+        data.ZZno, // SSN
         data.firstName,
         data.lastName,
         data.startOfCareDate,
@@ -51,9 +53,11 @@ export async function POST(req) {
         data.address,
         data.status,
         data.zip || data.zipCode,
-        data.ethicity,
+        data.ethnicity,
         data.languageSpoken,
         data.languageWritten,
+        data.race,
+        data.emergencyContactName,
         data.relationship,
         data.secondaryPhysicianNumber,
         data.state,
@@ -106,7 +110,7 @@ export async function POST(req) {
         `,
         [
           insuranceId,
-          id, // ✅ PatientId = Id (UUID) from ClinicPatient
+          id, // Link back to ClinicPatient
           data.coverageStartDate,
           data.coverageEndDate,
           data.coverageDetails,
