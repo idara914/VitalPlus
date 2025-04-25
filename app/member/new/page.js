@@ -5,6 +5,7 @@ import MainLayout from "@/app/components/layouts/MainLayout";
 import styles from "@/app/assets/member.module.css";
 import Stepper from "@/app/components/common/Stepper/Stepper";
 import { Form } from "antd";
+import axios from "axios";
 import PatientInfoForm from "./components/PatientInfoForm";
 import DemographicForm from "./components/Demographics";
 import InsurancePayor from "./components/InsurancePayor";
@@ -14,13 +15,15 @@ export default function NewMemberForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async () => {
     try {
       const values = await form.validateFields();
       console.log("Form values:", values);
-      // Handle form submission logic here
+      await axios.post("/api/save-patient", values);
+      alert("Saved successfully");
     } catch (error) {
       console.error("Validation failed:", error);
+      alert("Save failed");
     }
   };
 
@@ -57,20 +60,20 @@ export default function NewMemberForm() {
           onChange={onChange}
         />
         <div className={styles.containerCard}>
-         <Form layout="vertical" form={form}>
-  {currentStep === 0 && (
-    <PatientInfoForm onClick={() => setCurrentStep(1)} />
-  )}
-  {currentStep === 1 && (
-    <DemographicForm onClick={() => setCurrentStep(2)} />
-  )}
-  {currentStep === 2 && (
-    <InsurancePayor form={form} onClick={() => setCurrentStep(3)} />
-  )}
-  {currentStep === 3 && (
-    <Contact onClick={() => handleFormSubmit()} />
-  )}
-</Form>
+          <Form layout="vertical" form={form}>
+            {currentStep === 0 && (
+              <PatientInfoForm form={form} onClick={() => setCurrentStep(1)} />
+            )}
+            {currentStep === 1 && (
+              <DemographicForm form={form} onClick={() => setCurrentStep(2)} />
+            )}
+            {currentStep === 2 && (
+              <InsurancePayor form={form} onClick={() => setCurrentStep(3)} />
+            )}
+            {currentStep === 3 && (
+              <Contact form={form} onClick={handleFormSubmit} />
+            )}
+          </Form>
         </div>
       </div>
     </MainLayout>
