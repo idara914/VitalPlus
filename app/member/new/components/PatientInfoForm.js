@@ -7,7 +7,8 @@ import SelectField from "@/app/components/common/SelectField/SelectField";
 const customStyle = {
   marginRight: "10px",
 };
-function PatientInfoForm({ onClick }) {
+
+function PatientInfoForm({ onClick, form }) {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.gridContainer}>
@@ -24,6 +25,7 @@ function PatientInfoForm({ onClick }) {
         >
           <Input placeholder="Enter here" />
         </Form.Item>
+
         <Form.Item
           label="Last Name"
           name="lastName"
@@ -36,12 +38,15 @@ function PatientInfoForm({ onClick }) {
         >
           <Input placeholder="Enter here" />
         </Form.Item>
+
         <Form.Item label="Time In" name="timeIn" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
+
         <Form.Item label="Time Out" name="timeOut">
           <Input placeholder="Enter here" />
         </Form.Item>
+
         <Form.Item
           label="Start Of Care Date"
           name="startOfCareDate"
@@ -56,11 +61,12 @@ function PatientInfoForm({ onClick }) {
             }}
           />
         </Form.Item>
-     <Form.Item label="SSN" name="patientId">
-  <Input placeholder="Enter here" />
-</Form.Item>
 
+        <Form.Item label="SSN" name="patientId">
+          <Input placeholder="Enter here" />
+        </Form.Item>
       </div>
+
       <Form.Item
         label="Gender"
         name="gender"
@@ -70,6 +76,7 @@ function PatientInfoForm({ onClick }) {
         rules={[
           {
             required: true,
+            message: "Please select gender!",
           },
         ]}
       >
@@ -78,6 +85,7 @@ function PatientInfoForm({ onClick }) {
           <Radio value="Female">Female</Radio>
         </Radio.Group>
       </Form.Item>
+
       <div className={styles.gridContainer}>
         <Form.Item
           label="Date of Birth"
@@ -99,12 +107,15 @@ function PatientInfoForm({ onClick }) {
             }}
           />
         </Form.Item>
+
         <Form.Item label="Phone Number" name="phone" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
+
         <Form.Item label="Address" name="address" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
+
         <Form.Item label="Status" name="status" style={customStyle}>
           <SelectField
             options={[]}
@@ -122,6 +133,7 @@ function PatientInfoForm({ onClick }) {
           />
         </Form.Item>
       </div>
+
       <Form.Item label="Zip Code" name="zipCode">
         <Input placeholder="Enter here" />
       </Form.Item>
@@ -138,3 +150,4 @@ function PatientInfoForm({ onClick }) {
 }
 
 export default PatientInfoForm;
+
