@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { DatePicker, Form, Input, Radio } from "antd";
 import styles from "./PatientInfoForm.module.css";
@@ -39,11 +41,11 @@ function PatientInfoForm({ onClick, form }) {
           <Input placeholder="Enter here" />
         </Form.Item>
 
-        <Form.Item label="Time In" name="timeIn" style={customStyle}>
+        <Form.Item label="Middle Name" name="middleName" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
 
-        <Form.Item label="Time Out" name="timeOut">
+        <Form.Item label="Email" name="email">
           <Input placeholder="Enter here" />
         </Form.Item>
 
@@ -81,8 +83,8 @@ function PatientInfoForm({ onClick, form }) {
         ]}
       >
         <Radio.Group>
-          <Radio value="Male">Male</Radio>
-          <Radio value="Female">Female</Radio>
+          <Radio value="M">Male</Radio>
+          <Radio value="F">Female</Radio>
         </Radio.Group>
       </Form.Item>
 
@@ -116,9 +118,9 @@ function PatientInfoForm({ onClick, form }) {
           <Input placeholder="Enter here" />
         </Form.Item>
 
-        <Form.Item label="Status" name="status" style={customStyle}>
+        <Form.Item label="State" name="state" style={customStyle}>
           <SelectField
-            options={[]}
+            options={[]} // You can hardcode or load US states list here
             placeholder={"Select here"}
             containerStyle={{
               backgroundColor: "#fff",
@@ -134,9 +136,15 @@ function PatientInfoForm({ onClick, form }) {
         </Form.Item>
       </div>
 
-      <Form.Item label="Zip Code" name="zipCode">
-        <Input placeholder="Enter here" />
-      </Form.Item>
+      <div className={styles.gridContainer}>
+        <Form.Item label="Zip Code" name="zipCode" style={customStyle}>
+          <Input placeholder="Enter here" />
+        </Form.Item>
+
+        <Form.Item label="City" name="city">
+          <Input placeholder="Enter here" />
+        </Form.Item>
+      </div>
 
       <Button
         onClick={onClick}
