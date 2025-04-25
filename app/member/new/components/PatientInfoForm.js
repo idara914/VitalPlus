@@ -62,7 +62,7 @@ function PatientInfoForm({ onClick, form }) {
           />
         </Form.Item>
 
-        <Form.Item label="SSN" name="patientId">
+        <Form.Item label="SSN" name="ZZno">
           <Input placeholder="Enter here" />
         </Form.Item>
       </div>
