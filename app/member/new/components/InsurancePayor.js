@@ -27,18 +27,14 @@ function InsurancePayor({ onClick, form }) {
   }, []);
 
   const handleCompanySelect = (companyName) => {
-    const selected = insuranceOptions.find(c => c.name === companyName);
+    const selected = insuranceOptions.find((c) => c.name === companyName);
     if (selected) {
       form.setFieldsValue({ payerId: selected.payerId });
     }
   };
 
   const handleVerify = async () => {
-    if (!form) return;
-
     const values = form.getFieldsValue();
-    console.log("🔍 Submitting for verification:", values);
-
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -99,7 +95,6 @@ function InsurancePayor({ onClick, form }) {
           />
         </Form.Item>
 
-        {/* Hidden payerId sent with the form */}
         <Form.Item name="payerId" hidden>
           <Input />
         </Form.Item>
@@ -132,16 +127,16 @@ function InsurancePayor({ onClick, form }) {
           <Input placeholder="Enter here" />
         </Form.Item>
         <Form.Item label="Coverage Start Date" name="coverageStartDate" style={customStyle}>
-          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
+          <DatePicker style={{ width: "100%", borderRadius: "8px" }} />
         </Form.Item>
         <Form.Item label="Coverage End Date" name="coverageEndDate">
-          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
+          <DatePicker style={{ width: "100%", borderRadius: "8px" }} />
         </Form.Item>
         <Form.Item label="Eligibility Start Date" name="eligibilityStartDate" style={customStyle}>
-          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
+          <DatePicker style={{ width: "100%", borderRadius: "8px" }} />
         </Form.Item>
         <Form.Item label="Eligibility End Date" name="eligibilityEndDate">
-          <DatePicker style={{ width: "100%", borderRadius: "8px", padding: "8px" }} />
+          <DatePicker style={{ width: "100%", borderRadius: "8px" }} />
         </Form.Item>
       </div>
 
@@ -161,13 +156,12 @@ function InsurancePayor({ onClick, form }) {
 
       <Button
         onClick={onClick}
-        text={"Save"}
-        customStyle={{
-          width: "100%",
-        }}
+        text="Save"
+        customStyle={{ width: "100%" }}
       />
     </div>
   );
 }
 
 export default InsurancePayor;
+
