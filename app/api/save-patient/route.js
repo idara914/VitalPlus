@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const data = await req.json();
-    const patientUUID = uuidv4(); // UUID for ClinicPatient.Id
+    const id = uuidv4(); // UUID for Id column
     const insuranceId = uuidv4();
 
     // Insert or update ClinicPatient
@@ -16,8 +16,8 @@ export async function POST(req) {
         "LanguageSpoken", "LanguageWritten", "Relationship", "ContactNumber2",
         "State", "City", "IsActive"
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-        $12, $13, $14, $15, $16, $17, TRUE
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+        $11, $12, $13, $14, $15, $16, $17, $18, TRUE
       )
       ON CONFLICT ("Id") DO UPDATE SET
         "ZZno" = $2,
@@ -40,8 +40,8 @@ export async function POST(req) {
         "IsActive" = TRUE
       `,
       [
-        patientUUID,
-        data.ZZno, // SSN value
+        id,
+        data.ZZno, // ✅ This is your SSN/patient number
         data.firstName,
         data.lastName,
         data.startOfCareDate,
@@ -61,17 +61,27 @@ export async function POST(req) {
       ]
     );
 
-    // Conditionally insert insurance data
-    const insuranceFields = [
-      data.coverageStartDate, data.coverageEndDate, data.coverageDetails,
-      data.coverageStatus, data.coverageLevelCode, data.authorizationRequired,
-      data.copayAmount, data.deductibleAmount, data.outOfPocketLimit,
-      data.planName, data.eligibilityStartDate, data.eligibilityEndDate,
+    // Only insert into Clinical_PatientInsurances if all fields are filled
+    const insuranceRequiredFields = [
+      data.coverageStartDate,
+      data.coverageEndDate,
+      data.coverageDetails,
+      data.coverageStatus,
+      data.coverageLevelCode,
+      data.authorizationRequired,
+      data.copayAmount,
+      data.deductibleAmount,
+      data.outOfPocketLimit,
+      data.planName,
+      data.eligibilityStartDate,
+      data.eligibilityEndDate,
     ];
 
-    const hasInsurance = insuranceFields.every(f => f !== undefined && f !== null && f !== "");
+    const hasInsuranceData = insuranceRequiredFields.every(
+      (field) => field !== undefined && field !== null && field !== ""
+    );
 
-    if (hasInsurance) {
+    if (hasInsuranceData) {
       await pool.query(
         `INSERT INTO "Clinical_PatientInsurances" (
           "Id", "PatientId", "CoverageStartDate", "CoverageEndDate", "CoverageDetails",
@@ -96,7 +106,7 @@ export async function POST(req) {
         `,
         [
           insuranceId,
-          patientUUID,
+          id, // ✅ PatientId = Id (UUID) from ClinicPatient
           data.coverageStartDate,
           data.coverageEndDate,
           data.coverageDetails,
@@ -119,4 +129,3 @@ export async function POST(req) {
     return NextResponse.json({ error: "Save failed" }, { status: 500 });
   }
 }
-
