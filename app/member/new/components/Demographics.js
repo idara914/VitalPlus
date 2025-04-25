@@ -35,8 +35,8 @@ function DemographicForm({ onClick, form }) {
         style={{ textAlign: "left" }}
       >
         <Radio.Group>
-          <Radio value="Male">Male</Radio>
-          <Radio value="Female">Female</Radio>
+          <Radio value="M">Male</Radio>
+          <Radio value="F">Female</Radio>
         </Radio.Group>
       </Form.Item>
 
