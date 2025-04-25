@@ -14,10 +14,10 @@ export async function POST(req) {
         "Id", "FirstName", "LastName", "CreatedDT", "Gender", "DateOfBirth",
         "ContactNumber1", "FullAddress", "Status", "ZipCode", "Ethnicity",
         "LanguageSpoken", "LanguageWritten", "Relationship", "ContactNumber2",
-        "State", "City"
+        "State", "City", "IsActive"
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-        $12, $13, $14, $15, $16, $17
+        $12, $13, $14, $15, $16, $17, TRUE
       )
       ON CONFLICT ("Id") DO UPDATE SET
         "FirstName" = $2,
@@ -35,7 +35,8 @@ export async function POST(req) {
         "Relationship" = $14,
         "ContactNumber2" = $15,
         "State" = $16,
-        "City" = $17
+        "City" = $17,
+        "IsActive" = TRUE
       `,
       [
         patientId,
@@ -105,3 +106,4 @@ export async function POST(req) {
     return NextResponse.json({ error: "Save failed" }, { status: 500 });
   }
 }
+
