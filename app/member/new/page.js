@@ -30,25 +30,16 @@ export default function NewMemberForm() {
   const onChange = (current) => {
     if (current < currentStep) {
       setCurrentStep(current);
-      return;
     }
   };
 
   return (
     <MainLayout isSignedIn={true}>
       <div className={styles.container}>
-        {currentStep === 0 && (
-          <h1 className={styles.heading}>Patient Information</h1>
-        )}
-        {currentStep === 1 && (
-          <h1 className={styles.heading}>Patient Demographics</h1>
-        )}
-        {currentStep === 2 && (
-          <h1 className={styles.heading}>Insurance Payor</h1>
-        )}
-        {currentStep === 3 && (
-          <h1 className={styles.heading}>Emergency Contact</h1>
-        )}
+        <h1 className={styles.heading}>
+          {["Patient Information", "Patient Demographics", "Insurance Payor", "Emergency Contact"][currentStep]}
+        </h1>
+
         <Stepper
           steps={[
             { title: "Patient Info" },
@@ -59,20 +50,21 @@ export default function NewMemberForm() {
           currentStep={currentStep}
           onChange={onChange}
         />
+
         <div className={styles.containerCard}>
           <Form layout="vertical" form={form}>
-            {currentStep === 0 && (
+            <div style={{ display: currentStep === 0 ? "block" : "none" }}>
               <PatientInfoForm form={form} onClick={() => setCurrentStep(1)} />
-            )}
-            {currentStep === 1 && (
+            </div>
+            <div style={{ display: currentStep === 1 ? "block" : "none" }}>
               <DemographicForm form={form} onClick={() => setCurrentStep(2)} />
-            )}
-            {currentStep === 2 && (
+            </div>
+            <div style={{ display: currentStep === 2 ? "block" : "none" }}>
               <InsurancePayor form={form} onClick={() => setCurrentStep(3)} />
-            )}
-            {currentStep === 3 && (
+            </div>
+            <div style={{ display: currentStep === 3 ? "block" : "none" }}>
               <Contact form={form} onClick={handleFormSubmit} />
-            )}
+            </div>
           </Form>
         </div>
       </div>
