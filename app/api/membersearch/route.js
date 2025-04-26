@@ -54,7 +54,7 @@ export async function POST(req) {
     const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
 
     const query = `
-      SELECT "Id", "FirstName", "LastName", "MiddleInitial", "DOB", "PhoneNumber", "ZipCode", "ClinicPatientCode", "IsActive"
+      SELECT "Id", "FirstName", "LastName", "MiddleName", "DOB", "PhoneNumber", "ZipCode", "ClinicPatientCode", "IsActive"
       FROM public."ClinicPatient"
       ${whereClause}
       ORDER BY "LastName", "FirstName"
