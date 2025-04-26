@@ -27,7 +27,7 @@ export async function POST(req) {
       values.push(`%${lastName}%`);
     }
     if (middleName) {
-      filters.push(`"MiddleInitial" ILIKE $${idx++}`);
+      filters.push(`"MiddleName" ILIKE $${idx++}`);
       values.push(`%${middleName}%`);
     }
     if (clinicPatientCode) {
