@@ -31,7 +31,7 @@ function Contact({ form, onClick }) {
 
         <Form.Item
           label="Contact"
-          name="contact"
+          name="ContactNumber2"
           style={customStyle}
         >
           <Input placeholder="Enter here" />
