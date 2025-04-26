@@ -87,11 +87,11 @@ function PatientInfoForm({ onClick, form }) {
           <Input placeholder="Enter here" />
         </Form.Item>
 
-        <Form.Item label="Middle Name" name="middleName" style={customStyle}>
+        <Form.Item label="Middle Name" name="MiddleName" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
 
-        <Form.Item label="Email" name="email">
+        <Form.Item label="Email" name="Email">
           <Input placeholder="Enter here" />
         </Form.Item>
 
@@ -136,7 +136,7 @@ function PatientInfoForm({ onClick, form }) {
           />
         </Form.Item>
 
-        <Form.Item label="Phone Number" name="phone" style={customStyle}>
+        <Form.Item label="Phone Number" name="ContactNumber1" style={customStyle}>
           <Input placeholder="Enter here" />
         </Form.Item>
 
