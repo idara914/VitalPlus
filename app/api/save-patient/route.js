@@ -74,7 +74,7 @@ try {
     // Insert into ClinicPatient
     await pool.query(
       `INSERT INTO "ClinicPatient" (
-        "Id", "ZZno", "FirstName", "LastName", "CreatedDT", "Gender", "DateOfBirth",
+        "Id", "ZZno", "FirstName", "LastName", "CreatedDT", "Gender", "DOB",
         "ContactNumber1", "FullAddress", "Status", "ZipCode", "Ethnicity",
         "LanguageSpoken", "LanguageWritten", "Race", "EmergencyContactName",
         "Relationship", "ContactNumber2", "State", "City", "IsActive",
@@ -90,7 +90,7 @@ try {
         "LastName" = $4,
         "CreatedDT" = $5,
         "Gender" = $6,
-        "DateOfBirth" = $7,
+        "DOB" = $7,
         "ContactNumber1" = $8,
         "FullAddress" = $9,
         "Status" = $10,
