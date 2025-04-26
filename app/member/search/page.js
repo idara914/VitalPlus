@@ -37,7 +37,7 @@ export default function MemberSearch() {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const { data } = await instance.post("/api/search-clinic-patient", form);
+      const { data } = await instance.post("/api/membersearch", form);
       setResults(data.results);
       setHasSearched(true); // ✅ flag search complete
     } catch (err) {
