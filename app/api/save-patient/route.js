@@ -5,19 +5,84 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const data = await req.json();
-    const id = uuidv4(); // UUID for Id column
+    const id = uuidv4(); // UUID for ClinicPatient.Id
     const insuranceId = uuidv4();
+    const now = new Date();
 
-    // Insert or update ClinicPatient
+    // Default values
+    // Default values
+let isCoverageVerified = false;
+let coverageVerifiedDate = null;
+let hasAuthorization = false;
+let eligibilityStatus = "Pending";
+let verificationNotes = data.verificationNotes || null; // Availity notes if available
+
+try {
+  if (data.coverageStartDate && data.coverageEndDate) {
+    const coverageStart = new Date(data.coverageStartDate);
+    const coverageEnd = new Date(data.coverageEndDate);
+
+    if (now >= coverageStart && now <= coverageEnd) {
+      isCoverageVerified = true;
+      coverageVerifiedDate = now;
+    }
+
+    if (now >= coverageStart && now <= coverageEnd) {
+      eligibilityStatus = "Active";
+    } else if (now > coverageEnd) {
+      eligibilityStatus = "Expired";
+    } else {
+      eligibilityStatus = "Inactive"; // Optional fallback if before start
+    }
+  } else {
+    eligibilityStatus = "Pending"; // No dates provided
+  }
+
+  hasAuthorization = data.authorizationRequired === true;
+} catch (error) {
+  console.error("Error determining insurance status:", error);
+  eligibilityStatus = "Error"; // 🚨 If error calculating, mark it as "Error"
+}
+
+    // Determine based on insurance fields
+    if (data.coverageStartDate && data.coverageEndDate) {
+      const coverageStart = new Date(data.coverageStartDate);
+      const coverageEnd = new Date(data.coverageEndDate);
+
+      if (now >= coverageStart && now <= coverageEnd) {
+        isCoverageVerified = true;
+        coverageVerifiedDate = now;
+      } else {
+        isCoverageVerified = false;
+        coverageVerifiedDate = null;
+      }
+
+      if (now >= coverageStart && now <= coverageEnd) {
+        eligibilityStatus = "Active";
+      } else if (now > coverageEnd) {
+        eligibilityStatus = "Expired";
+      } else {
+        eligibilityStatus = "Inactive"; // Optional fallback if before start
+      }
+    } else {
+      eligibilityStatus = "Pending"; // No insurance dates = pending
+    }
+
+    // Authorization
+    hasAuthorization = data.authorizationRequired === true;
+
+    // Insert into ClinicPatient
     await pool.query(
       `INSERT INTO "ClinicPatient" (
         "Id", "ZZno", "FirstName", "LastName", "CreatedDT", "Gender", "DateOfBirth",
         "ContactNumber1", "FullAddress", "Status", "ZipCode", "Ethnicity",
         "LanguageSpoken", "LanguageWritten", "Race", "EmergencyContactName",
-        "Relationship", "ContactNumber2", "State", "City", "IsActive"
+        "Relationship", "ContactNumber2", "State", "City", "IsActive",
+        "IsCoverageVerified", "CoverageVerifiedDate", "HasAuthorization", "EligibilityStatus", "VerificationNotes"
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-        $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, TRUE
+        $11, $12, $13, $14, $15, $16, $17, $18, $19, TRUE,
+        $20, $21, $22, $23, $24
       )
       ON CONFLICT ("Id") DO UPDATE SET
         "ZZno" = $2,
@@ -39,11 +104,16 @@ export async function POST(req) {
         "ContactNumber2" = $18,
         "State" = $19,
         "City" = $20,
-        "IsActive" = TRUE
+        "IsActive" = TRUE,
+        "IsCoverageVerified" = $21,
+        "CoverageVerifiedDate" = $22,
+        "HasAuthorization" = $23,
+        "EligibilityStatus" = $24,
+        "VerificationNotes" = $25
       `,
       [
         id,
-        data.ZZno, // SSN
+        data.ZZno,
         data.firstName,
         data.lastName,
         data.startOfCareDate,
@@ -62,10 +132,15 @@ export async function POST(req) {
         data.secondaryPhysicianNumber,
         data.state,
         data.city,
+        isCoverageVerified,
+        coverageVerifiedDate,
+        hasAuthorization,
+        eligibilityStatus,
+        verificationNotes,
       ]
     );
 
-    // Only insert into Clinical_PatientInsurances if all fields are filled
+    // Insert into Clinical_PatientInsurances if insurance fields filled
     const insuranceRequiredFields = [
       data.coverageStartDate,
       data.coverageEndDate,
@@ -110,7 +185,7 @@ export async function POST(req) {
         `,
         [
           insuranceId,
-          id, // Link back to ClinicPatient
+          id, // Foreign key
           data.coverageStartDate,
           data.coverageEndDate,
           data.coverageDetails,
