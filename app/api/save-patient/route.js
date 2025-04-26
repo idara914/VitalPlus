@@ -73,72 +73,74 @@ try {
 
     // Insert into ClinicPatient
     await pool.query(
-      `INSERT INTO "ClinicPatient" (
-        "Id", "ZZno", "FirstName", "LastName", "CreatedDT", "Gender", "DOB",
-        "ContactNumber1", "FullAddress", "Status", "ZipCode", "Ethnicity",
-        "LanguageSpoken", "LanguageWritten", "Race", "EmergencyContactName",
-        "Relationship", "ContactNumber2", "State", "City", "IsActive",
-        "IsCoverageVerified", "CoverageVerifiedDate", "HasAuthorization", "EligibilityStatus", "VerificationNotes"
-      ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-        $11, $12, $13, $14, $15, $16, $17, $18, $19, TRUE,
-        $20, $21, $22, $23, $24
-      )
-      ON CONFLICT ("Id") DO UPDATE SET
-        "ZZno" = $2,
-        "FirstName" = $3,
-        "LastName" = $4,
-        "CreatedDT" = $5,
-        "Gender" = $6,
-        "DOB" = $7,
-        "ContactNumber1" = $8,
-        "FullAddress" = $9,
-        "Status" = $10,
-        "ZipCode" = $11,
-        "Ethnicity" = $12,
-        "LanguageSpoken" = $13,
-        "LanguageWritten" = $14,
-        "Race" = $15,
-        "EmergencyContactName" = $16,
-        "Relationship" = $17,
-        "ContactNumber2" = $18,
-        "State" = $19,
-        "City" = $20,
-        "IsActive" = TRUE,
-        "IsCoverageVerified" = $21,
-        "CoverageVerifiedDate" = $22,
-        "HasAuthorization" = $23,
-        "EligibilityStatus" = $24,
-        "VerificationNotes" = $25
-      `,
-      [
-        id,
-        data.ZZno,
-        data.firstName,
-        data.lastName,
-        data.startOfCareDate,
-        data.gender,
-        data.dob,
-        data.contact,
-        data.address,
-        data.status,
-        data.zip || data.zipCode,
-        data.ethnicity,
-        data.languageSpoken,
-        data.languageWritten,
-        data.race,
-        data.emergencyContactName,
-        data.relationship,
-        data.secondaryPhysicianNumber,
-        data.state,
-        data.city,
-        isCoverageVerified,
-        coverageVerifiedDate,
-        hasAuthorization,
-        eligibilityStatus,
-        verificationNotes,
-      ]
-    );
+  `INSERT INTO "ClinicPatient" (
+    "Id", "ZZno", "FirstName", "LastName", "CreatedDT", "Gender", "DOB",
+    "ContactNumber1", "FullAddress", "Status", "ZipCode", "Ethnicity",
+    "LanguageSpoken", "LanguageWritten", "Race", "EmergencyContactName",
+    "Relationship", "ContactNumber2", "State", "City", "IsActive",
+    "IsCoverageVerified", "CoverageVerifiedDate", "HasAuthorization", "EligibilityStatus", "VerificationNotes"
+  ) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+    $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
+    $21, $22, $23, $24, $25, $26
+  )
+  ON CONFLICT ("Id") DO UPDATE SET
+    "ZZno" = $2,
+    "FirstName" = $3,
+    "LastName" = $4,
+    "CreatedDT" = $5,
+    "Gender" = $6,
+    "DOB" = $7,
+    "ContactNumber1" = $8,
+    "FullAddress" = $9,
+    "Status" = $10,
+    "ZipCode" = $11,
+    "Ethnicity" = $12,
+    "LanguageSpoken" = $13,
+    "LanguageWritten" = $14,
+    "Race" = $15,
+    "EmergencyContactName" = $16,
+    "Relationship" = $17,
+    "ContactNumber2" = $18,
+    "State" = $19,
+    "City" = $20,
+    "IsActive" = $21,
+    "IsCoverageVerified" = $22,
+    "CoverageVerifiedDate" = $23,
+    "HasAuthorization" = $24,
+    "EligibilityStatus" = $25,
+    "VerificationNotes" = $26
+  `,
+  [
+    id,
+    data.ZZno,
+    data.firstName,
+    data.lastName,
+    data.startOfCareDate,
+    data.gender,
+    data.dob,
+    data.contact,
+    data.address,
+    data.status,
+    data.zip || data.zipCode,
+    data.ethnicity,
+    data.languageSpoken,
+    data.languageWritten,
+    data.race,
+    data.emergencyContactName,
+    data.relationship,
+    data.contact, // Emergency contact phone (instead of secondaryPhysicianNumber)
+    data.state,
+    data.city,
+    true, // IsActive = TRUE
+    isCoverageVerified,
+    coverageVerifiedDate,
+    hasAuthorization,
+    eligibilityStatus,
+    verificationNotes,
+  ]
+);
+
 
     // Insert into Clinical_PatientInsurances if insurance fields filled
     const insuranceRequiredFields = [
