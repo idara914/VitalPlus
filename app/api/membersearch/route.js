@@ -35,7 +35,7 @@ export async function POST(req) {
       values.push(`%${clinicPatientCode}%`);
     }
     if (phone) {
-      filters.push(`"PhoneNumber" ILIKE $${idx++}`);
+      filters.push(`"ContactNumber1" ILIKE $${idx++}`);
       values.push(`%${phone}%`);
     }
     if (dob) {
@@ -54,7 +54,7 @@ export async function POST(req) {
     const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
 
     const query = `
-      SELECT "Id", "FirstName", "LastName", "MiddleName", "DOB", "PhoneNumber", "ZipCode", "ClinicPatientCode", "IsActive"
+      SELECT "Id", "FirstName", "LastName", "MiddleName", "DOB", "ContactNumber1", "ZipCode", "ClinicPatientCode", "IsActive"
       FROM public."ClinicPatient"
       ${whereClause}
       ORDER BY "LastName", "FirstName"
