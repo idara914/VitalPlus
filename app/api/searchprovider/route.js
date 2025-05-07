@@ -36,9 +36,9 @@ export async function POST(req) {
       });
     }
 
-    // 🔍 Get AgencyId from AppUser table
+    // ✅ Get CompanyId from AppUser (which maps to Agency.Id)
     const agencyResult = await pool.query(
-      `SELECT "AgencyId" FROM public."AppUser" WHERE "Id" = $1`,
+      `SELECT "CompanyId" FROM public."AppUser" WHERE "Id" = $1`,
       [userId]
     );
 
@@ -49,7 +49,7 @@ export async function POST(req) {
       });
     }
 
-    const agencyId = agencyResult.rows[0].AgencyId;
+    const agencyId = agencyResult.rows[0].CompanyId;
 
     const {
       firstName,
@@ -118,4 +118,5 @@ export async function POST(req) {
     });
   }
 }
+
 
