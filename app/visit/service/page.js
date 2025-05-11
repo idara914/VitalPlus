@@ -181,7 +181,204 @@ export default function ServiceAuthorizationTable() {
   const expandedRowRender = (record) => {
     return (
       <div className={styles.expandedRow}>
-        {/* patient info and authorization details sections here */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Patient Info</h3>
+          <div className={styles.infoGrid}>
+            <div className={styles.infoItem}>
+              <div className={styles.infoLabel}>Full Name</div>
+              <div className={styles.infoValue}>{record.fullName}</div>
+            </div>
+            <div className={styles.infoItem}>
+              <div className={styles.infoLabel}>DOB</div>
+              <div className={styles.infoValue}>{record.dob}</div>
+            </div>
+            <div className={styles.infoItem}>
+              <div className={styles.infoLabel}>SSN / Member ID</div>
+              <div className={styles.infoValue}>{record.ssn}</div>
+            </div>
+            <div className={styles.infoItem}>
+              <div className={styles.infoLabel}>Payer Name</div>
+              <div className={styles.infoValue}>{record.payerName}</div>
+            </div>
+            <div className={styles.infoItem}>
+              <div className={styles.infoLabel}>Payer ID</div>
+              <div className={styles.infoValue}>{record.payerId}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.sectionTitle}>Authorization Details</h3>
+            <div className={styles.templateActions}>
+              <SelectField
+                options={[]}
+                placeholder={"Select here"}
+                containerStyle={{
+                  backgroundColor: "#fff",
+                }}
+                customStyle={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #d0d3d7",
+                  padding: "2px",
+                  height: "35px",
+                  width: "180px",
+                  textAlign: "left",
+                }}
+              />
+              <Button
+                type="primary"
+                className={styles.createTemplateBtn}
+                onClick={openTemplateModal}
+              >
+                Create Template
+              </Button>
+            </div>
+          </div>
+
+          <Form form={form} layout="vertical" className={styles.authForm}>
+            <div className={styles.formGrid}>
+              <Form.Item label="Service Type Code" className={styles.formItem}>
+                <Input placeholder="e.g. 42" />
+              </Form.Item>
+
+              <Form.Item label="Place of Service" className={styles.formItem}>
+                <SelectField
+                  options={[]}
+                  placeholder={"Select here"}
+                  containerStyle={{
+                    backgroundColor: "#fff",
+                  }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Diagnosis Code (ICD-10)"
+                className={styles.formItem}
+              >
+                <Input placeholder="F331" />
+              </Form.Item>
+
+              <Form.Item label="Procedure Code(s)" className={styles.formItem}>
+                <Input placeholder="CPT/HCPCS" />
+              </Form.Item>
+
+              <Form.Item label="Units Requested" className={styles.formItem}>
+                <Input placeholder="20" />
+              </Form.Item>
+
+              <Form.Item label="Frequency" className={styles.formItem}>
+                <SelectField
+                  options={[]}
+                  placeholder={"Select here"}
+                  containerStyle={{
+                    backgroundColor: "#fff",
+                  }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item label="Start Date" className={styles.formItem}>
+                <DatePicker
+                  format="DD/MM/YYYY"
+                  placeholder="dd/mm/yyyy"
+                  className={styles.fullWidth}
+                />
+              </Form.Item>
+
+              <Form.Item label="End Date" className={styles.formItem}>
+                <DatePicker
+                  format="DD/MM/YYYY"
+                  placeholder="dd/mm/yyyy"
+                  className={styles.fullWidth}
+                />
+              </Form.Item>
+
+              <Form.Item label="Prior Auth Number" className={styles.formItem}>
+                <Input placeholder="Optional" />
+              </Form.Item>
+
+              <Form.Item
+                label="Authorization Template"
+                className={styles.formItem}
+              >
+                <SelectField
+                  options={[]}
+                  placeholder={"Select here"}
+                  containerStyle={{
+                    backgroundColor: "#fff",
+                  }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Supporting Documents"
+                className={styles.formItemFull}
+              >
+                <div className={styles.fileUploadContainer}>
+                  <label
+                    htmlFor="file-upload"
+                    className={styles.chooseFileButton}
+                  >
+                    Choose file
+                  </label>
+                  <div className={styles.fileNameDisplay}>No file chosen</div>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className={styles.hiddenFileInput}
+                    onChange={(e) => {
+                      const fileName = e.target.files?.[0]?.name;
+                      if (fileName) {
+                        const fileDisplay = document.querySelector(
+                          `.${styles.fileNameDisplay}`
+                        );
+                        if (fileDisplay) fileDisplay.textContent = fileName;
+                      }
+                    }}
+                  />
+                </div>
+              </Form.Item>
+
+              <Form.Item
+                label="Notes / Justification"
+                className={styles.formItemFull}
+              >
+                <TextArea
+                  rows={2}
+                  placeholder="Optional for payer communication"
+                />
+              </Form.Item>
+            </div>
+
+            <div className={styles.formActions}>
+              <Button className={styles.submitBtn}>Submit</Button>
+              <Button type="primary" className={styles.nextBtn}>
+                Next
+              </Button>
+            </div>
+          </Form>
+        </div>
       </div>
     );
   };
@@ -205,9 +402,82 @@ export default function ServiceAuthorizationTable() {
     <MainLayout isSignedIn={true}>
       <div style={{ backgroundColor: "#e5e7eb", padding: "20px" }}>
         <div className={styles.container}>
-          {/* everything else remains unchanged */}
+          <div className={styles.header}>
+            <div className={styles.title}>
+              <div className={styles.icon}></div>
+              <h2>Service Authorization</h2>
+            </div>
+            <div className={styles.actions}>
+              <Button onClick={handleClear} className={styles.clearBtn}>
+                Clear
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleSaveSelection}
+                className={styles.saveBtn}
+              >
+                Save Selection
+              </Button>
+            </div>
+          </div>
+
+          <div className={styles.filters}>
+            <Input placeholder="All" className={styles.filterInput} />
+
+            <DatePicker
+              format="DD/MM/YYYY"
+              placeholder=""
+              className={styles.datePicker}
+            />
+
+            <Input
+              placeholder="SSN / Member ID"
+              //   suffix={<SearchOutlined />}
+              className={styles.searchInput}
+            />
+            <Button className={styles.SearchBtn} icon={<SearchOutlined />} />
+            {/* </div> */}
+          </div>
+
+          <Table
+            rowSelection={{
+              type: "checkbox",
+              selectedRowKeys,
+              onChange: handleRowSelection,
+            }}
+            columns={columns}
+            scroll={{ x: 768 }}
+            dataSource={data}
+            expandable={{
+              expandedRowRender,
+              expandedRowKeys,
+              showExpandColumn: false,
+            }}
+            pagination={false}
+            className={styles.table}
+          />
+
+          <CustomModal
+            title="Create Template"
+            open={isTemplateModalOpen}
+            onCancel={closeTemplateModal}
+            footer={modalFooter}
+          >
+            <Form form={templateForm} layout="vertical">
+              <Form.Item
+                name="templateName"
+                label="Template Name"
+                rules={[
+                  { required: true, message: "Please enter a template name" },
+                ]}
+              >
+                <Input placeholder="Enter name of template" />
+              </Form.Item>
+            </Form>
+          </CustomModal>
         </div>
       </div>
     </MainLayout>
   );
 }
+
