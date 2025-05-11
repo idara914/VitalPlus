@@ -1,21 +1,9 @@
-"use client";
-
 import styles from "../../assets/landing.module.css";
 import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
-import { useEffect, useState } from "react";
 
-export default function MainLayout({ children, isSignedIn = false }) {
-  const [firstName, setFirstName] = useState("");
-
-  useEffect(() => {
-    const storedName = localStorage.getItem("firstName");
-    if (storedName) {
-      setFirstName(storedName);
-    }
-  }, []);
-
+export default function MainLayout({ children, isSignedIn = false, user = null }) {
   return (
     <ConfigProvider
       theme={{
@@ -30,7 +18,7 @@ export default function MainLayout({ children, isSignedIn = false }) {
       }}
     >
       <div>
-        <Navbar isSignedIn={isSignedIn} user={{ FirstName: firstName }} />
+        <Navbar isSignedIn={isSignedIn} user={user} />
         {children && (
           <div className={styles.containerRightInner}>{children}</div>
         )}
@@ -40,4 +28,3 @@ export default function MainLayout({ children, isSignedIn = false }) {
     </ConfigProvider>
   );
 }
-

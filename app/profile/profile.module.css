@@ -1,0 +1,244 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.content {
+  width: 100%;
+  max-width: 800px;
+}
+
+/* Custom styling for Ant Design Tabs */
+.customTabs {
+  margin-bottom: 0;
+}
+
+.customTabs .ant-tabs-nav {
+  margin-bottom: 0;
+}
+
+.customTabs .ant-tabs-tab {
+  padding: 12px 0;
+  margin-right: 24px;
+  color: #717680;
+  font-weight: 500;
+}
+
+.customTabs .ant-tabs-tab-active {
+  color: #3c3897;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.customTabs .ant-tabs-ink-bar {
+  background-color: #3c3897;
+  height: 2px;
+}
+
+.customTabs .ant-tabs-content-holder {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.customTabs .ant-tabs-nav::before {
+  border-bottom: none;
+}
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.header h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.formRow {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.formGroup {
+  flex: 1;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.input {
+  width: 100%;
+}
+
+.infoList {
+  margin-bottom: 24px;
+  background-color: #f9fafb;
+  padding: 0 13px;
+  border-radius: 10px;
+}
+
+.infoItem {
+  display: flex;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  width: 120px;
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.infoValue {
+  flex: 1;
+  font-size: 14px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancelButton {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px !important;
+  height: 40px !important;
+}
+
+.saveButton,
+.updateButton {
+  background-color: #3c3897;
+  border-radius: 6px !important;
+  height: 40px !important;
+}
+
+.updateButton {
+  background-color: #3c3897;
+  border-radius: 6px !important;
+  height: 40px !important;
+}
+
+/* Password Tab Styles */
+.passwordForm {
+  margin-bottom: 24px;
+}
+
+.passwordField {
+  margin-bottom: 24px;
+}
+
+.passwordField label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.passwordHint {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.formField {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 8px;
+  font-weight: normal;
+}
+
+.passwordInput {
+  border-radius: 8px !important;
+  height: 40px !important;
+}
+
+.fieldRow {
+  display: flex;
+}
+
+.fieldRow .fieldLabel {
+  width: 160px;
+  margin-bottom: 0;
+  margin-right: 16px;
+}
+
+.fieldRow .passwordInput {
+  flex: 1;
+}
+
+.inputWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 65px;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .fieldRow {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
