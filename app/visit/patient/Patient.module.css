@@ -1,0 +1,148 @@
+.container {
+  /* max-width: 1200px; */
+  background-color: #f3f4f6;
+  margin: 0 auto;
+  padding-right: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+.formLayout {
+  display: flex;
+  gap: 20px;
+}
+
+/* Left Column Styles */
+.leftColumn {
+  width: 280px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.patientInfoHeader {
+  padding: 16px;
+}
+
+.patientInfoHeader h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.formGroup {
+  padding: 8px 16px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.input,
+.select,
+.datePicker {
+  width: 100%;
+  height: 39px;
+  border-radius: 8px;
+}
+
+.textarea {
+  width: 100%;
+}
+
+.verifyButton {
+  width: calc(100% - 32px);
+  margin: 16px;
+  height: 40px;
+  background-color: #3c3897;
+  border-radius: 7px;
+}
+
+.verifyButton:hover {
+  background-color: #3730a3;
+  border-color: #3730a3;
+}
+
+/* Right Column Styles */
+.rightColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  background-color: #e5e7eb;
+  padding: 15px 16px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.sectionContent {
+  padding: 16px;
+}
+
+.formRow {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.formRow:last-child {
+  margin-bottom: 0;
+}
+
+.formColumn {
+  flex: 1;
+}
+
+.formColumn label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Responsive Styles */
+
+@media (max-width: 992px) {
+  .leftColumn {
+    width: 40%;
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formLayout {
+    flex-direction: column;
+  }
+
+  .leftColumn {
+    width: 100%;
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+}

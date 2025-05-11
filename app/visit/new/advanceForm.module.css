@@ -1,0 +1,146 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #e5e7eb;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.backButton {
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+}
+
+.formContainer {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.form {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.halfWidth {
+  width: 50%;
+}
+
+.input,
+.select,
+.datePicker,
+.timePicker,
+.textarea {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.input,
+.select .ant-select-selector,
+.datePicker,
+.timePicker {
+  height: 40px !important;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.daysContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dayCheckbox {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.dayCheckbox .ant-checkbox-wrapper {
+  margin-right: 0;
+}
+
+.upload .ant-upload-list {
+  margin-top: 8px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.cancelButton {
+  min-width: 120px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.saveButton {
+  min-width: 120px;
+  height: 40px;
+  background-color: #3c3897;
+  border-radius: 8px;
+}
+
+.fileUploadContainer {
+  display: flex;
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chooseFileButton {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  border-right: 1px solid #d9d9d9;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.fileNameDisplay {
+  padding: 8px 16px;
+  flex-grow: 1;
+  background-color: white;
+  color: #666;
+  font-size: 14px;
+}
+
+.hiddenFileInput {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .halfWidth {
+    width: 100%;
+  }
+}
