@@ -60,7 +60,7 @@ export default function AdvancedVisitForm() {
   ];
 
   return (
-    <MainLayout>
+    <MainLayout isSignedIn={true}>
       <div style={{ backgroundColor: "#e5e7eb" }}>
         <div className={styles.container}>
           <div className={styles.header}>
