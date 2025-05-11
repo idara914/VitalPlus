@@ -167,12 +167,12 @@ export const memberItems = [
     label: <Link href={"/member/new"}>New Member</Link>,
   },
   {
-    key: "supplies-rx-search",
-    label: <Link href={"/member/supplies-search"}>Supplies/RX Search</Link>,
+    key: "PreAuthorization",
+    label: <Link href={"/member/PreAuthorization"}>PreAuthorization</Link>,
   },
   {
-    key: "claims",
-    label: <Link href={"/member/claims"}>Claims</Link>,
+    key: "Eligibility Verification",
+    label: <Link href={"/member/eligibility"}>eligibility</Link>,
   },
   {
     key: "assessments",
