@@ -36,7 +36,7 @@ export default function MainLayout({ children, isSignedIn = false }) {
           isSignedIn={isSignedIn}
           user={{
             FirstName: (
-              <Link href="/app/profile">
+              <Link href="/profile">
                 <span style={{ cursor: "pointer", textDecoration: "underline" }}>
                   {firstName}
                 </span>
