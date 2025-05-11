@@ -172,7 +172,7 @@ export const memberItems = [
   },
   {
     key: "Eligibility Verification",
-    label: <Link href={"/member/eligibility"}>eligibility</Link>,
+    label: <Link href={"/member/eligibility"}>Eligibility Verification</Link>,
   },
   {
     key: "assessments",
@@ -204,7 +204,7 @@ export const careProviderItems = [
 export const visitItems = [
   {
     key: "call-dashboard",
-    label: <Link href={"/visit/call-dashboard"}>Call Dashboard</Link>,
+    label: <Link href={"/visit/Create"}>Schedule Visit</Link>,
   },
   {
     key: "visit-search",
