@@ -1,3 +1,4 @@
+
 "use client";
 
 import styles from "../../assets/landing.module.css";
@@ -5,6 +6,7 @@ import Navbar from "../common/Navbar/Navbar";
 import Footer from "../common/Footer/Footer";
 import { ConfigProvider } from "antd";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function MainLayout({ children, isSignedIn = false }) {
   const [firstName, setFirstName] = useState("");
@@ -30,7 +32,18 @@ export default function MainLayout({ children, isSignedIn = false }) {
       }}
     >
       <div>
-        <Navbar isSignedIn={isSignedIn} user={{ FirstName: firstName }} />
+        <Navbar
+          isSignedIn={isSignedIn}
+          user={{
+            FirstName: (
+              <Link href="/app/profile">
+                <span style={{ cursor: "pointer", textDecoration: "underline" }}>
+                  {firstName}
+                </span>
+              </Link>
+            ),
+          }}
+        />
         {children && (
           <div className={styles.containerRightInner}>{children}</div>
         )}
