@@ -27,7 +27,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <MainLayout>
+    <MainLayout isSignedIn={true}>
       <div className={styles.container}>
         <div className={styles.content}>
           <Tabs
