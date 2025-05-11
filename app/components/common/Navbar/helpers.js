@@ -203,8 +203,8 @@ export const careProviderItems = [
 
 export const visitItems = [
   {
-    key: "call-dashboard",
-    label: <Link href={"/visit/Create"}>Schedule Visit</Link>,
+    key: "Schedule Visit",
+    label: <Link href={"/visit/New"}>Schedule Visit</Link>,
   },
   {
     key: "visit-search",
