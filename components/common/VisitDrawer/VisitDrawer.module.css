@@ -1,0 +1,50 @@
+.formRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.halfWidth {
+  width: 50%;
+}
+
+.fullWidth {
+  width: 100%;
+  height: 39px;
+  border-radius: 7px;
+}
+.advanceBtn {
+  border: 2px solid #3c3897;
+  border-radius: 10px;
+  color: #3c3897;
+}
+.grpBtn {
+  display: flex;
+  gap: 10px;
+}
+
+.cancelBtn {
+  width: 150px;
+  border-radius: 10px;
+  box-shadow: 10px;
+}
+.saveBtn {
+  width: 150px;
+  border-radius: 10px;
+  background: #3c3897;
+  color: white;
+  box-shadow: 10px;
+}
+.addBtn {
+  width: 200px;
+  border-radius: 10px;
+  box-shadow: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .formRow {
+    flex-wrap: wrap;
+  }
+  .halfWidth {
+    width: 100%;
+  }
+}

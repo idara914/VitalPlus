@@ -1,13 +1,13 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
-import MainLayout from "./components/layouts/MainLayout";
 import CartImage from "../public/icons/cart.png";
-import Button from "./components/common/Button/Button";
 import RightArrow from "../public/icons/ArrowRight.png";
 import TryNow from "../public/imgs/try-now.png";
 import ConnSystem from "../public/imgs/conn-system.png";
 import Demo from "../public/imgs/demo.png";
+import MainLayout from "@/components/Layouts/MainLayout";
+import Button from "@/components/common/Button/Button";
 
 export default function Home() {
   return (

@@ -1,0 +1,84 @@
+/* Navbar Styles */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--common-body-padding);
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.navOptions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid blue; */
+}
+
+.navOptions a {
+  color: #000;
+  text-decoration: none;
+  margin-left: 25px;
+
+  transition: color 0.3s;
+}
+
+.navOptions a:hover {
+  color: var(--primary-color);
+}
+
+/* Button Styles (assuming you have a Button component) */
+.navOptions .button {
+  margin-left: 20px;
+  justify-self: flex-end;
+}
+
+.nav > img {
+  cursor: pointer;
+}
+/* Mobile Menu Toggle */
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.bar {
+  display: none;
+  height: 3px;
+  width: 25px;
+  background-color: white;
+  margin: 4px 0;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Styles */
+@media (max-width: 868px) {
+  .nav {
+    padding: var(--common-body-padding-md);
+  }
+  .navOptions {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .navOptions.active {
+    display: flex;
+  }
+
+  .navOptions a {
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .navbar-toggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 484px) {
+  .nav {
+    padding: var(--common-body-padding-sm);
+  }
+}

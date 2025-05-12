@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  background-color: #fff;
+  border: 2px solid #e4e4e7;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.container > img {
+  margin-right: 20px;
+}
+
+.input {
+  border: none;
+  background-color: #fff;
+  height: 52px;
+  width: 100%;
+  border-radius: 8px;
+  font-weight: 300;
+  font-size: 15px;
+}
+.input::placeholder {
+  color: #a1a1aa;
+  opacity: 1; /* Firefox */
+}
