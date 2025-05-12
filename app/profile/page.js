@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Input, Button, Tabs } from "antd";
 import styles from "./profile.module.css";
-import MainLayout from "../components/layouts/MainLayout";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import MainLayout from "@/components/Layouts/MainLayout";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("details");

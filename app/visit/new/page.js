@@ -14,8 +14,8 @@ import {
 
 import { useRouter } from "next/navigation";
 import styles from "./advanceForm.module.css";
-import MainLayout from "@/app/components/layouts/MainLayout";
-import SelectField from "@/app/components/common/SelectField/SelectField";
+import SelectField from "@/components/common/SelectField/SelectField";
+import MainLayout from "@/components/Layouts/MainLayout";
 
 const { TextArea } = Input;
 
