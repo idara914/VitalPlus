@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "@/assets/visitdetail.css";
+import styles from "./visitdetail.css";
 import MainLayout from "../../components/layouts/MainLayout";
 
 export default function Features() {
