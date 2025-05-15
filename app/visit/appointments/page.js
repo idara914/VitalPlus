@@ -83,7 +83,7 @@ export default function Features() {
 }
 
 function InfoItem({ label, value }) {
-  const styles = require("@/assets/VisitDetailPage.module.css");
+  const styles = require("./visitdetail.css");
   return (
     <div className={styles.infoItem}>
       <div className={styles.infoLabel}>{label}</div>
