@@ -137,7 +137,7 @@ export async function POST(req) {
       `INSERT INTO public."appUsers"
       ("Id", "Email", "NormalizedEmail", "EmailConfirmed", 
        "FirstName", "LastName", "CreatedDT", "ModifiedDT", "EmployeeID", "CompanyId")
-       VALUES ($1, $2, $3, false, $4, $5, $6, $6, $7, $8, $9, $10)`,
+       VALUES ($1, $2, $3, false, $4, $5, $6, $6, $7, $8)`,
       [
         uuidv4(),
         Email,
