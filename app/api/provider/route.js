@@ -47,7 +47,6 @@ export async function POST(req) {
       NPI,
       DOB,
       Remarks,
-      UserName,
       NormalizedEmail
     } = body;
 
@@ -136,13 +135,11 @@ export async function POST(req) {
     // 3. Insert into appUsers
     await client.query(
       `INSERT INTO public."appUsers"
-      ("Id", "UserName", "NormalizedUserName", "Email", "NormalizedEmail", "EmailConfirmed", 
+      ("Id", "Email", "NormalizedEmail", "EmailConfirmed", 
        "FirstName", "LastName", "CreatedDT", "ModifiedDT", "EmployeeID", "CompanyId")
-       VALUES ($1, $2, $3, $4, $5, false, $6, $7, $8, $8, $9, $10)`,
+       VALUES ($1, $2, $3, false, $4, $5, $6, $6, $7, $8, $9, $10)`,
       [
         uuidv4(),
-        UserName,
-        UserName.toUpperCase(),
         Email,
         NormalizedEmail,
         FirstName,
