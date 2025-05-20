@@ -1,0 +1,29 @@
+import pool from "@/config/db";
+
+export async function GET() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT "Id", "FirstName", "LastName"
+      FROM public."ServiceProvider"
+      WHERE "IsActive" = true AND "IsDeleted" = false
+    `);
+
+    const providers = result.rows.map(p => ({
+      label: `${p.FirstName} ${p.LastName}`,
+      value: p.Id,
+    }));
+
+    return new Response(JSON.stringify(providers), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("🔴 Error fetching ServiceProvider:", err);
+    return new Response(JSON.stringify({ message: "Failed to fetch providers" }), {
+      status: 500,
+    });
+  } finally {
+    client.release();
+  }
+}
