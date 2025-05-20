@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -8,43 +8,147 @@ import {
   TimePicker,
   Button,
   Checkbox,
-  Upload,
   message,
 } from "antd";
-
 import { useRouter } from "next/navigation";
 import styles from "./advanceForm.module.css";
 import MainLayout from "@/app/components/layouts/MainLayout";
 import SelectField from "@/app/components/common/SelectField/SelectField";
+import dayjs from "dayjs";
 
 const { TextArea } = Input;
+
+const recurrenceOptions = [
+  { label: "None", value: "None" },
+  { label: "Daily", value: "Daily" },
+  { label: "Every Weekday", value: "Weekdays" },
+  { label: "Weekly", value: "Weekly" },
+  { label: "Bi-Weekly", value: "BiWeekly" },
+  { label: "Monthly", value: "Monthly" },
+  { label: "Custom Days", value: "CustomDays" },
+];
+
+const workflowOptions = [
+  { label: "Start of Care", value: "StartOfCare" },
+  { label: "Resumption of Care", value: "ResumptionOfCare" },
+  { label: "Recertification", value: "Recertification" },
+  { label: "Routine Visit", value: "RoutineVisit" },
+  { label: "Missed Visit", value: "MissedVisit" },
+  { label: "Discharge Planning", value: "DischargePlanning" },
+  { label: "End of Episode Review", value: "EndOfEpisode" },
+  { label: "Evaluation Required", value: "NeedsEvaluation" },
+  { label: "Incident Follow-Up", value: "IncidentFollowUp" },
+  { label: "Manual Workflow", value: "Manual" },
+  { label: "Ready for Billing", value: "ReadyForBilling" },
+  { label: "None", value: "None" },
+];
+
+const carePlanOptions = [
+  { label: "Terminal Care", value: "terminal care" },
+  { label: "Hospice", value: "hospice" },
+  { label: "Elderly", value: "elderly" },
+  { label: "Disabled", value: "disabled" },
+];
+
+const verificationOptions = [
+  { label: "Mobile", value: "mobile" },
+  { label: "Call", value: "call" },
+  { label: "QR", value: "qr" },
+];
+
+const durationOptions = Array.from({ length: 40 }, (_, i) => {
+  const minutes = (i + 1) * 30;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  const label = `${hours > 0 ? hours + "h" : ""}${mins > 0 ? " " + mins + "m" : ""}`.trim();
+  const value = `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:00`;
+  return { label, value };
+});
 
 export default function AdvancedVisitForm() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [providers, setProviders] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/clinicpatient")
+      .then(res => res.json())
+      .then(data =>
+        setMembers(data.map(p => ({ label: p.name, value: p.id })))
+      );
+
+    fetch("/api/serviceprovider")
+      .then(res => res.json())
+      .then(data =>
+        setProviders(data.map(p => ({ label: p.name, value: p.id })))
+      );
+  }, []);
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    console.log("Form values:", values);
-    // Here you would typically send the data to your API
-    setTimeout(() => {
-      setLoading(false);
-      message.success("Visit saved successfully");
-      // Navigate back or to another page
-    }, 1000);
-  };
+    try {
+      const scheduledstart = dayjs(values.date)
+        .hour(dayjs(values.time).hour())
+        .minute(dayjs(values.time).minute())
+        .second(0)
+        .toISOString();
 
-  const handleBack = () => {
-    router.back();
+      const durationParts = values.duration.split(":");
+      const scheduledend = dayjs(scheduledstart)
+        .add(Number(durationParts[0]), "hour")
+        .add(Number(durationParts[1]), "minute")
+        .toISOString();
+
+      const payload = {
+        ProviderId: values.serviceProvider,
+        patientId: values.memberName,
+        visitdate: scheduledstart,
+        scheduledstart,
+        scheduledend,
+        visitduration: values.duration,
+        location: values.location,
+        notes: values.notes,
+        visittype: values.serviceType,
+        status: values.visitStatus,
+        tasksperformed: {
+          cptCodes: [values.cptCodes],
+          visitVerification: values.visitVerification,
+          workflowTrigger: values.workflowTrigger,
+          recurrenceType: values.recurrenceType,
+          selectedDays,
+        },
+        careplanid: values.carePlan,
+        companyid: "demo-company-id", // Replace with actual value
+      };
+
+      const res = await fetch("/api/visits", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Failed to save");
+
+      message.success("Visit saved successfully");
+      router.push("/visits");
+    } catch (err) {
+      console.error("Error submitting visit:", err);
+      message.error("Failed to save visit");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDayChange = (day, checked) => {
     const newSelectedDays = checked
       ? [...selectedDays, day]
-      : selectedDays.filter((d) => d !== day);
-
+      : selectedDays.filter(d => d !== day);
     setSelectedDays(newSelectedDays);
     form.setFieldsValue({ selectedDays: newSelectedDays });
   };
@@ -65,7 +169,7 @@ export default function AdvancedVisitForm() {
         <div className={styles.container}>
           <div className={styles.header}>
             <h1 className={styles.title}>Advanced Visit Form</h1>
-            <Button onClick={handleBack} className={styles.backButton}>
+            <Button onClick={() => router.back()} className={styles.backButton}>
               Back
             </Button>
           </div>
@@ -77,41 +181,24 @@ export default function AdvancedVisitForm() {
               onFinish={handleSubmit}
               initialValues={{
                 visitStatus: "Scheduled",
-                recurrenceType: "Custom Days",
+                recurrenceType: "CustomDays",
               }}
               className={styles.form}
             >
               <Form.Item
                 name="memberName"
                 label="Member Name"
-                rules={[
-                  { required: true, message: "Please enter member name" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input placeholder="Member Name" className={styles.input} />
+                <SelectField options={members} placeholder="Select member" />
               </Form.Item>
 
               <Form.Item
                 name="serviceProvider"
                 label="Service Provider"
-                rules={[
-                  { required: true, message: "Please select a provider" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
+                <SelectField options={providers} placeholder="Select provider" />
               </Form.Item>
 
               <div className={styles.row}>
@@ -119,26 +206,18 @@ export default function AdvancedVisitForm() {
                   name="date"
                   label="Date"
                   className={styles.halfWidth}
-                  rules={[{ required: true, message: "Please select date" }]}
+                  rules={[{ required: true }]}
                 >
-                  <DatePicker
-                    format="DD/MM/YYYY"
-                    placeholder="dd/mm/yyyy"
-                    className={styles.datePicker}
-                  />
+                  <DatePicker format="DD/MM/YYYY" />
                 </Form.Item>
 
                 <Form.Item
                   name="time"
                   label="Time"
                   className={styles.halfWidth}
-                  rules={[{ required: true, message: "Please select time" }]}
+                  rules={[{ required: true }]}
                 >
-                  <TimePicker
-                    format="HH:mm"
-                    placeholder="--:-- --"
-                    className={styles.timePicker}
-                  />
+                  <TimePicker format="HH:mm" />
                 </Form.Item>
               </div>
 
@@ -147,121 +226,44 @@ export default function AdvancedVisitForm() {
                   name="duration"
                   label="Duration"
                   className={styles.halfWidth}
-                  rules={[
-                    { required: true, message: "Please select duration" },
-                  ]}
+                  rules={[{ required: true }]}
                 >
-                  <SelectField
-                    options={[]}
-                    placeholder={"Select here"}
-                    containerStyle={{
-                      backgroundColor: "#fff",
-                    }}
-                    customStyle={{
-                      backgroundColor: "#fff",
-                      border: "1px solid #d0d3d7",
-                      padding: "2px",
-                      height: "39px",
-                      textAlign: "left",
-                    }}
-                  />
+                  <SelectField options={durationOptions} placeholder="Select duration" />
                 </Form.Item>
 
                 <Form.Item
                   name="location"
                   label="Location"
                   className={styles.halfWidth}
-                  rules={[{ required: true, message: "Please enter location" }]}
+                  rules={[{ required: true }]}
                 >
-                  <Input
-                    placeholder="Enter location"
-                    className={styles.input}
-                  />
+                  <Input placeholder="Enter location" />
                 </Form.Item>
               </div>
 
-              <div className={styles.row}>
-                <Form.Item
-                  name="serviceType"
-                  label="Service Type"
-                  className={styles.halfWidth}
-                  rules={[
-                    { required: true, message: "Please select service type" },
-                  ]}
-                >
-                  <SelectField
-                    options={[]}
-                    placeholder={"Select here"}
-                    containerStyle={{
-                      backgroundColor: "#fff",
-                    }}
-                    customStyle={{
-                      backgroundColor: "#fff",
-                      border: "1px solid #d0d3d7",
-                      padding: "2px",
-                      height: "39px",
-                      textAlign: "left",
-                    }}
-                  />
-                </Form.Item>
+              <Form.Item name="serviceType" label="Service Type">
+                <Input />
+              </Form.Item>
 
-                <Form.Item
-                  name="visitStatus"
-                  label="Visit Status"
-                  className={styles.halfWidth}
-                  rules={[
-                    { required: true, message: "Please select visit status" },
-                  ]}
-                >
-                  <SelectField
-                    options={[]}
-                    placeholder={"Select here"}
-                    containerStyle={{
-                      backgroundColor: "#fff",
-                    }}
-                    customStyle={{
-                      backgroundColor: "#fff",
-                      border: "1px solid #d0d3d7",
-                      padding: "2px",
-                      height: "39px",
-                      textAlign: "left",
-                    }}
-                  />
-                </Form.Item>
-              </div>
+              <Form.Item name="visitStatus" label="Visit Status">
+                <Input />
+              </Form.Item>
 
               <Form.Item name="notes" label="Notes">
-                <TextArea
-                  rows={4}
-                  placeholder="Enter any notes..."
-                  className={styles.textarea}
-                />
+                <TextArea rows={4} />
               </Form.Item>
 
               <Form.Item name="recurrenceType" label="Recurrence Type">
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
+                <SelectField options={recurrenceOptions} />
               </Form.Item>
 
               <Form.Item name="selectedDays" label="Select Custom Days">
                 <div className={styles.daysContainer}>
-                  {daysOfWeek.map((day) => (
-                    <div key={day.value} className={styles.dayCheckbox}>
+                  {daysOfWeek.map(day => (
+                    <div key={day.value}>
                       <Checkbox
                         checked={selectedDays.includes(day.value)}
-                        onChange={(e) =>
+                        onChange={e =>
                           handleDayChange(day.value, e.target.checked)
                         }
                       >
@@ -272,100 +274,25 @@ export default function AdvancedVisitForm() {
                 </div>
               </Form.Item>
 
-              <Form.Item name="attachments" label="Attachments">
-                <div className={styles.fileUploadContainer}>
-                  <label
-                    htmlFor="file-upload"
-                    className={styles.chooseFileButton}
-                  >
-                    Choose file
-                  </label>
-                  <div className={styles.fileNameDisplay}>No file chosen</div>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className={styles.hiddenFileInput}
-                    onChange={(e) => {
-                      const fileName = e.target.files?.[0]?.name;
-                      if (fileName) {
-                        const fileDisplay = document.querySelector(
-                          `.${styles.fileNameDisplay}`
-                        );
-                        if (fileDisplay) fileDisplay.textContent = fileName;
-                      }
-                    }}
-                  />
-                </div>
-              </Form.Item>
-
               <Form.Item name="cptCodes" label="Service / CPT Codes">
-                <Input
-                  placeholder="Enter code (e.g. 99213)"
-                  className={styles.input}
-                />
+                <Input placeholder="Enter code (e.g. 99213)" />
               </Form.Item>
 
               <Form.Item name="carePlan" label="Care Plan">
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
+                <SelectField options={carePlanOptions} />
               </Form.Item>
 
               <Form.Item name="visitVerification" label="Visit Verification">
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
+                <SelectField options={verificationOptions} />
               </Form.Item>
 
               <Form.Item name="workflowTrigger" label="Workflow Trigger">
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
+                <SelectField options={workflowOptions} />
               </Form.Item>
 
               <div className={styles.buttonContainer}>
-                <Button onClick={handleBack} className={styles.cancelButton}>
-                  Cancel
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  className={styles.saveButton}
-                >
+                <Button onClick={() => router.back()}>Cancel</Button>
+                <Button type="primary" htmlType="submit" loading={loading}>
                   Save
                 </Button>
               </div>
