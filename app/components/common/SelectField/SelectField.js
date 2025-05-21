@@ -1,6 +1,8 @@
 import { Select } from "antd";
 import styles from "./SelectField.module.css";
 
+const { Option } = Select;
+
 const SelectField = ({
   options,
   label,
@@ -22,9 +24,9 @@ const SelectField = ({
         placeholder={placeholder}
       >
         {options.map((e) => (
-          <option value={e.Id} key={e.Id}>
-            {e.Name}
-          </option>
+          <Option value={e.value} key={e.value}>
+            {e.label}
+          </Option>
         ))}
       </Select>
     </div>
@@ -32,3 +34,4 @@ const SelectField = ({
 };
 
 export default SelectField;
+
