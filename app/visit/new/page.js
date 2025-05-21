@@ -279,43 +279,43 @@ export default function AdvancedVisitForm() {
                 />
               </Form.Item>
 
-              <Form.Item name="carePlan" label="Care Plan">
-                <SelectField
-                  options={[
-                    { label: "Hospice", value: "Hospice" },
-                    { label: "Elderly", value: "Elderly" },
-                    { label: "Disabled", value: "Disabled" },
-                  ]}
-                  placeholder={"Select here"}
-                  containerStyle={{ backgroundColor: "#fff" }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
-              </Form.Item>
+            <Form.Item name="carePlan" label="Care Plan">
+  <SelectField
+    options={[
+      { label: "Hospice", value: "Hospice" },
+      { label: "Elderly", value: "Elderly" },
+      { label: "Disabled", value: "Disabled" },
+    ]}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left",
+    }}
+  />
+</Form.Item>
 
-              <Form.Item name="visitVerification" label="Visit Verification">
-                <SelectField
-                  options={[
-                    { label: "Mobile", value: "Mobile" },
-                    { label: "Call", value: "Call" },
-                    { label: "QR", value: "QR" },
-                  ]}
-                  placeholder={"Select here"}
-                  containerStyle={{ backgroundColor: "#fff" }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
-              </Form.Item>
+             <Form.Item name="visitVerification" label="Visit Verification">
+  <SelectField
+    options={[
+      { label: "Mobile", value: "Mobile" },
+      { label: "Call", value: "Call" },
+      { label: "QR", value: "QR" },
+    ]}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left",
+    }}
+  />
+</Form.Item>
 
               <Form.Item name="workflowTrigger" label="Workflow Trigger">
                 <SelectField
