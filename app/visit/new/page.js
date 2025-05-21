@@ -135,25 +135,30 @@ export default function AdvancedVisitForm() {
 
               <div className={styles.row}>
                 <Form.Item
-                  name="duration"
-                  label="Duration"
-                  className={styles.halfWidth}
-                  rules={[{ required: true, message: "Please select duration" }]}
-                >
-                  <SelectField
-                    options={[]}
-                    placeholder={"Select here"}
-                    containerStyle={{ backgroundColor: "#fff" }}
-                    customStyle={{
-                      backgroundColor: "#fff",
-                      border: "1px solid #d0d3d7",
-                      padding: "2px",
-                      height: "39px",
-                      textAlign: "left",
-                    }}
-                  />
-                </Form.Item>
-
+  name="duration"
+  label="Duration"
+  className={styles.halfWidth}
+  rules={[{ required: true, message: "Please select duration" }]}
+>
+  <SelectField
+    options={Array.from({ length: 37 }, (_, i) => {
+      const totalMinutes = (i + 4) * 30;
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      const label = `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
+      return { label, value: label };
+    })}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left",
+    }}
+  />
+</Form.Item>
                 <Form.Item
                   name="location"
                   label="Location"
@@ -215,19 +220,27 @@ export default function AdvancedVisitForm() {
               </Form.Item>
 
               <Form.Item name="recurrenceType" label="Recurrence Type">
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{ backgroundColor: "#fff" }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
-              </Form.Item>
+  <SelectField
+    options={[
+      { label: "None", value: "None" },
+      { label: "Daily", value: "Daily" },
+      { label: "Every Weekday", value: "Every Weekday" },
+      { label: "Weekly", value: "Weekly" },
+      { label: "Bi-Weekly", value: "Bi-Weekly" },
+      { label: "Monthly", value: "Monthly" },
+      { label: "Custom days", value: "Custom days" },
+    ]}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left",
+    }}
+  />
+</Form.Item>
 
               <Form.Item name="selectedDays" label="Select Custom Days">
                 <div className={styles.daysContainer}>
@@ -318,19 +331,31 @@ export default function AdvancedVisitForm() {
 </Form.Item>
 
               <Form.Item name="workflowTrigger" label="Workflow Trigger">
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{ backgroundColor: "#fff" }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
-              </Form.Item>
+  <SelectField
+    options={[
+      { label: "Start of Care", value: "Start of Care" },
+      { label: "Resumption of Care", value: "Resumption of Care" },
+      { label: "Recertification", value: "Recertification" },
+      { label: "Routine Visit", value: "Routine Visit" },
+      { label: "Missed Visit", value: "Missed Visit" },
+      { label: "Discharge Planning", value: "Discharge Planning" },
+      { label: "End of Episode Review", value: "End of Episode Review" },
+      { label: "Evaluation Required", value: "Evaluation Required" },
+      { label: "Incident Follow-Up", value: "Incident Follow-Up" },
+      { label: "Ready for Billing", value: "Ready for Billing" },
+      { label: "None", value: "None" },
+    ]}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left",
+    }}
+  />
+</Form.Item>
 
               <div className={styles.buttonContainer}>
                 <Button onClick={handleBack} className={styles.cancelButton}>
