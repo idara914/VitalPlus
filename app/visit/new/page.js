@@ -8,147 +8,86 @@ import {
   TimePicker,
   Button,
   Checkbox,
+  Upload,
   message,
 } from "antd";
+
 import { useRouter } from "next/navigation";
 import styles from "./advanceForm.module.css";
 import MainLayout from "@/app/components/layouts/MainLayout";
 import SelectField from "@/app/components/common/SelectField/SelectField";
-import dayjs from "dayjs";
 
 const { TextArea } = Input;
-
-const recurrenceOptions = [
-  { label: "None", value: "None" },
-  { label: "Daily", value: "Daily" },
-  { label: "Every Weekday", value: "Weekdays" },
-  { label: "Weekly", value: "Weekly" },
-  { label: "Bi-Weekly", value: "BiWeekly" },
-  { label: "Monthly", value: "Monthly" },
-  { label: "Custom Days", value: "CustomDays" },
-];
-
-const workflowOptions = [
-  { label: "Start of Care", value: "StartOfCare" },
-  { label: "Resumption of Care", value: "ResumptionOfCare" },
-  { label: "Recertification", value: "Recertification" },
-  { label: "Routine Visit", value: "RoutineVisit" },
-  { label: "Missed Visit", value: "MissedVisit" },
-  { label: "Discharge Planning", value: "DischargePlanning" },
-  { label: "End of Episode Review", value: "EndOfEpisode" },
-  { label: "Evaluation Required", value: "NeedsEvaluation" },
-  { label: "Incident Follow-Up", value: "IncidentFollowUp" },
-  { label: "Manual Workflow", value: "Manual" },
-  { label: "Ready for Billing", value: "ReadyForBilling" },
-  { label: "None", value: "None" },
-];
-
-const carePlanOptions = [
-  { label: "Terminal Care", value: "terminal care" },
-  { label: "Hospice", value: "hospice" },
-  { label: "Elderly", value: "elderly" },
-  { label: "Disabled", value: "disabled" },
-];
-
-const verificationOptions = [
-  { label: "Mobile", value: "mobile" },
-  { label: "Call", value: "call" },
-  { label: "QR", value: "qr" },
-];
-
-const durationOptions = Array.from({ length: 40 }, (_, i) => {
-  const minutes = (i + 1) * 30;
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  const label = `${hours > 0 ? hours + "h" : ""}${mins > 0 ? " " + mins + "m" : ""}`.trim();
-  const value = `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:00`;
-  return { label, value };
-});
 
 export default function AdvancedVisitForm() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
-  const [members, setMembers] = useState([]);
+  const [patients, setPatients] = useState([]);
   const [providers, setProviders] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/clinicpatient")
-      .then(res => res.json())
-      .then(data =>
-        setMembers(data.map(p => ({ label: p.name, value: p.id })))
-      );
+    const fetchData = async () => {
+      try {
+        const [patientRes, providerRes] = await Promise.all([
+          fetch("/api/clinicpatient"),
+          fetch("/api/serviceprovider"),
+        ]);
+        const patientData = await patientRes.json();
+        const providerData = await providerRes.json();
+        setPatients(
+          patientData.map((p) => ({
+            label: `${p.FirstName} ${p.LastName}`,
+            value: p.Id,
+          }))
+        );
+        setProviders(
+          providerData.map((s) => ({
+            label: `${s.FirstName} ${s.LastName}`,
+            value: s.Id,
+          }))
+        );
+      } catch (error) {
+        console.error("Error loading dropdown data", error);
+      }
+    };
 
-    fetch("/api/serviceprovider")
-      .then(res => res.json())
-      .then(data =>
-        setProviders(data.map(p => ({ label: p.name, value: p.id })))
-      );
+    fetchData();
   }, []);
 
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      const scheduledstart = dayjs(values.date)
-        .hour(dayjs(values.time).hour())
-        .minute(dayjs(values.time).minute())
-        .second(0)
-        .toISOString();
-
-      const durationParts = values.duration.split(":");
-      const scheduledend = dayjs(scheduledstart)
-        .add(Number(durationParts[0]), "hour")
-        .add(Number(durationParts[1]), "minute")
-        .toISOString();
-
-      const payload = {
-        ProviderId: values.serviceProvider,
-        patientId: values.memberName,
-        visitdate: scheduledstart,
-        scheduledstart,
-        scheduledend,
-        visitduration: values.duration,
-        location: values.location,
-        notes: values.notes,
-        visittype: values.serviceType,
-        status: values.visitStatus,
-        tasksperformed: {
-          cptCodes: [values.cptCodes],
-          visitVerification: values.visitVerification,
-          workflowTrigger: values.workflowTrigger,
-          recurrenceType: values.recurrenceType,
-          selectedDays,
-        },
-        careplanid: values.carePlan,
-        companyid: "demo-company-id", // Replace with actual value
-      };
-
-      const res = await fetch("/api/visits", {
+      const response = await fetch("/api/visit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
       });
 
-      if (!res.ok) throw new Error("Failed to save");
+      if (!response.ok) {
+        throw new Error("Failed to save visit");
+      }
 
       message.success("Visit saved successfully");
-      router.push("/visits");
-    } catch (err) {
-      console.error("Error submitting visit:", err);
-      message.error("Failed to save visit");
+      router.back();
+    } catch (error) {
+      console.error("Submit error", error);
+      message.error("Something went wrong while saving");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   const handleDayChange = (day, checked) => {
     const newSelectedDays = checked
       ? [...selectedDays, day]
-      : selectedDays.filter(d => d !== day);
+      : selectedDays.filter((d) => d !== day);
+
     setSelectedDays(newSelectedDays);
     form.setFieldsValue({ selectedDays: newSelectedDays });
   };
@@ -163,13 +102,58 @@ export default function AdvancedVisitForm() {
     { label: "Sunday", value: "sunday" },
   ];
 
+  const durationOptions = Array.from({ length: 40 }, (_, i) => {
+    const minutes = (i + 1) * 30;
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    const label = `${hours ? hours + "h" : ""} ${mins ? mins + "m" : ""}`.trim();
+    return { label, value: minutes };
+  });
+
+  const recurrenceOptions = [
+    { label: "None", value: "None" },
+    { label: "Daily", value: "Daily" },
+    { label: "Every Weekday", value: "Every Weekday" },
+    { label: "Weekly", value: "Weekly" },
+    { label: "Bi-Weekly", value: "Bi-Weekly" },
+    { label: "Monthly", value: "Monthly" },
+    { label: "Custom days", value: "Custom days" },
+  ];
+
+  const carePlanOptions = [
+    { label: "Terminal Care", value: "terminal care" },
+    { label: "Hospice", value: "hospice" },
+    { label: "Elderly", value: "elderly" },
+    { label: "Disabled", value: "disabled" },
+  ];
+
+  const verificationOptions = [
+    { label: "Mobile", value: "mobile" },
+    { label: "Call", value: "call" },
+    { label: "QR", value: "QR" },
+  ];
+
+  const workflowOptions = [
+    "Start of Care",
+    "Resumption of Care",
+    "Recertification",
+    "Routine Visit",
+    "Missed Visit",
+    "Discharge Planning",
+    "End of Episode Review",
+    "Evaluation Required",
+    "Incident Follow-Up",
+    "Ready for Billing",
+    "None",
+  ].map((item) => ({ label: item, value: item }));
+
   return (
     <MainLayout isSignedIn={true}>
       <div style={{ backgroundColor: "#e5e7eb" }}>
         <div className={styles.container}>
           <div className={styles.header}>
             <h1 className={styles.title}>Advanced Visit Form</h1>
-            <Button onClick={() => router.back()} className={styles.backButton}>
+            <Button onClick={handleBack} className={styles.backButton}>
               Back
             </Button>
           </div>
@@ -179,120 +163,149 @@ export default function AdvancedVisitForm() {
               form={form}
               layout="vertical"
               onFinish={handleSubmit}
-              initialValues={{
-                visitStatus: "Scheduled",
-                recurrenceType: "CustomDays",
-              }}
+              initialValues={{ visitStatus: "Scheduled" }}
               className={styles.form}
             >
-              <Form.Item
-                name="memberName"
-                label="Member Name"
-                rules={[{ required: true }]}
-              >
-                <SelectField options={members} placeholder="Select member" />
+              <Form.Item name="memberName" label="Member Name" rules={[{ required: true }]}>
+                <SelectField
+                  options={patients}
+                  placeholder="Select patient"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
               </Form.Item>
 
-              <Form.Item
-                name="serviceProvider"
-                label="Service Provider"
-                rules={[{ required: true }]}
-              >
-                <SelectField options={providers} placeholder="Select provider" />
+              <Form.Item name="serviceProvider" label="Service Provider" rules={[{ required: true }]}>
+                <SelectField
+                  options={providers}
+                  placeholder="Select provider"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
               </Form.Item>
 
-              <div className={styles.row}>
-                <Form.Item
-                  name="date"
-                  label="Date"
-                  className={styles.halfWidth}
-                  rules={[{ required: true }]}
-                >
-                  <DatePicker format="DD/MM/YYYY" />
-                </Form.Item>
-
-                <Form.Item
-                  name="time"
-                  label="Time"
-                  className={styles.halfWidth}
-                  rules={[{ required: true }]}
-                >
-                  <TimePicker format="HH:mm" />
-                </Form.Item>
-              </div>
-
-              <div className={styles.row}>
-                <Form.Item
-                  name="duration"
-                  label="Duration"
-                  className={styles.halfWidth}
-                  rules={[{ required: true }]}
-                >
-                  <SelectField options={durationOptions} placeholder="Select duration" />
-                </Form.Item>
-
-                <Form.Item
-                  name="location"
-                  label="Location"
-                  className={styles.halfWidth}
-                  rules={[{ required: true }]}
-                >
-                  <Input placeholder="Enter location" />
-                </Form.Item>
-              </div>
-
-              <Form.Item name="serviceType" label="Service Type">
-                <Input />
+              <Form.Item name="date" label="Date" rules={[{ required: true }]}>
+                <DatePicker className={styles.datePicker} format="DD/MM/YYYY" />
               </Form.Item>
 
-              <Form.Item name="visitStatus" label="Visit Status">
-                <Input />
+              <Form.Item name="time" label="Time" rules={[{ required: true }]}>
+                <TimePicker className={styles.timePicker} format="HH:mm" />
               </Form.Item>
 
-              <Form.Item name="notes" label="Notes">
-                <TextArea rows={4} />
+              <Form.Item name="duration" label="Duration" rules={[{ required: true }]}>
+                <SelectField
+                  options={durationOptions}
+                  placeholder="Select duration"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item name="location" label="Location" rules={[{ required: true }]}>
+                <Input placeholder="Enter location" className={styles.input} />
+              </Form.Item>
+
+              <Form.Item name="carePlan" label="Care Plan">
+                <SelectField
+                  options={carePlanOptions}
+                  placeholder="Select care plan"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item name="visitVerification" label="Visit Verification">
+                <SelectField
+                  options={verificationOptions}
+                  placeholder="Select verification method"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
+              </Form.Item>
+
+              <Form.Item name="workflowTrigger" label="Workflow Trigger">
+                <SelectField
+                  options={workflowOptions}
+                  placeholder="Select workflow trigger"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
               </Form.Item>
 
               <Form.Item name="recurrenceType" label="Recurrence Type">
-                <SelectField options={recurrenceOptions} />
+                <SelectField
+                  options={recurrenceOptions}
+                  placeholder="Select recurrence type"
+                  containerStyle={{ backgroundColor: "#fff" }}
+                  customStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #d0d3d7",
+                    padding: "2px",
+                    height: "39px",
+                    textAlign: "left",
+                  }}
+                />
               </Form.Item>
 
               <Form.Item name="selectedDays" label="Select Custom Days">
                 <div className={styles.daysContainer}>
-                  {daysOfWeek.map(day => (
-                    <div key={day.value}>
-                      <Checkbox
-                        checked={selectedDays.includes(day.value)}
-                        onChange={e =>
-                          handleDayChange(day.value, e.target.checked)
-                        }
-                      >
-                        {day.label}
-                      </Checkbox>
-                    </div>
+                  {daysOfWeek.map((day) => (
+                    <Checkbox
+                      key={day.value}
+                      checked={selectedDays.includes(day.value)}
+                      onChange={(e) => handleDayChange(day.value, e.target.checked)}
+                    >
+                      {day.label}
+                    </Checkbox>
                   ))}
                 </div>
               </Form.Item>
 
-              <Form.Item name="cptCodes" label="Service / CPT Codes">
-                <Input placeholder="Enter code (e.g. 99213)" />
-              </Form.Item>
-
-              <Form.Item name="carePlan" label="Care Plan">
-                <SelectField options={carePlanOptions} />
-              </Form.Item>
-
-              <Form.Item name="visitVerification" label="Visit Verification">
-                <SelectField options={verificationOptions} />
-              </Form.Item>
-
-              <Form.Item name="workflowTrigger" label="Workflow Trigger">
-                <SelectField options={workflowOptions} />
+              <Form.Item name="notes" label="Notes">
+                <TextArea rows={4} placeholder="Enter any notes..." className={styles.textarea} />
               </Form.Item>
 
               <div className={styles.buttonContainer}>
-                <Button onClick={() => router.back()}>Cancel</Button>
-                <Button type="primary" htmlType="submit" loading={loading}>
+                <Button onClick={handleBack} className={styles.cancelButton}>
+                  Cancel
+                </Button>
+                <Button type="primary" htmlType="submit" loading={loading} className={styles.saveButton}>
                   Save
                 </Button>
               </div>
