@@ -180,7 +180,7 @@ export default function AdvancedVisitForm() {
     options={[
       {
         label: "Managed Care",
-        options: [
+        children: [
           { label: "NURSING - HHS OF RN EA 15 MIN", value: "G0299" },
           { label: "NURSING - HHS OF LPN EA 15 MIN", value: "G0300" },
           { label: "NURSING - HHS OF AIDE EA 15 MIN", value: "G0156" },
@@ -210,7 +210,7 @@ export default function AdvancedVisitForm() {
       },
       {
         label: "Acute Care FFS",
-        options: [
+        children: [
           { label: "NURSING - RN-Skilled Care in the Client's Home", value: "S9123" },
           { label: "NURSING - LVN-Skilled Care in the Client's Home", value: "S9124" },
           { label: "NURSING - HHS OF AIDE EA 15 MIN", value: "G0156" },
@@ -231,7 +231,7 @@ export default function AdvancedVisitForm() {
       },
       {
         label: "Longterm Care FFS",
-        options: [
+        children: [
           { label: "In-Home OCCUPATIONAL THERAPY - EVV OHFH", value: "G0152" },
           { label: "In-Home PHYSICAL THERAPY - EVV OHFH", value: "G0151" },
           { label: "In-Home NURSING SERVICES BY LPN/LVN - EVV OHFH", value: "T1003" },
@@ -256,6 +256,7 @@ export default function AdvancedVisitForm() {
     }}
   />
 </Form.Item>
+
 
                 <Form.Item
                   name="visitStatus"
