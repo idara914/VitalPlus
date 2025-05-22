@@ -19,15 +19,18 @@ const SelectField = ({
       {label && <label className={styles.label}>{label}</label>}
       {isGrouped ? (
         <Cascader
-          options={options}
-          onChange={(val, selectedOptions) => {
-            const finalValue = selectedOptions?.[1]?.value; // pick HCPCS
-            onChange(finalValue);
-          }}
-          placeholder={placeholder}
-          style={customStyle}
-          popupClassName={styles.input}
-        />
+  options={options}
+  onChange={(val, selectedOptions) => {
+    const finalValue = val[val.length - 1];
+    onChange(finalValue);
+  }}
+  placeholder={placeholder}
+  style={customStyle}
+  popupClassName={styles.input}
+  dropdownRender={(menus) => <div style={{ maxHeight: "400px", overflowY: "auto" }}>{menus}</div>}
+  getPopupContainer={(triggerNode) => document.body} // ✅ Forces dropdown to body
+/>
+
       ) : (
         <Select
           value={value}
