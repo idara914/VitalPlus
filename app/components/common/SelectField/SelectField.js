@@ -1,22 +1,27 @@
+import { useState, useEffect } from "react";
 import { Select, Dropdown, Menu } from "antd";
 import styles from "./SelectField.module.css";
 
 const { Option } = Select;
-const [memberOptions, setMemberOptions] = useState([]);
 
-const handleSearch = async (value) => {
-  const res = await fetch(`/api/clinic-patients?search=${encodeURIComponent(value)}`);
-  const data = await res.json();
-  setMemberOptions(data);
 const SelectField = ({
-  options,
+  options = [],
   label,
   placeholder,
   value,
   onChange,
+  onSearch, // for dynamic search
   customStyle,
   containerStyle,
+  showSearch = false,
 }) => {
+  const [dynamicOptions, setDynamicOptions] = useState([]);
+
+  useEffect(() => {
+    if (!showSearch) return;
+    setDynamicOptions(options); // initialize with props
+  }, [options, showSearch]);
+
   const isGrouped = options.some((opt) => opt.children);
 
   const getLabelForValue = (val) => {
@@ -24,7 +29,8 @@ const SelectField = ({
       const match = group.children?.find((item) => item.value === val);
       if (match) return match.label;
     }
-    return null;
+    const match = options.find((item) => item.value === val);
+    return match?.label || null;
   };
 
   const buildMenu = () => (
@@ -41,12 +47,19 @@ const SelectField = ({
     </Menu>
   );
 
+  const handleDynamicSearch = async (searchText) => {
+    if (onSearch) {
+      const results = await onSearch(searchText);
+      setDynamicOptions(results);
+    }
+  };
+
   return (
     <div className={styles.container} style={containerStyle}>
       {label && <label className={styles.label}>{label}</label>}
       {isGrouped ? (
-        <Dropdown overlay={buildMenu()} trigger={['click']} placement="bottomLeft">
-          <div className={styles.input} style={{ cursor: 'pointer', ...customStyle }}>
+        <Dropdown overlay={buildMenu()} trigger={["click"]} placement="bottomLeft">
+          <div className={styles.input} style={{ cursor: "pointer", ...customStyle }}>
             {getLabelForValue(value) || placeholder}
           </div>
         </Dropdown>
@@ -57,9 +70,12 @@ const SelectField = ({
           placeholder={placeholder}
           style={customStyle}
           className={styles.input}
-          getPopupContainer={() => document.body}
+          showSearch={showSearch}
+          filterOption={false}
+          onSearch={handleDynamicSearch}
+          options={showSearch ? dynamicOptions : options}
         >
-          {options.map((opt) => (
+          {(showSearch ? dynamicOptions : options).map((opt) => (
             <Option key={opt.value} value={opt.value}>
               {opt.label}
             </Option>
@@ -71,4 +87,5 @@ const SelectField = ({
 };
 
 export default SelectField;
+
 
