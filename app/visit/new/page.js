@@ -104,7 +104,11 @@ useEffect(() => {
               }}
               className={styles.form}
             >
-              <Form.Item
+              import { useState } from "react";
+import { Select, Form } from "antd";
+const { Option } = Select;
+
+<Form.Item
   name="memberName"
   label="Member Name"
   rules={[{ required: true, message: "Please select a member" }]}
@@ -112,14 +116,22 @@ useEffect(() => {
   <Select
     showSearch
     placeholder="Select a member"
-    optionFilterProp="label"
-    options={members}
     className={styles.input}
-    filterOption={(input, option) =>
-      option?.label?.toLowerCase().includes(input.toLowerCase())
-    }
+    value={form.getFieldValue("memberName")}
+    onChange={(val) => form.setFieldsValue({ memberName: val })}
+    onSearch={async (search) => {
+      if (!search) return;
+
+      const res = await fetch(`/api/clinic-patients?search=${encodeURIComponent(search)}`);
+      const data = await res.json();
+
+      setMembers(data); // assuming setMembers is a useState hook
+    }}
+    filterOption={false}
+    options={members} // must be [{ label: "John Doe", value: "uuid" }]
   />
 </Form.Item>
+
 
 
               <Form.Item
