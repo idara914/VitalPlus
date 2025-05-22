@@ -50,6 +50,19 @@ useEffect(() => {
   fetchMembers();
 }, []);
 
+ const [serviceproviders, setServiceProvider] = useState([]);
+useEffect(() => {
+  const fetchServiceProviders = async () => {
+    try {
+      const res = await axios.get("/api/serviceprovider"); // ✅ Adjust path if needed
+      setServiceProviders(res.data); // must be an array of { label, value }
+    } catch (err) {
+      console.error("Error loading service providers:", err);
+    }
+  };
+  fetchServiceProviders();
+}, []);
+
   
   const handleSubmit = async (values) => {
     setLoading(true);
@@ -137,23 +150,29 @@ useEffect(() => {
 
 
               <Form.Item
-                name="serviceProvider"
-                label="Service Provider"
-                rules={[{ required: true, message: "Please select a provider" }]}
-              >
-                <SelectField
-                  options={[]}
-                  placeholder={"Select here"}
-                  containerStyle={{ backgroundColor: "#fff" }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
-              </Form.Item>
+  name="serviceProvider"
+  label="Service Provider"
+  rules={[{ required: true, message: "Please select a member" }]}
+>
+  <Select
+    showSearch
+    placeholder="Select a member"
+    className={styles.input}
+    onSearch={async (search) => {
+      if (!search.trim()) return;
+      try {
+        const res = await fetch(`/api/serviceprovider?search=${encodeURIComponent(search)}`);
+        const data = await res.json();
+        setMembers(data); // assumes [{ label: "John Doe", value: "uuid" }]
+      } catch (err) {
+        console.error("Failed to fetch members:", err);
+      }
+    }}
+    onChange={(val) => form.setFieldsValue({ memberName: val })}
+    filterOption={false}
+    options={members}
+  />
+</Form.Item>
 
               <div className={styles.row}>
                 <Form.Item
