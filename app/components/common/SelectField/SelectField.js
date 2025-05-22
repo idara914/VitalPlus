@@ -1,4 +1,4 @@
-import { Select, Cascader } from "antd";
+import { Select, Dropdown, Menu } from "antd";
 import styles from "./SelectField.module.css";
 
 const { Option } = Select;
@@ -12,48 +12,40 @@ const SelectField = ({
   customStyle,
   containerStyle,
 }) => {
-  const isGrouped = options.some((opt) => opt.children); // Check for multilevel structure
+  const isGrouped = options.some((opt) => opt.children);
+
+  const buildMenu = () => (
+    <Menu>
+      {options.map((group) => (
+        <Menu.SubMenu key={group.label} title={group.label}>
+          {group.children.map((item) => (
+            <Menu.Item
+              key={item.value}
+              onClick={() => onChange(item.value)}
+            >
+              {item.label}
+            </Menu.Item>
+          ))}
+        </Menu.SubMenu>
+      ))}
+    </Menu>
+  );
 
   return (
     <div className={styles.container} style={containerStyle}>
       {label && <label className={styles.label}>{label}</label>}
       {isGrouped ? (
-        <Cascader
-  options={options}
-  onChange={(val, selectedOptions) => {
-    const finalValue = val[val.length - 1];
-    onChange(finalValue);
-  }}
-  placeholder={placeholder}
-  style={{ ...customStyle, zIndex: 10000 }}
-  popupClassName={styles.input}
-  getPopupContainer={() => document.body} // Force to body
-  dropdownRender={(menus) => (
-    <div
-      style={{
-        maxHeight: "500px",
-        overflowY: "auto",
-        backgroundColor: "#fff",
-        zIndex: 10000,
-      }}
-    >
-      {menus}
-    </div>
-  )}
-  popupStyle={{
-    maxHeight: "500px",
-    overflowY: "auto",
-    zIndex: 10000,
-    position: "absolute",
-  }}
-/>
-
+        <Dropdown overlay={buildMenu()} trigger={['click']} placement="bottomLeft">
+          <div className={styles.input} style={{ cursor: 'pointer', ...customStyle }}>
+            {value || placeholder}
+          </div>
+        </Dropdown>
       ) : (
         <Select
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          style={{ ...customStyle, zIndex: 9999 }}
+          style={customStyle}
           className={styles.input}
           getPopupContainer={() => document.body}
         >
@@ -69,4 +61,3 @@ const SelectField = ({
 };
 
 export default SelectField;
-
