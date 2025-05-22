@@ -2,7 +2,12 @@ import { Select, Dropdown, Menu } from "antd";
 import styles from "./SelectField.module.css";
 
 const { Option } = Select;
+const [memberOptions, setMemberOptions] = useState([]);
 
+const handleSearch = async (value) => {
+  const res = await fetch(`/api/clinic-patients?search=${encodeURIComponent(value)}`);
+  const data = await res.json();
+  setMemberOptions(data);
 const SelectField = ({
   options,
   label,
