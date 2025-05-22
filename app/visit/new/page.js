@@ -160,6 +160,9 @@ export default function AdvancedVisitForm() {
       textAlign: "left",
     }}
   />
+     </div>
+
+              <div className={styles.row}>
 <Form.Item
   name="location"
   label="Location"
@@ -196,9 +199,7 @@ export default function AdvancedVisitForm() {
 </Form.Item>
 
 
-              </div>
-
-              <div className={styles.row}>
+             
                <Form.Item
   name="serviceType"
   label="Service Type"
