@@ -16,13 +16,12 @@ import { useRouter } from "next/navigation";
 import styles from "./advanceForm.module.css";
 import MainLayout from "@/app/components/layouts/MainLayout";
 import SelectField from "@/app/components/common/SelectField/SelectField";
-import { AddressAutofill } from "@mapbox/search-js-react";
-
-
+import dynamic from "next/dynamic";
 const AddressAutofill = dynamic(
   () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
   { ssr: false }
 );
+
 
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
