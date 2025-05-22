@@ -50,12 +50,13 @@ useEffect(() => {
   fetchMembers();
 }, []);
 
- const [serviceproviders, setServiceProvider] = useState([]);
+const [serviceproviders, setServiceProviders] = useState([]);
+
 useEffect(() => {
   const fetchServiceProviders = async () => {
     try {
-      const res = await axios.get("/api/serviceprovider"); // ✅ Adjust path if needed
-      setServiceProviders(res.data); // must be an array of { label, value }
+      const res = await axios.get("/api/serviceprovider");
+      setServiceProviders(res.data); // must be [{ label, value }]
     } catch (err) {
       console.error("Error loading service providers:", err);
     }
@@ -149,7 +150,7 @@ useEffect(() => {
 
 
 
-             <Form.Item
+<Form.Item
   name="serviceProvider"
   label="Service Provider"
   rules={[{ required: true, message: "Please select a provider" }]}
@@ -163,16 +164,17 @@ useEffect(() => {
       try {
         const res = await fetch(`/api/serviceprovider?search=${encodeURIComponent(search)}`);
         const data = await res.json();
-        setServiceProvider(data); // ✅ correct setter
+        setServiceProviders(data); // ✅ use correct setter
       } catch (err) {
         console.error("Failed to fetch service providers:", err);
       }
     }}
-    onChange={(val) => form.setFieldsValue({ serviceProvider: val })} // ✅ correct field
+    onChange={(val) => form.setFieldsValue({ serviceProvider: val })}
     filterOption={false}
-    options={serviceproviders} // ✅ correct array
+    options={serviceproviders}
   />
 </Form.Item>
+
 
               <div className={styles.row}>
                 <Form.Item
