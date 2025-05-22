@@ -170,25 +170,92 @@ export default function AdvancedVisitForm() {
               </div>
 
               <div className={styles.row}>
-                <Form.Item
-                  name="serviceType"
-                  label="Service Type"
-                  className={styles.halfWidth}
-                  rules={[{ required: true, message: "Please select service type" }]}
-                >
-                  <SelectField
-                    options={[]}
-                    placeholder={"Select here"}
-                    containerStyle={{ backgroundColor: "#fff" }}
-                    customStyle={{
-                      backgroundColor: "#fff",
-                      border: "1px solid #d0d3d7",
-                      padding: "2px",
-                      height: "39px",
-                      textAlign: "left",
-                    }}
-                  />
-                </Form.Item>
+               <Form.Item
+  name="serviceType"
+  label="Service Type"
+  className={styles.halfWidth}
+  rules={[{ required: true, message: "Please select service type" }]}
+>
+  <SelectField
+    options={[
+      {
+        label: "Managed Care",
+        options: [
+          { label: "NURSING - HHS OF RN EA 15 MIN", value: "G0299" },
+          { label: "NURSING - HHS OF LPN EA 15 MIN", value: "G0300" },
+          { label: "NURSING - HHS OF AIDE EA 15 MIN", value: "G0156" },
+          { label: "OT - ELECTRIC STIMULATION THERAPY", value: "97014" },
+          { label: "OT - PHYSICAL MEDICINE PROCEDURE", value: "97799" },
+          { label: "OT - ELECTRICAL STIMULATION", value: "97032" },
+          { label: "OT - THERAPEUTIC EXERCISES", value: "97110" },
+          { label: "OT - NEUROMUSCULAR REEDUCATION", value: "97112" },
+          { label: "OT - GAIT TRAINING THERAPY", value: "97116" },
+          { label: "OT - THERAPEUTIC PROCEDURE", value: "97124" },
+          { label: "OT - MANUAL THERAPY 1/> REGIONS", value: "97140" },
+          { label: "OT - THERAPEUTIC ACTIVITIES", value: "97530" },
+          { label: "OT - SELF CARE MNGMENT TRAINING", value: "97535" },
+          { label: "OT - COMMUNITY/WORK REINTEGRATION", value: "97537" },
+          { label: "OT - WHEELCHAIR MNGMENT TRAINING", value: "97542" },
+          { label: "OT - PHYSICAL PERFORMANCE TEST", value: "97750" },
+          { label: "RN Assessment of delegation of CFC tasks (MDCP)", value: "G0162" },
+          { label: "RN Training and Supervision of Delegated tasks", value: "G0495" },
+          { label: "Respite Care Specialized RN, (CDS)", value: "T1005" },
+          { label: "FFSS Specialized RN, (CDS)", value: "S9482" },
+          { label: "Nursing Services - RN Agency", value: "S9123" },
+          { label: "Nursing Care - LVN Agency", value: "S9124" },
+          { label: "Occupational Therapy Agency", value: "S9129" },
+          { label: "Physical Therapy Agency", value: "S9131" },
+          { label: "Private Duty Nursing (PDN)", value: "T1000" }
+        ]
+      },
+      {
+        label: "Acute Care FFS",
+        options: [
+          { label: "NURSING - RN-Skilled Care in the Client's Home", value: "S9123" },
+          { label: "NURSING - LVN-Skilled Care in the Client's Home", value: "S9124" },
+          { label: "NURSING - HHS OF AIDE EA 15 MIN", value: "G0156" },
+          { label: "NURSING - HHS OF RN EA 15 MIN", value: "G0299" },
+          { label: "NURSING - HHS OF LPN EA 15 MIN", value: "G0300" },
+          { label: "PT - PHYSICAL MEDICINE PROCEDURE", value: "97799" },
+          { label: "PT - ELECTRIC STIMULATION THERAPY", value: "97014" },
+          { label: "OT - ELECTRICAL STIMULATION", value: "97032" },
+          { label: "PT - THERAPEUTIC EXERCISES", value: "97110" },
+          { label: "OT - NEUROMUSCULAR REEDUCATION", value: "97112" },
+          { label: "PT - GAIT TRAINING THERAPY", value: "97116" },
+          { label: "PT - THERAPEUTIC PROCEDURE", value: "97124" },
+          { label: "PT - MANUAL THERAPY 1/> REGIONS", value: "97140" },
+          { label: "PT - THERAPEUTIC ACTIVITIES", value: "97530" },
+          { label: "PT - SELF CARE MNGMENT TRAINING", value: "97535" },
+          { label: "OT - COMMUNITY/WORK REINTEGRATION", value: "97537" }
+        ]
+      },
+      {
+        label: "Longterm Care FFS",
+        options: [
+          { label: "In-Home OCCUPATIONAL THERAPY - EVV OHFH", value: "G0152" },
+          { label: "In-Home PHYSICAL THERAPY - EVV OHFH", value: "G0151" },
+          { label: "In-Home NURSING SERVICES BY LPN/LVN - EVV OHFH", value: "T1003" },
+          { label: "In-Home CDS NURSING RN - EVV OHFH", value: "T1002" },
+          { label: "In-Home OCCUPATIONAL THERAPY - CDS - EVV OHFH", value: "G0152" },
+          { label: "In-Home Physical Therapy - LC 1, 8 - EVV OHFH", value: "S8990" },
+          { label: "In-Home CDS Occupational Therapy - LC 1 - EVV OHFH", value: "M0232" },
+          { label: "In-Home CDS Physical Therapy - LC 1 - EVV OHFH", value: "M0235" },
+          { label: "In-Home CDS Physical Therapy - LC 1 - EVV OHFH", value: "G0151" }
+        ]
+      }
+    ]}
+    onChange={(value) => form.setFieldsValue({ hcpcsCode: value })}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left"
+    }}
+  />
+</Form.Item>
 
                 <Form.Item
                   name="visitStatus"
@@ -285,12 +352,9 @@ export default function AdvancedVisitForm() {
                 </div>
               </Form.Item>
 
-              <Form.Item name="cptCodes" label="Service / CPT Codes">
-                <Input
-                  placeholder="Enter code (e.g. 99213)"
-                  className={styles.input}
-                />
-              </Form.Item>
+             <Form.Item name="hcpcsCode" label="Service / HCPCS Codes">
+  <Input placeholder="Auto-filled from service type" className={styles.input} />
+</Form.Item>
 
             <Form.Item name="carePlan" label="Care Plan">
   <SelectField
