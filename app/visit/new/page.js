@@ -149,28 +149,28 @@ useEffect(() => {
 
 
 
-              <Form.Item
+             <Form.Item
   name="serviceProvider"
   label="Service Provider"
-  rules={[{ required: true, message: "Please select a member" }]}
+  rules={[{ required: true, message: "Please select a provider" }]}
 >
   <Select
     showSearch
-    placeholder="Select a member"
+    placeholder="Select a provider"
     className={styles.input}
     onSearch={async (search) => {
       if (!search.trim()) return;
       try {
         const res = await fetch(`/api/serviceprovider?search=${encodeURIComponent(search)}`);
         const data = await res.json();
-        setMembers(data); // assumes [{ label: "John Doe", value: "uuid" }]
+        setServiceProvider(data); // ✅ correct setter
       } catch (err) {
-        console.error("Failed to fetch members:", err);
+        console.error("Failed to fetch service providers:", err);
       }
     }}
-    onChange={(val) => form.setFieldsValue({ memberName: val })}
+    onChange={(val) => form.setFieldsValue({ serviceProvider: val })} // ✅ correct field
     filterOption={false}
-    options={members}
+    options={serviceproviders} // ✅ correct array
   />
 </Form.Item>
 
