@@ -35,7 +35,10 @@
 </div>
 /* ✅ Ensure dropdown doesn't get clipped and scrolls properly */
 .ant-cascader-dropdown {
-  z-index: 9999 !important;
-  max-height: 400px;
+  z-index: 10000 !important;
+  max-height: 500px;
   overflow-y: auto;
+  position: absolute !important;
+  visibility: visible !important;
 }
+
