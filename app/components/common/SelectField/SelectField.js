@@ -1,7 +1,7 @@
 import { Select } from "antd";
 import styles from "./SelectField.module.css";
 
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
 const SelectField = ({
   options,
@@ -22,12 +22,26 @@ const SelectField = ({
         onChange={onChange}
         style={customStyle}
         placeholder={placeholder}
+        showSearch
+        filterOption={(input, option) =>
+          (option?.children ?? "").toLowerCase().includes(input.toLowerCase())
+        }
       >
-        {options.map((e) => (
-          <Option value={e.value} key={e.value}>
-            {e.label}
-          </Option>
-        ))}
+        {options.map((opt) =>
+          opt.options ? (
+            <OptGroup key={opt.label} label={opt.label}>
+              {opt.options.map((item) => (
+                <Option key={item.value} value={item.value}>
+                  {item.label}
+                </Option>
+              ))}
+            </OptGroup>
+          ) : (
+            <Option key={opt.value} value={opt.value}>
+              {opt.label}
+            </Option>
+          )
+        )}
       </Select>
     </div>
   );
