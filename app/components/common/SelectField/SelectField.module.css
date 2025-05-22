@@ -1,14 +1,19 @@
 .container {
   display: flex;
   flex-direction: column;
+  overflow: visible;
+  position: relative;
+  z-index: 0;
 }
+
 .label {
-  font-size: #121212;
+  color: #121212;
   font-size: 15px;
-  font-size: bold;
+  font-weight: bold;
   margin-bottom: 12px;
   text-align: left;
 }
+
 .input {
   border: none;
   background-color: rgba(122, 130, 138, 0.2);
@@ -16,3 +21,11 @@
   border-radius: 8px;
   padding: 10px 20px;
 }
+
+/* Optional: override popup menu rendering */
+.ant-cascader-dropdown {
+  z-index: 9999 !important;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
