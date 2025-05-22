@@ -6,7 +6,7 @@ export async function GET() {
     const result = await client.query(`
       SELECT "Id", "FirstName", "LastName"
       FROM public."ServiceProvider"
-      WHERE "IsActive" = true AND "IsDeleted" = false
+      WHERE "IsActive" = true AND "IsDeleted" IS NOT TRUE
     `);
 
     const providers = result.rows.map(p => ({
