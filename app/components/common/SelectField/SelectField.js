@@ -19,19 +19,35 @@ const SelectField = ({
       {label && <label className={styles.label}>{label}</label>}
       {isGrouped ? (
         <Cascader
-          options={options}
-          onChange={(val, selectedOptions) => {
-            const finalValue = val[val.length - 1];
-            onChange(finalValue);
-          }}
-          placeholder={placeholder}
-          style={{ ...customStyle, zIndex: 9999 }} // add z-index directly
-          popupClassName={styles.input}
-          getPopupContainer={() => document.body} // force dropdown to root level
-          dropdownRender={(menus) => (
-            <div style={{ maxHeight: "400px", overflowY: "auto" }}>{menus}</div>
-          )}
-        />
+  options={options}
+  onChange={(val, selectedOptions) => {
+    const finalValue = val[val.length - 1];
+    onChange(finalValue);
+  }}
+  placeholder={placeholder}
+  style={{ ...customStyle, zIndex: 10000 }}
+  popupClassName={styles.input}
+  getPopupContainer={() => document.body} // Force to body
+  dropdownRender={(menus) => (
+    <div
+      style={{
+        maxHeight: "500px",
+        overflowY: "auto",
+        backgroundColor: "#fff",
+        zIndex: 10000,
+      }}
+    >
+      {menus}
+    </div>
+  )}
+  popupStyle={{
+    maxHeight: "500px",
+    overflowY: "auto",
+    zIndex: 10000,
+    position: "absolute",
+  }}
+/>
+
       ) : (
         <Select
           value={value}
