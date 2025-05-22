@@ -12,7 +12,7 @@ const SelectField = ({
   customStyle,
   containerStyle,
 }) => {
-  const isGrouped = options.some((opt) => opt.options); // detect cascader format
+  const isGrouped = options.some((opt) => opt.children); // detect cascader format
 
   return (
     <div className={styles.container} style={containerStyle}>
