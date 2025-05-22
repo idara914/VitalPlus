@@ -18,6 +18,9 @@ import MainLayout from "@/app/components/layouts/MainLayout";
 import SelectField from "@/app/components/common/SelectField/SelectField";
 import { AddressAutofill } from "@mapbox/search-js-react";
 
+const [fileName, setFileName] = useState("No file chosen");
+
+
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const { TextArea } = Input;
@@ -355,30 +358,23 @@ export default function AdvancedVisitForm() {
               </Form.Item>
 
               <Form.Item name="attachments" label="Attachments">
-                <div className={styles.fileUploadContainer}>
-                  <label
-                    htmlFor="file-upload"
-                    className={styles.chooseFileButton}
-                  >
-                    Choose file
-                  </label>
-                  <div className={styles.fileNameDisplay}>No file chosen</div>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className={styles.hiddenFileInput}
-                    onChange={(e) => {
-                      const fileName = e.target.files?.[0]?.name;
-                      if (fileName) {
-                        const fileDisplay = document.querySelector(
-                          `.${styles.fileNameDisplay}`
-                        );
-                        if (fileDisplay) fileDisplay.textContent = fileName;
-                      }
-                    }}
-                  />
-                </div>
-              </Form.Item>
+  <div className={styles.fileUploadContainer}>
+    <label htmlFor="file-upload" className={styles.chooseFileButton}>
+      Choose file
+    </label>
+    <div className={styles.fileNameDisplay}>{fileName}</div>
+    <input
+      id="file-upload"
+      type="file"
+      className={styles.hiddenFileInput}
+      onChange={(e) => {
+        const name = e.target.files?.[0]?.name;
+        if (name) setFileName(name);
+      }}
+    />
+  </div>
+</Form.Item>
+
 
              <Form.Item name="hcpcsCode" label="Service / HCPCS Codes">
   <Input placeholder="Auto-filled from service type" className={styles.input} />
