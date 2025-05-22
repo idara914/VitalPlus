@@ -222,6 +222,10 @@ export default function AdvancedVisitForm() {
   <Input type="hidden" />
 </Form.Item>
 
+   </div>
+
+              <div className={styles.row}>         
+          
 <Form.Item
   name="serviceType"
   label="Service Type"
