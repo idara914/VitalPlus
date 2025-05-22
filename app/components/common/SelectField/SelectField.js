@@ -12,32 +12,34 @@ const SelectField = ({
   customStyle,
   containerStyle,
 }) => {
-  const isGrouped = options.some((opt) => opt.children); // detect cascader format
+  const isGrouped = options.some((opt) => opt.children); // Check for multilevel structure
 
   return (
     <div className={styles.container} style={containerStyle}>
       {label && <label className={styles.label}>{label}</label>}
       {isGrouped ? (
         <Cascader
-  options={options}
-  onChange={(val, selectedOptions) => {
-    const finalValue = val[val.length - 1];
-    onChange(finalValue);
-  }}
-  placeholder={placeholder}
-  style={customStyle}
-  popupClassName={styles.input}
-  dropdownRender={(menus) => <div style={{ maxHeight: "1000px", overflowY: "auto" }}>{menus}</div>}
-  getPopupContainer={(triggerNode) => document.body} // ✅ Forces dropdown to body
-/>
-
+          options={options}
+          onChange={(val, selectedOptions) => {
+            const finalValue = val[val.length - 1];
+            onChange(finalValue);
+          }}
+          placeholder={placeholder}
+          style={{ ...customStyle, zIndex: 9999 }} // add z-index directly
+          popupClassName={styles.input}
+          getPopupContainer={() => document.body} // force dropdown to root level
+          dropdownRender={(menus) => (
+            <div style={{ maxHeight: "400px", overflowY: "auto" }}>{menus}</div>
+          )}
+        />
       ) : (
         <Select
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          style={customStyle}
+          style={{ ...customStyle, zIndex: 9999 }}
           className={styles.input}
+          getPopupContainer={() => document.body}
         >
           {options.map((opt) => (
             <Option key={opt.value} value={opt.value}>
@@ -51,5 +53,4 @@ const SelectField = ({
 };
 
 export default SelectField;
-
 
