@@ -27,7 +27,7 @@ const SelectField = ({
   placeholder={placeholder}
   style={customStyle}
   popupClassName={styles.input}
-  dropdownRender={(menus) => <div style={{ maxHeight: "400px", overflowY: "auto" }}>{menus}</div>}
+  dropdownRender={(menus) => <div style={{ maxHeight: "1000px", overflowY: "auto" }}>{menus}</div>}
   getPopupContainer={(triggerNode) => document.body} // ✅ Forces dropdown to body
 />
 
