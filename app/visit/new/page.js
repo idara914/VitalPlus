@@ -167,7 +167,7 @@ export default function AdvancedVisitForm() {
       height: "39px",
       textAlign: "left",
     }}
-  />
+  </Form.Item>  
 <Form.Item
   name="location"
   label="Location"
