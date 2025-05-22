@@ -168,33 +168,35 @@ export default function AdvancedVisitForm() {
       textAlign: "left",
     }}
   />
-</Form.Item>
-    <Form.Item
+<Form.Item
   name="location"
   label="Location"
   className={styles.halfWidth}
   rules={[{ required: true, message: "Please enter location" }]}
 >
-  <AddressAutofill
-    accessToken={MAPBOX_TOKEN}
-    onRetrieve={(res) => {
-      const [lng, lat] = res.features[0]?.geometry?.coordinates || [];
-      const fullAddress = res.features[0]?.place_name;
+  {typeof window !== "undefined" && (
+    <AddressAutofill
+      accessToken={MAPBOX_TOKEN}
+      onRetrieve={(res) => {
+        const [lng, lat] = res.features[0]?.geometry?.coordinates || [];
+        const fullAddress = res.features[0]?.place_name;
 
-      form.setFieldsValue({
-        location: fullAddress,
-        Latitude: lat,
-        Longitude: lng,
-      });
-    }}
-  >
-    <Input
-      placeholder="Enter location"
-      className={styles.input}
-      autoComplete="street-address"
-    />
-  </AddressAutofill>
+        form.setFieldsValue({
+          location: fullAddress,
+          Latitude: lat,
+          Longitude: lng,
+        });
+      }}
+    >
+      <Input
+        placeholder="Enter location"
+        className={styles.input}
+        autoComplete="street-address"
+      />
+    </AddressAutofill>
+  )}
 </Form.Item>
+
 
 <Form.Item name="Latitude" noStyle>
   <Input type="hidden" />
