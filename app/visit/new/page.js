@@ -164,7 +164,7 @@ useEffect(() => {
       try {
         const res = await fetch(`/api/serviceprovider?search=${encodeURIComponent(search)}`);
         const data = await res.json();
-        setServiceProviders(data); // ✅ use correct setter
+        setServiceProviders(data); // ✅ correct setter
       } catch (err) {
         console.error("Failed to fetch service providers:", err);
       }
