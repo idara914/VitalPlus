@@ -197,6 +197,7 @@ export default function AdvancedVisitForm() {
   <Input />
 </Form.Item>
 
+<Form.Item
   name="serviceType"
   label="Service Type"
   className={styles.halfWidth}
