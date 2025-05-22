@@ -18,7 +18,7 @@ import MainLayout from "@/app/components/layouts/MainLayout";
 import SelectField from "@/app/components/common/SelectField/SelectField";
 import { AddressAutofill } from "@mapbox/search-js-react";
 
-const [fileName, setFileName] = useState("No file chosen");
+
 
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -30,6 +30,7 @@ export default function AdvancedVisitForm() {
   const [loading, setLoading] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const router = useRouter();
+  const [fileName, setFileName] = useState("No file chosen");
 
   const handleSubmit = async (values) => {
     setLoading(true);
