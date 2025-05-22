@@ -120,17 +120,20 @@ const { Option } = Select;
     value={form.getFieldValue("memberName")}
     onChange={(val) => form.setFieldsValue({ memberName: val })}
     onSearch={async (search) => {
-      if (!search) return;
-
-      const res = await fetch(`/api/clinic-patients?search=${encodeURIComponent(search)}`);
-      const data = await res.json();
-
-      setMembers(data); // assuming setMembers is a useState hook
+      if (!search.trim()) return;
+      try {
+        const res = await fetch(`/api/clinic-patients?search=${encodeURIComponent(search)}`);
+        const data = await res.json();
+        setMembers(data); // e.g. [{ label: "Jane Doe", value: "uuid" }]
+      } catch (err) {
+        console.error("Failed to fetch members:", err);
+      }
     }}
     filterOption={false}
-    options={members} // must be [{ label: "John Doe", value: "uuid" }]
+    options={members}
   />
 </Form.Item>
+
 
 
 
