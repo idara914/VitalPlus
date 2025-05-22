@@ -1,8 +1,9 @@
-.container,
-.formContainer {
-  overflow: visible;
-  position: relative;
-  z-index: 0;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #e5e7eb;
+  min-height: 100vh;
 }
 
 .header {
