@@ -19,6 +19,10 @@ import SelectField from "@/app/components/common/SelectField/SelectField";
 import { AddressAutofill } from "@mapbox/search-js-react";
 
 
+const AddressAutofill = dynamic(
+  () => import("@mapbox/search-js-react").then((mod) => mod.AddressAutofill),
+  { ssr: false }
+);
 
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -166,7 +170,7 @@ export default function AdvancedVisitForm() {
     }}
   />
 </Form.Item>
-               <Form.Item
+    <Form.Item
   name="location"
   label="Location"
   className={styles.halfWidth}
@@ -193,12 +197,12 @@ export default function AdvancedVisitForm() {
   </AddressAutofill>
 </Form.Item>
 
-<Form.Item name="Latitude" hidden>
-  <Input />
+<Form.Item name="Latitude" noStyle>
+  <Input type="hidden" />
 </Form.Item>
 
-<Form.Item name="Longitude" hidden>
-  <Input />
+<Form.Item name="Longitude" noStyle>
+  <Input type="hidden" />
 </Form.Item>
 
 <Form.Item
