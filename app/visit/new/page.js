@@ -11,7 +11,9 @@ import {
   Upload,
   message,
 } from "antd";
-
+import { Select } from "antd";
+import axios from "axios";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./advanceForm.module.css";
 import MainLayout from "@/app/components/layouts/MainLayout";
@@ -35,6 +37,20 @@ export default function AdvancedVisitForm() {
   const router = useRouter();
   const [fileName, setFileName] = useState("No file chosen");
 
+  const [members, setMembers] = useState([]);
+useEffect(() => {
+  const fetchMembers = async () => {
+    try {
+      const res = await axios.get("/api/patients"); // ✅ Adjust path if needed
+      setMembers(res.data); // must be an array of { label, value }
+    } catch (err) {
+      console.error("Error loading members:", err);
+    }
+  };
+  fetchMembers();
+}, []);
+
+  
   const handleSubmit = async (values) => {
     setLoading(true);
     console.log("Form values:", values);
@@ -89,12 +105,22 @@ export default function AdvancedVisitForm() {
               className={styles.form}
             >
               <Form.Item
-                name="memberName"
-                label="Member Name"
-                rules={[{ required: true, message: "Please enter member name" }]}
-              >
-                <Input placeholder="Member Name" className={styles.input} />
-              </Form.Item>
+  name="memberName"
+  label="Member Name"
+  rules={[{ required: true, message: "Please select a member" }]}
+>
+  <Select
+    showSearch
+    placeholder="Select a member"
+    optionFilterProp="label"
+    options={members}
+    className={styles.input}
+    filterOption={(input, option) =>
+      option?.label?.toLowerCase().includes(input.toLowerCase())
+    }
+  />
+</Form.Item>
+
 
               <Form.Item
                 name="serviceProvider"
