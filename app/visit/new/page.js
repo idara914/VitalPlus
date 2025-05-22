@@ -41,7 +41,7 @@ export default function AdvancedVisitForm() {
 useEffect(() => {
   const fetchMembers = async () => {
     try {
-      const res = await axios.get("/api/patients"); // ✅ Adjust path if needed
+      const res = await axios.get("/api/clinicpatient"); // ✅ Adjust path if needed
       setMembers(res.data); // must be an array of { label, value }
     } catch (err) {
       console.error("Error loading members:", err);
@@ -122,7 +122,7 @@ const { Option } = Select;
     onSearch={async (search) => {
       if (!search.trim()) return;
       try {
-        const res = await fetch(`/api/clinic-patients?search=${encodeURIComponent(search)}`);
+        const res = await fetch(`/api/clinicpatient?search=${encodeURIComponent(search)}`);
         const data = await res.json();
         setMembers(data); // e.g. [{ label: "Jane Doe", value: "uuid" }]
       } catch (err) {
