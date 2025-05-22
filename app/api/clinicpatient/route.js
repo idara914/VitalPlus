@@ -10,7 +10,7 @@ export async function GET(req) {
       SELECT "Id", "FirstName", "LastName", "MiddleName"
       FROM public."ClinicPatient"
       WHERE "IsActive" = true
-        AND "IsDeleted" = false
+        AND "IsDeleted" IS NOT TRUE
         AND (
           "FirstName" ILIKE $1 OR
           "LastName" ILIKE $1 OR
