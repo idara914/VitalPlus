@@ -124,7 +124,7 @@ const { Option } = Select;
       try {
         const res = await fetch(`/api/clinicpatient?search=${encodeURIComponent(search)}`);
         const data = await res.json();
-        setMembers(data); // e.g. [{ label: "Jane Doe", value: "uuid" }]
+        setMembers(data); // assumes [{ label: "John Doe", value: "uuid" }]
       } catch (err) {
         console.error("Failed to fetch members:", err);
       }
@@ -133,6 +133,7 @@ const { Option } = Select;
     options={members}
   />
 </Form.Item>
+
 
 
 
