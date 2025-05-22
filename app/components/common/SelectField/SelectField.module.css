@@ -23,8 +23,6 @@
 }
 
 
-  TEST BOX
-</div>
 /* ✅ Ensure dropdown doesn't get clipped and scrolls properly */
 .ant-cascader-dropdown {
   z-index: 10000 !important;
