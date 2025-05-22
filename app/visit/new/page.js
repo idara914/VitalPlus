@@ -115,8 +115,6 @@ useEffect(() => {
     showSearch
     placeholder="Select a member"
     className={styles.input}
-    value={form.getFieldValue("memberName")}
-    onChange={(val) => form.setFieldsValue({ memberName: val })}
     onSearch={async (search) => {
       if (!search.trim()) return;
       try {
@@ -127,10 +125,12 @@ useEffect(() => {
         console.error("Failed to fetch members:", err);
       }
     }}
+    onChange={(val) => form.setFieldsValue({ memberName: val })}
     filterOption={false}
     options={members}
   />
 </Form.Item>
+
 
 
 
