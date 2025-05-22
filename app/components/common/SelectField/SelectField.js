@@ -14,15 +14,20 @@ const SelectField = ({
 }) => {
   const isGrouped = options.some((opt) => opt.children);
 
+  const getLabelForValue = (val) => {
+    for (const group of options) {
+      const match = group.children?.find((item) => item.value === val);
+      if (match) return match.label;
+    }
+    return null;
+  };
+
   const buildMenu = () => (
     <Menu>
       {options.map((group) => (
         <Menu.SubMenu key={group.label} title={group.label}>
           {group.children.map((item) => (
-            <Menu.Item
-              key={item.value}
-              onClick={() => onChange(item.value)}
-            >
+            <Menu.Item key={item.value} onClick={() => onChange(item.value)}>
               {item.label}
             </Menu.Item>
           ))}
@@ -37,7 +42,7 @@ const SelectField = ({
       {isGrouped ? (
         <Dropdown overlay={buildMenu()} trigger={['click']} placement="bottomLeft">
           <div className={styles.input} style={{ cursor: 'pointer', ...customStyle }}>
-            {value || placeholder}
+            {getLabelForValue(value) || placeholder}
           </div>
         </Dropdown>
       ) : (
@@ -61,3 +66,4 @@ const SelectField = ({
 };
 
 export default SelectField;
+
