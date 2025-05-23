@@ -247,11 +247,8 @@ useEffect(() => {
                   className={styles.halfWidth}
                   rules={[{ required: true, message: "Please select date" }]}
                 >
-                  <DatePicker
-                    format="DD/MM/YYYY"
-                    placeholder="dd/mm/yyyy"
-                    className={styles.datePicker}
-                  />
+                  <DatePicker format="MM/DD/YYYY" placeholder="mm/dd/yyyy" className={styles.datePicker} />
+
                 </Form.Item>
 
                 <Form.Item
@@ -260,11 +257,8 @@ useEffect(() => {
                   className={styles.halfWidth}
                   rules={[{ required: true, message: "Please select time" }]}
                 >
-                  <TimePicker
-                    format="HH:mm"
-                    placeholder="--:-- --"
-                    className={styles.timePicker}
-                  />
+                 <TimePicker format="HH:mm" placeholder="--:-- --" className={styles.timePicker} />
+
                 </Form.Item>
               </div>
 
