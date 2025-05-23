@@ -66,13 +66,77 @@ useEffect(() => {
 
   
   const handleSubmit = async (values) => {
-    setLoading(true);
-    console.log("Form values:", values);
-    setTimeout(() => {
-      setLoading(false);
-      message.success("Visit saved successfully");
-    }, 1000);
-  };
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("token");
+    const date = values.date?.format("YYYY-MM-DD");
+    const time = values.time?.format("HH:mm");
+    const duration = values.duration;
+
+    const scheduledstart = `${date}T${time}:00`;
+
+    // Parse visitduration string like "1h 30m"
+    const match = duration.match(/(\d+)h(?:\s*(\d+)m)?/);
+    const hours = parseInt(match?.[1] || "0");
+    const minutes = parseInt(match?.[2] || "0");
+    const end = new Date(scheduledstart);
+    end.setHours(end.getHours() + hours);
+    end.setMinutes(end.getMinutes() + minutes);
+    const scheduledend = end.toISOString();
+
+    // Get both label and value from serviceType dropdown
+    const serviceTypeOption = findServiceType(values.hcpcsCode);
+    const hcpcsCode = values.hcpcsCode;
+    const taskLabel = serviceTypeOption?.label || "";
+
+    const body = {
+      ProviderId: values.serviceProvider,
+      patientId: values.memberName,
+      appointmentid: null,
+      employeeid: null,
+      visitdate: date,
+      visitduration: duration,
+      careplanid: values.carePlan,
+      notes: values.notes,
+      status: values.visitStatus || "Scheduled",
+      visittype: values.workflowTrigger,
+      issuesencountered: null,
+      outcome: null,
+      tasksperformed: { description: taskLabel }, // JSONB
+      companyid: null, // will be set in backend
+      scheduledstart,
+      scheduledend,
+      actualstart: null,
+      actualend: null,
+      isverified: false,
+      verifieddate: null,
+      hcpcs: hcpcsCode,
+      AddressLine1: values.AddressLine1,
+      AddressLine2: values.AddressLine2 || null,
+      City: values.City,
+      State: values.State,
+      ZipCode: values.ZipCode,
+      Latitude: values.Latitude,
+      Longitude: values.Longitude,
+    };
+
+    await axios.post("/api/visit", body, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    message.success("Visit saved successfully");
+    router.push("/visits"); // optional redirect
+  } catch (err) {
+    console.error("🔴 Submit error:", err);
+    message.error("Failed to save visit");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleBack = () => {
     router.back();
@@ -242,16 +306,26 @@ useEffect(() => {
       <AddressAutofill
         accessToken={MAPBOX_TOKEN}
         autoFillOnSubmit={true}
-        onRetrieve={(res) => {
-          const [lng, lat] = res.features[0]?.geometry?.coordinates || [];
-          const fullAddress = res.features[0]?.place_name;
+     onRetrieve={(res) => {
+  const [lng, lat] = res.features[0]?.geometry?.coordinates || [];
+  const fullAddress = res.features[0]?.place_name;
 
-          form.setFieldsValue({
-            location: fullAddress,
-            Latitude: lat,
-            Longitude: lng,
-          });
-        }}
+  const context = res.features[0]?.context || [];
+  const city = context.find((c) => c.id.includes("place"))?.text || "";
+  const state = context.find((c) => c.id.includes("region"))?.text || "";
+  const zip = context.find((c) => c.id.includes("postcode"))?.text || "";
+
+  form.setFieldsValue({
+    location: fullAddress,
+    Latitude: lat,
+    Longitude: lng,
+    AddressLine1: fullAddress.split(",")[0], // crude parsing
+    City: city,
+    State: state,
+    ZipCode: zip,
+  });
+}}
+
       >
         <Input
           name="location"
@@ -283,6 +357,23 @@ useEffect(() => {
   <Input type="hidden" />
 </Form.Item>
 
+<Form.Item name="AddressLine1" noStyle>
+  <Input type="hidden" />
+</Form.Item>
+<Form.Item name="AddressLine2" noStyle>
+  <Input type="hidden" />
+</Form.Item>
+<Form.Item name="City" noStyle>
+  <Input type="hidden" />
+</Form.Item>
+<Form.Item name="State" noStyle>
+  <Input type="hidden" />
+</Form.Item>
+<Form.Item name="ZipCode" noStyle>
+  <Input type="hidden" />
+</Form.Item>
+
+          
    </div>
 
               <div className={styles.row}>         
