@@ -257,7 +257,8 @@ useEffect(() => {
                   className={styles.halfWidth}
                   rules={[{ required: true, message: "Please select time" }]}
                 >
-                 <TimePicker format="HH:mm" placeholder="--:-- --" className={styles.timePicker} />
+                 <TimePicker use12Hours format="h:mm A" placeholder="hh:mm AM/PM" className={styles.timePicker} />
+
 
                 </Form.Item>
               </div>
