@@ -1,4 +1,3 @@
-
 import pool from "@/config/db";
 
 export async function GET(req) {
@@ -12,7 +11,7 @@ export async function GET(req) {
       SELECT "Id", "FirstName", "LastName"
       FROM public."ServiceProvider"
       WHERE "IsActive" = true AND "IsDeleted" IS NOT TRUE
-        AND ("FirstName" ILIKE $1 OR "LastName" ILIKE $1)
+        AND ($1 = '' OR "FirstName" ILIKE $1 OR "LastName" ILIKE $1)
       LIMIT 20
       `,
       [`%${search}%`]
@@ -37,3 +36,4 @@ export async function GET(req) {
     client.release();
   }
 }
+
