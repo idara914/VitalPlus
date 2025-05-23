@@ -18,7 +18,7 @@ export async function POST(req) {
     const userId = decoded.id;
 
     const { rows } = await client.query(
-      `SELECT "CompanyId" FROM public."AppUsers" WHERE "Id" = $1 LIMIT 1`,
+      `SELECT "CompanyId" FROM public."appUsers" WHERE "Id" = $1 LIMIT 1`,
       [userId]
     );
     const companyId = rows[0]?.CompanyId;
