@@ -17,30 +17,48 @@ export async function POST(req) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
-    const body = await req.json();
+    const { rows } = await client.query(
+      `SELECT "CompanyId" FROM public."AppUsers" WHERE "Id" = $1 LIMIT 1`,
+      [userId]
+    );
+    const companyId = rows[0]?.CompanyId;
 
+    if (!companyId) {
+      return new Response(
+        JSON.stringify({ message: "Company ID not found for user." }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const body = await req.json();
     const {
       ProviderId,
       patientId,
       appointmentid,
       employeeid,
       visitdate,
-      visitduration,          // e.g. "01:00:00"
+      visitduration,
       careplanid,
-      location,
       notes,
       status,
       visittype,
       issuesencountered,
       outcome,
-      tasksperformed,         // JSONB object
-      companyid,
+      tasksperformed,
       scheduledstart,
       scheduledend,
       actualstart,
       actualend,
       isverified = false,
       verifieddate = null,
+      hcpcs,
+      AddressLine1,
+      AddressLine2,
+      City,
+      State,
+      ZipCode,
+      Latitude,
+      Longitude,
     } = body;
 
     const id = uuidv4();
@@ -50,17 +68,19 @@ export async function POST(req) {
 
     await client.query(
       `INSERT INTO public."Clinical_Visit"
-      ("id", "providerid", "visitdate", "appointmentid", "employeeid", "createdby", "createddt",
-       "modifiedby", "modifieddt", "patientid", "visitduration", "careplanid", "tasksperformed",
-       "companyid", "isactive", "isdeleted", "status", "visittype", "issuesencountered",
-       "outcome", "location", "notes", "isverified", "verifieddate", 
-       "scheduledstart", "scheduledend", "actualstart", "actualend")
+        ("id", "providerid", "visitdate", "appointmentid", "employeeid", "createdby", "createddt",
+         "modifiedby", "modifieddt", "patientid", "visitduration", "careplanid", "tasksperformed",
+         "companyid", "isactive", "isdeleted", "status", "visittype", "issuesencountered",
+         "outcome", "notes", "isverified", "verifieddate", 
+         "scheduledstart", "scheduledend", "actualstart", "actualend", "hcpcs",
+         "AddressLine1", "AddressLine2", "City", "State", "ZipCode", "Latitude", "Longitude")
       VALUES
-      ($1, $2, $3, $4, $5, $6, $7,
-       $6, $7, $8, $9, $10, $11,
-       $12, true, false, $13, $14, $15,
-       $16, $17, $18, $19, $20,
-       $21, $22, $23, $24)`,
+        ($1, $2, $3, $4, $5, $6, $7,
+         $6, $7, $8, $9, $10, $11,
+         $12, true, false, $13, $14, $15,
+         $16, $17, $18, $19, $20,
+         $21, $22, $23, $24, $25,
+         $26, $27, $28, $29, $30, $31, $32)`,
       [
         id,
         ProviderId,
@@ -73,12 +93,11 @@ export async function POST(req) {
         visitduration,
         careplanid,
         tasksperformed,
-        companyid,
+        companyId,
         status,
         visittype,
         issuesencountered,
         outcome,
-        location,
         notes,
         isverified,
         verifieddate,
@@ -86,6 +105,14 @@ export async function POST(req) {
         scheduledend,
         actualstart,
         actualend,
+        hcpcs,
+        AddressLine1,
+        AddressLine2,
+        City,
+        State,
+        ZipCode,
+        Latitude,
+        Longitude,
       ]
     );
 
