@@ -76,47 +76,46 @@ export async function POST(req) {
      "AddressLine1", "AddressLine2", "City", "State", "ZipCode", "Latitude", "Longitude")
   VALUES
     ($1, $2, $3, $4, $5, $6, $7,
-     $8, $9, $10, $11, $12, $13,
-     $14, true, false, $15, $16, $17,
-     $18, $19, $20, $21, $22,
-     $23, $24, $25, $26, $27,
-     $28, $29, $30, $31, $32, $33, $34)`,
+     $6, $7, $8, $9, $10, $11,
+     $12, true, false, $13, $14, $15,
+     $16, $17, $18, $19, $20,
+     $21, $22, $23, $24, $25,
+     $26, $27, $28, $29, $30, $31, $32)`,
   [
-    id,            // $1
-    ProviderId,    // $2
-    visitdate,     // $3
-    appointmentid, // $4
-    employeeid,    // $5
-    userId,        // $6 - createdby
-    now,           // $7 - createddt
-    userId,        // $8 - modifiedby
-    now,           // $9 - modifieddt
-    patientId,     // $10
-    visitduration, // $11
-    careplanid,    // $12
-    tasksperformed,// $13
-    companyId,     // $14
-    status,        // $15
-    visittype,     // $16
-    issuesencountered, // $17
-    outcome,       // $18
-    notes,         // $19
-    isverified,    // $20
-    verifieddate,  // $21
-    scheduledstart,// $22
-    scheduledend,  // $23
-    actualstart,   // $24
-    actualend,     // $25
-    hcpcs,         // $26
-    AddressLine1,  // $27
-    AddressLine2,  // $28
-    City,          // $29
-    State,         // $30
-    ZipCode,       // $31
-    Latitude,      // $32
-    Longitude      // $33
+    id,             // $1
+    ProviderId,     // $2
+    visitdate,      // $3
+    appointmentid,  // $4
+    employeeid,     // $5
+    userId,         // $6 → used for both createdby and modifiedby
+    now,            // $7 → used for both createddt and modifieddt
+    patientId,      // $8
+    visitduration,  // $9
+    careplanid,     // $10
+    tasksperformed, // $11
+    companyId,      // $12
+    status,         // $13
+    visittype,      // $14
+    issuesencountered, // $15
+    outcome,        // $16
+    notes,          // $17
+    isverified,     // $18
+    verifieddate,   // $19
+    scheduledstart, // $20
+    scheduledend,   // $21
+    actualstart,    // $22
+    actualend,      // $23
+    hcpcs,          // $24
+    AddressLine1,   // $25
+    AddressLine2,   // $26
+    City,           // $27
+    State,          // $28
+    ZipCode,        // $29
+    Latitude,       // $30
+    Longitude       // $31
   ]
 );
+
 
 
     await client.query("COMMIT");
