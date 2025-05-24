@@ -66,55 +66,59 @@ export async function POST(req) {
 
     await client.query("BEGIN");
 
-    await client.query(
-      `INSERT INTO public."Clinical_Visit"
-        ("id", "providerid", "visitdate", "appointmentid", "employeeid", "createdby", "createddt",
-         "modifiedby", "modifieddt", "patientid", "visitduration", "careplanid", "tasksperformed",
-         "companyid", "isactive", "isdeleted", "status", "visittype", "issuesencountered",
-         "outcome", "notes", "isverified", "verifieddate", 
-         "scheduledstart", "scheduledend", "actualstart", "actualend", "hcpcs",
-         "AddressLine1", "AddressLine2", "City", "State", "ZipCode", "Latitude", "Longitude")
-      VALUES
-        ($1, $2, $3, $4, $5, $6, $7,
-         $6, $7, $8, $9, $10, $11,
-         $12, true, false, $13, $14, $15,
-         $16, $17, $18, $19, $20,
-         $21, $22, $23, $24, $25,
-         $26, $27, $28, $29, $30, $31, $32)`,
-      [
-        id,             // $1
-        ProviderId,     // $2
-        visitdate,      // $3
-        appointmentid,  // $4
-        employeeid,     // $5
-        userId,         // $6 → used for both createdby and modifiedby
-        now,            // $7 → used for both createddt and modifieddt
-        patientId,      // $8
-        visitduration,  // $9
-        careplanid,     // $10
-        tasksperformed, // $11
-        companyId,      // $12
-        status,         // $13
-        visittype,      // $14
-        issuesencountered, // $15
-        outcome,        // $16
-        notes,          // $17
-        isverified,     // $18
-        verifieddate,   // $19
-        scheduledstart, // $20
-        scheduledend,   // $21
-        actualstart,    // $22
-        actualend,      // $23
-        hcpcs,          // $24
-        AddressLine1,   // $25
-        AddressLine2,   // $26
-        City,           // $27
-        State,          // $28
-        ZipCode,        // $29
-        Latitude,       // $30
-        Longitude       // $31 ✅ Now 32 total with correct mapping
-      ]
-    );
+ await client.query(
+  `INSERT INTO public."Clinical_Visit"
+    ("id", "providerid", "visitdate", "appointmentid", "employeeid", "createdby", "createddt",
+     "modifiedby", "modifieddt", "patientid", "visitduration", "careplanid", "tasksperformed",
+     "companyid", "isactive", "isdeleted", "status", "visittype", "issuesencountered",
+     "outcome", "notes", "isverified", "verifieddate", 
+     "scheduledstart", "scheduledend", "actualstart", "actualend", "hcpcs",
+     "AddressLine1", "AddressLine2", "City", "State", "ZipCode", "Latitude", "Longitude")
+  VALUES
+    ($1, $2, $3, $4, $5, $6, $7,
+     $8, $9, $10, $11, $12, $13,
+     $14, $15, $16, $17, $18, $19,
+     $20, $21, $22, $23, $24,
+     $25, $26, $27, $28, $29,
+     $30, $31, $32, $33, $34, $35)`,
+  [
+    id,             // $1
+    ProviderId,     // $2
+    visitdate,      // $3
+    appointmentid,  // $4
+    employeeid,     // $5
+    userId,         // $6 → createdby
+    now,            // $7 → createddt
+    userId,         // $8 → modifiedby
+    now,            // $9 → modifieddt
+    patientId,      // $10
+    visitduration,  // $11
+    careplanid,     // $12
+    tasksperformed, // $13
+    companyId,      // $14
+    true,           // $15 → isactive
+    false,          // $16 → isdeleted
+    status,         // $17
+    visittype,      // $18
+    issuesencountered, // $19
+    outcome,        // $20
+    notes,          // $21
+    isverified,     // $22
+    verifieddate,   // $23
+    scheduledstart, // $24
+    scheduledend,   // $25
+    actualstart,    // $26
+    actualend,      // $27
+    hcpcs,          // $28
+    AddressLine1,   // $29
+    AddressLine2,   // $30
+    City,           // $31
+    State,          // $32
+    ZipCode,        // $33
+    Latitude,       // $34
+    Longitude       // $35
+  ]
+);
 
     await client.query("COMMIT");
 
