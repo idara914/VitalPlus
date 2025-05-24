@@ -67,56 +67,54 @@ export async function POST(req) {
     await client.query("BEGIN");
 
     await client.query(
-  `INSERT INTO public."Clinical_Visit"
-    ("id", "providerid", "visitdate", "appointmentid", "employeeid", "createdby", "createddt",
-     "modifiedby", "modifieddt", "patientid", "visitduration", "careplanid", "tasksperformed",
-     "companyid", "isactive", "isdeleted", "status", "visittype", "issuesencountered",
-     "outcome", "notes", "isverified", "verifieddate", 
-     "scheduledstart", "scheduledend", "actualstart", "actualend", "hcpcs",
-     "AddressLine1", "AddressLine2", "City", "State", "ZipCode", "Latitude", "Longitude")
-  VALUES
-    ($1, $2, $3, $4, $5, $6, $7,
-     $6, $7, $8, $9, $10, $11,
-     $12, true, false, $13, $14, $15,
-     $16, $17, $18, $19, $20,
-     $21, $22, $23, $24, $25,
-     $26, $27, $28, $29, $30, $31, $32)`,
-  [
-    id,             // $1
-    ProviderId,     // $2
-    visitdate,      // $3
-    appointmentid,  // $4
-    employeeid,     // $5
-    userId,         // $6 → used for both createdby and modifiedby
-    now,            // $7 → used for both createddt and modifieddt
-    patientId,      // $8
-    visitduration,  // $9
-    careplanid,     // $10
-    tasksperformed, // $11
-    companyId,      // $12
-    status,         // $13
-    visittype,      // $14
-    issuesencountered, // $15
-    outcome,        // $16
-    notes,          // $17
-    isverified,     // $18
-    verifieddate,   // $19
-    scheduledstart, // $20
-    scheduledend,   // $21
-    actualstart,    // $22
-    actualend,      // $23
-    hcpcs,          // $24
-    AddressLine1,   // $25
-    AddressLine2,   // $26
-    City,           // $27
-    State,          // $28
-    ZipCode,        // $29
-    Latitude,       // $30
-    Longitude       // $31
-  ]
-);
-
-
+      `INSERT INTO public."Clinical_Visit"
+        ("id", "providerid", "visitdate", "appointmentid", "employeeid", "createdby", "createddt",
+         "modifiedby", "modifieddt", "patientid", "visitduration", "careplanid", "tasksperformed",
+         "companyid", "isactive", "isdeleted", "status", "visittype", "issuesencountered",
+         "outcome", "notes", "isverified", "verifieddate", 
+         "scheduledstart", "scheduledend", "actualstart", "actualend", "hcpcs",
+         "AddressLine1", "AddressLine2", "City", "State", "ZipCode", "Latitude", "Longitude")
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7,
+         $6, $7, $8, $9, $10, $11,
+         $12, true, false, $13, $14, $15,
+         $16, $17, $18, $19, $20,
+         $21, $22, $23, $24, $25,
+         $26, $27, $28, $29, $30, $31, $32)`,
+      [
+        id,             // $1
+        ProviderId,     // $2
+        visitdate,      // $3
+        appointmentid,  // $4
+        employeeid,     // $5
+        userId,         // $6 → used for both createdby and modifiedby
+        now,            // $7 → used for both createddt and modifieddt
+        patientId,      // $8
+        visitduration,  // $9
+        careplanid,     // $10
+        tasksperformed, // $11
+        companyId,      // $12
+        status,         // $13
+        visittype,      // $14
+        issuesencountered, // $15
+        outcome,        // $16
+        notes,          // $17
+        isverified,     // $18
+        verifieddate,   // $19
+        scheduledstart, // $20
+        scheduledend,   // $21
+        actualstart,    // $22
+        actualend,      // $23
+        hcpcs,          // $24
+        AddressLine1,   // $25
+        AddressLine2,   // $26
+        City,           // $27
+        State,          // $28
+        ZipCode,        // $29
+        Latitude,       // $30
+        Longitude       // $31 ✅ Now 32 total with correct mapping
+      ]
+    );
 
     await client.query("COMMIT");
 
@@ -135,4 +133,5 @@ export async function POST(req) {
     client.release();
   }
 }
+
 
