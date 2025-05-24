@@ -64,7 +64,7 @@ useEffect(() => {
   }
 }
 
-  };
+  
 useEffect(() => {
   const patientId = form.getFieldValue("memberName");
   if (patientId) {
