@@ -441,21 +441,23 @@ onChange={(val) => {
   <Input type="hidden" />
 </Form.Item>
 
-<Form.Item name="AddressLine1" noStyle>
-  <Input type="hidden" />
+<Form.Item name="AddressLine1" hidden>
+  <Input />
 </Form.Item>
-<Form.Item name="AddressLine2" noStyle>
-  <Input type="hidden" />
+<Form.Item name="AddressLine2" hidden>
+  <Input />
 </Form.Item>
-<Form.Item name="City" noStyle>
-  <Input type="hidden" />
+<Form.Item name="City" hidden>
+  <Input />
 </Form.Item>
-<Form.Item name="State" noStyle>
-  <Input type="hidden" />
+<Form.Item name="State" hidden>
+  <Input />
 </Form.Item>
-<Form.Item name="ZipCode" noStyle>
-  <Input type="hidden" />
+<Form.Item name="ZipCode" hidden>
+  <Input />
 </Form.Item>
+
+
 
           
    </div>
