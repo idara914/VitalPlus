@@ -14,7 +14,7 @@ export async function GET(req) {
     }
 
     const result = await client.query(
-      `SELECT "Id", "ClinicalPatientCarePlanCode"
+      `SELECT "Id", "Goal"
        FROM public."Clinical_PatientCarePlan"
        WHERE "PatientId" = $1 AND "IsDeleted" = false AND "IsActive" = true
        ORDER BY "CreatedDT" DESC`,
@@ -22,7 +22,7 @@ export async function GET(req) {
     );
 
     const options = result.rows.map((row) => ({
-      label: row.ClinicalPatientCarePlanCode,
+      label: row.Goal,
       value: row.Id,
     }));
 
