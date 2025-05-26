@@ -53,6 +53,7 @@ useEffect(() => {
 
 const [serviceproviders, setServiceProviders] = useState([]);
 const [selectedPatientId, setSelectedPatientId] = useState(null);
+const [carePlans, setCarePlans] = useState([]);
 
 useEffect(() => {
   const fetchServiceProviders = async () => {
@@ -66,19 +67,30 @@ useEffect(() => {
   fetchServiceProviders();
 }, []);
 
-  useEffect(() => {
+useEffect(() => {
   if (!selectedPatientId) return;
+
   const fetchCarePlans = async () => {
     try {
       const res = await fetch(`/api/patientcareplan?patientId=${selectedPatientId}`);
       const data = await res.json();
-      setCarePlans(data);
+
+      // Ensure each item becomes { label: Goal, value: Id }
+      const formatted = data.map((item) => ({
+        label: item.Goal,
+        value: item.Id,
+      }));
+
+      setCarePlans(formatted);
     } catch (err) {
       console.error("Failed to fetch care plans:", err);
+      setCarePlans([]);
     }
   };
+
   fetchCarePlans();
 }, [selectedPatientId]);
+
 
   
   const findServiceType = (hcpcsCode) => {
