@@ -72,16 +72,10 @@ useEffect(() => {
 
   const fetchCarePlans = async () => {
     try {
-      const res = await fetch(`/api/patientcareplan?patientId=${selectedPatientId}`);
-      const data = await res.json();
+   const res = await fetch(`/api/patientcareplan?patientId=${selectedPatientId}`);
+const data = await res.json();
+setCarePlans(data); // API already returns label/value
 
-      // Ensure each item becomes { label: Goal, value: Id }
-      const formatted = data.map((item) => ({
-        label: item.Goal,
-        value: item.Id,
-      }));
-
-      setCarePlans(formatted);
     } catch (err) {
       console.error("Failed to fetch care plans:", err);
       setCarePlans([]);
