@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -51,23 +52,6 @@ useEffect(() => {
 }, []);
 
 const [serviceproviders, setServiceProviders] = useState([]);
-const [carePlans, setCarePlans] = useState([]);
-
-useEffect(() => {
-  const fetchCarePlans = async () => {
-    try {
-      const res = await fetch(`/api/patientcareplan?patientId=${selectedPatientId}`);
-      const data = await res.json();
-      setCarePlans(data);
-    } catch (err) {
-      console.error("Failed to fetch care plans:", err);
-    }
-  };
-
-  if (selectedPatientId) {
-    fetchCarePlans();
-  }
-}, [selectedPatientId]);
 
 useEffect(() => {
   const fetchServiceProviders = async () => {
@@ -631,22 +615,24 @@ useEffect(() => {
   <Input placeholder="Auto-filled from service type" className={styles.input} />
 </Form.Item>
 
-           <Form.Item
-  name="carePlan"
-  label="Care Plan"
-  rules={[{ required: true, message: "Please select a care plan" }]}
->
-  <Select
-    showSearch
-    placeholder="Select a care plan"
-    options={carePlans} // fetched from API
-    onChange={(val) => form.setFieldsValue({ carePlan: val })}
-    filterOption={(input, option) =>
-      option.label.toLowerCase().includes(input.toLowerCase())
-    }
+            <Form.Item name="carePlan" label="Care Plan">
+  <SelectField
+    options={[
+      { label: "Hospice", value: "Hospice" },
+      { label: "Elderly", value: "Elderly" },
+      { label: "Disabled", value: "Disabled" },
+    ]}
+    placeholder={"Select here"}
+    containerStyle={{ backgroundColor: "#fff" }}
+    customStyle={{
+      backgroundColor: "#fff",
+      border: "1px solid #d0d3d7",
+      padding: "2px",
+      height: "39px",
+      textAlign: "left",
+    }}
   />
 </Form.Item>
-
 
              <Form.Item name="visitVerification" label="Visit Verification">
   <SelectField
