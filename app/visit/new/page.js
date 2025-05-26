@@ -287,10 +287,11 @@ setCarePlans(data); // API already returns label/value
         console.error("Failed to fetch members:", err);
       }
     }}
-    onChange={(val) => {
-  form.setFieldsValue({ memberName: val });
-  setSelectedPatientId(val); // 👈 Trigger care plan fetch
+onChange={(val) => {
+  form.setFieldsValue({ memberName: val, carePlan: undefined }); // 👈 clear carePlan
+  setSelectedPatientId(val);
 }}
+
 
     filterOption={false}
     options={members}
