@@ -4,10 +4,10 @@ export async function GET(req) {
   const client = await pool.connect();
   try {
     const { searchParams } = new URL(req.url);
-    const PatientId = searchParams.get("PatientId");
+    const patientId = searchParams.get("patientId");
 
-    if (!PatientId) {
-      return new Response(JSON.stringify({ message: "Missing PatientId" }), {
+    if (!patientId) {
+      return new Response(JSON.stringify({ message: "Missing patientId" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
@@ -18,7 +18,7 @@ export async function GET(req) {
        FROM public."Clinical_PatientCarePlan"
        WHERE "PatientId" = $1 AND "IsDeleted" = false AND "IsActive" = true
        ORDER BY "CreatedDT" DESC`,
-      [PatientId]
+      [patientId]
     );
 
     const options = result.rows.map((row) => ({
