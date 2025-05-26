@@ -54,29 +54,19 @@ const [serviceproviders, setServiceProviders] = useState([]);
 const [carePlans, setCarePlans] = useState([]);
 
 useEffect(() => {
-  const fetchCarePlans = async (patientId) => {
-  try {
-    const res = await fetch(`/api/patientcareplan?patientId=${patientId}`);
-    const data = await res.json();
-    setCarePlans(data);
-  } catch (err) {
-    console.error("Failed to fetch care plans:", err);
+  const fetchCarePlans = async () => {
+    try {
+      const res = await fetch(`/api/patientcareplan?patientId=${selectedPatientId}`);
+      const data = await res.json();
+      setCarePlans(data);
+    } catch (err) {
+      console.error("Failed to fetch care plans:", err);
+    }
+  };
+
+  if (selectedPatientId) {
+    fetchCarePlans();
   }
-}
-
-  
-useEffect(() => {
-  const patientId = form.getFieldValue("memberName");
-  if (patientId) {
-    fetchCarePlans(patientId);
-  }
-}, [form.getFieldValue("memberName")]);
-
-const patientId = form.getFieldValue("memberName");
-if (patientId) {
-  fetchCarePlans(patientId);
-}
-
 }, [selectedPatientId]);
 
 useEffect(() => {
