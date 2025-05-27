@@ -429,7 +429,7 @@ const handleSearch = async (values) => {
 >
   <div className={styles.filters}>
     <Form.Item name="name" noStyle>
-      <Input placeholder="All" className={styles.filterInput} />
+      <Input placeholder="First + Last" className={styles.filterInput} />
     </Form.Item>
 
     <Form.Item name="dob" noStyle>
