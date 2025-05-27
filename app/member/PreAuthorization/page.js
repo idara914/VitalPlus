@@ -70,7 +70,6 @@ const handleSearch = async (values) => {
   }
 };
 
-  const [tableData, setTableData] = useState([]);
 
 
   const handleExpand = (expanded, record) => {
