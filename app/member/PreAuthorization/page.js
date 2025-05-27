@@ -426,7 +426,7 @@ export default function ServiceAuthorizationTable() {
 
             <DatePicker
               format="DD/MM/YYYY"
-              placeholder=""
+              placeholder="Date of Birth"
               className={styles.datePicker}
             />
 
