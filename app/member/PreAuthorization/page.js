@@ -30,45 +30,48 @@ export default function ServiceAuthorizationTable() {
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+const [tableData, setTableData] = useState([]);
 
-  const data = [
-    {
-      key: "1",
-      firstName: "Ali",
-      lastName: "Khan",
-      dob: "1985-05-10",
-      memberId: "12345678",
-      insurance: "ABC Health",
-      fullName: "Ali Khan",
-      ssn: "12345678",
-      payerName: "ABC Health",
-      payerId: "12345678",
-    },
-    {
-      key: "2",
-      firstName: "Ali",
-      lastName: "Ahmed",
-      dob: "1995-08-17",
-      memberId: "12345678",
-      insurance: "DEF Health",
-      fullName: "Ali Ahmed",
-      ssn: "12345678",
-      payerName: "DEF Health",
-      payerId: "12345678",
-    },
-    {
-      key: "3",
-      firstName: "Ali",
-      lastName: "John",
-      dob: "1985-04-11",
-      memberId: "12345678",
-      insurance: "XYZ Health",
-      fullName: "Ali John",
-      ssn: "12345678",
-      payerName: "XYZ Health",
-      payerId: "12345678",
-    },
-  ];
+const handleSearch = async (values) => {
+  const [firstName, lastName = ""] = (values.name || "").split(" ");
+  const payload = {
+    firstName,
+    lastName,
+    dob: values.dob?.format("YYYY-MM-DD") || null,
+    clinicPatientCode: values.clinicPatientCode || null,
+    isActive: "true",
+  };
+
+  try {
+    const res = await fetch("/api/clinicpatient/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    setTableData(
+      data.results.map((r, i) => ({
+        key: r.Id || i,
+        firstName: r.FirstName,
+        lastName: r.LastName,
+        dob: r.DOB,
+        memberId: r.ClinicPatientCode,
+        insurance: "Unknown", // You can replace this if you have payer info
+        fullName: `${r.FirstName} ${r.LastName}`,
+        ssn: r.ClinicPatientCode,
+        payerName: "Unknown",
+        payerId: "N/A",
+      }))
+    );
+  } catch (err) {
+    console.error("🔴 Search failed:", err);
+  }
+};
+
+  const [tableData, setTableData] = useState([]);
+
 
   const handleExpand = (expanded, record) => {
     setExpandedRowKeys(expanded ? [record.key] : []);
@@ -421,23 +424,25 @@ export default function ServiceAuthorizationTable() {
             </div>
           </div>
 
-          <div className={styles.filters}>
-            <Input placeholder="All" className={styles.filterInput} />
+          <Form layout="inline" onFinish={handleSearch}>
+  <Form.Item name="name">
+    <Input placeholder="Full Name" />
+  </Form.Item>
 
-            <DatePicker
-              format="DD/MM/YYYY"
-              placeholder="Date of Birth"
-              className={styles.datePicker}
-            />
+  <Form.Item name="dob">
+    <DatePicker format="YYYY-MM-DD" placeholder="DOB" />
+  </Form.Item>
 
-            <Input
-              placeholder="SSN / Member ID"
-              //   suffix={<SearchOutlined />}
-              className={styles.searchInput}
-            />
-            <Button className={styles.SearchBtn} icon={<SearchOutlined />} />
-            {/* </div> */}
-          </div>
+  <Form.Item name="clinicPatientCode">
+    <Input placeholder="SSN / Member ID" />
+  </Form.Item>
+
+  <Form.Item>
+    <Button type="primary" htmlType="submit" icon={<SearchOutlined />}>
+      Search
+    </Button>
+  </Form.Item>
+</Form>
 
           <Table
             rowSelection={{
@@ -447,7 +452,7 @@ export default function ServiceAuthorizationTable() {
             }}
             columns={columns}
             scroll={{ x: 768 }}
-            dataSource={data}
+            dataSource={tableData}
             expandable={{
               expandedRowRender,
               expandedRowKeys,
