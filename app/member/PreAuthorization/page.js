@@ -425,39 +425,36 @@ const handleSearch = async (values) => {
 
 <Form
   form={form}
-  layout="inline"
   onFinish={handleSearch}
-  className={styles.filters}
 >
-  <Form.Item name="name" noStyle>
-    <Input
-      placeholder="All"
-      className={styles.filterInput}
-    />
-  </Form.Item>
+  <div className={styles.filters}>
+    <Form.Item name="name" noStyle>
+      <Input placeholder="All" className={styles.filterInput} />
+    </Form.Item>
 
-  <Form.Item name="dob" noStyle>
-    <DatePicker
-      format="DD/MM/YYYY"
-      placeholder="Date of Birth"
-      className={styles.datePicker}
-    />
-  </Form.Item>
+    <Form.Item name="dob" noStyle>
+      <DatePicker
+        format="DD/MM/YYYY"
+        placeholder="Date of Birth"
+        className={styles.datePicker}
+      />
+    </Form.Item>
 
-  <Form.Item name="clinicPatientCode" noStyle>
-    <Input
-      placeholder="SSN / Member ID"
-      className={styles.searchInput}
-    />
-  </Form.Item>
+    <Form.Item name="clinicPatientCode" noStyle>
+      <Input
+        placeholder="SSN / Member ID"
+        className={styles.searchInput}
+      />
+    </Form.Item>
 
-  <Form.Item noStyle>
-    <Button
-      htmlType="submit"
-      className={styles.SearchBtn}
-      icon={<SearchOutlined />}
-    />
-  </Form.Item>
+    <Form.Item noStyle>
+      <Button
+        htmlType="submit"
+        className={styles.SearchBtn}
+        icon={<SearchOutlined />}
+      />
+    </Form.Item>
+  </div>
 </Form>
 
 
