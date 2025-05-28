@@ -28,7 +28,9 @@ export default function ServiceAuthorizationTable() {
   const [form] = Form.useForm();
   const [templateForm] = Form.useForm();
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 const [tableData, setTableData] = useState([]);
 
@@ -51,20 +53,20 @@ const handleSearch = async (values) => {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    setTableData(
-      data.results.map((r, i) => ({
-        key: r.Id || i,
-        firstName: r.FirstName,
-        lastName: r.LastName,
-        dob: r.DOB,
-        memberId: r.ClinicPatientCode,
-        insurance: "Unknown", // You can replace this if you have payer info
-        fullName: `${r.FirstName} ${r.LastName}`,
-        ssn: r.ClinicPatientCode,
-        payerName: "Unknown",
-        payerId: "N/A",
-      }))
-    );
+    const results = data.results.map((r, i) => ({
+      key: r.Id || i,
+      firstName: r.FirstName,
+      lastName: r.LastName,
+      dob: r.DOB,
+      memberId: r.ClinicPatientCode,
+      insurance: "Unknown",
+      fullName: `${r.FirstName} ${r.LastName}`,
+      ssn: r.ClinicPatientCode,
+      payerName: "Unknown",
+      payerId: "N/A",
+    }));
+    
+    setTableData(results); // Always replace with latest results
   } catch (err) {
     console.error("🔴 Search failed:", err);
   }
@@ -72,17 +74,28 @@ const handleSearch = async (values) => {
 
 
 
+
   const handleExpand = (expanded, record) => {
     setExpandedRowKeys(expanded ? [record.key] : []);
   };
 
-  const handleRowSelection = (selectedKeys) => {
-    setSelectedRowKeys(selectedKeys);
-  };
+ const handleRowSelection = (newSelectedKeys, selectedRecords) => {
+  const newSelectedRows = [
+    ...selectedRows.filter((r) => !newSelectedKeys.includes(r.key)),
+    ...selectedRecords,
+  ];
+  setSelectedRowKeys(newSelectedKeys);
+  setSelectedRows(newSelectedRows);
+};
+
 
   const handleClear = () => {
-    setSelectedRowKeys([]);
-  };
+  setSelectedRowKeys([]);
+  setSelectedRows([]);
+  setTableData([]);
+  form.resetFields();
+};
+
 
   const handleSaveSelection = () => {
     console.log("Saving selection:", selectedRowKeys);
@@ -459,22 +472,23 @@ const handleSearch = async (values) => {
 
 
           <Table
-            rowSelection={{
-              type: "checkbox",
-              selectedRowKeys,
-              onChange: handleRowSelection,
-            }}
-            columns={columns}
-            scroll={{ x: 768 }}
-            dataSource={tableData}
-            expandable={{
-              expandedRowRender,
-              expandedRowKeys,
-              showExpandColumn: false,
-            }}
-            pagination={false}
-            className={styles.table}
-          />
+  rowSelection={{
+    type: "checkbox",
+    selectedRowKeys,
+    onChange: handleRowSelection,
+  }}
+  columns={columns}
+  scroll={{ x: 768 }}
+  dataSource={tableData}
+  expandable={{
+    expandedRowRender,
+    expandedRowKeys,
+    showExpandColumn: false,
+  }}
+  pagination={false}
+  className={styles.table}
+/>
+
 
           <CustomModal
             title="Create Template"
