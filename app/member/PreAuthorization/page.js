@@ -85,11 +85,6 @@ const handleSearch = async (values) => {
 };
 
 
-    setTableData(uniqueData);
-  } catch (err) {
-    console.error("🔴 Search failed:", err);
-  }
-};
 
 
 
