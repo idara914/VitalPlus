@@ -31,6 +31,7 @@ export default function ServiceAuthorizationTable() {
   const [selectedRows, setSelectedRows] = useState([]);
 const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 const [savedRowKeys, setSavedRowKeys] = useState([]);
+const [currentSelectedIndex, setCurrentSelectedIndex] = useState(0);
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 const [tableData, setTableData] = useState([]);
@@ -94,7 +95,12 @@ const handleSearch = async (values) => {
   ];
   setSelectedRowKeys(newSelectedKeys);
   setSelectedRows(newSelectedRows);
+  setCurrentSelectedIndex(0);
+  if (newSelectedKeys.length > 0) {
+    setExpandedRowKeys([newSelectedKeys[0]]);
+  }
 };
+
 
 
   const handleClear = () => {
@@ -399,9 +405,22 @@ const handleSearch = async (values) => {
 
             <div className={styles.formActions}>
               <Button className={styles.submitBtn}>Submit</Button>
-              <Button type="primary" className={styles.nextBtn}>
-                Next
-              </Button>
+              <Button
+  type="primary"
+  className={styles.nextBtn}
+  onClick={() => {
+    if (selectedRowKeys.length === 0) return;
+
+    const nextIndex = currentSelectedIndex + 1;
+    if (nextIndex < selectedRowKeys.length) {
+      setCurrentSelectedIndex(nextIndex);
+      setExpandedRowKeys([selectedRowKeys[nextIndex]]);
+    }
+  }}
+>
+  Next
+</Button>
+
             </div>
           </Form>
         </div>
