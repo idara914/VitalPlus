@@ -204,15 +204,17 @@ const handleSearch = async (values) => {
     },
   ];
 const handleExpandNext = (currentKey) => {
-  const currentIndex = savedRowKeys.indexOf(currentKey);
+  const currentIndex = selectedRowKeys.indexOf(currentKey);
 
-  if (currentIndex !== -1 && currentIndex < savedRowKeys.length - 1) {
-    const nextKey = savedRowKeys[currentIndex + 1];
-    setExpandedRowKeys([nextKey]);
-  } else {
-    console.log("No more selected rows to expand.");
-  }
+  if (selectedRowKeys.length === 0) return;
+
+  const nextIndex = (currentIndex + 1) % selectedRowKeys.length;
+  const nextKey = selectedRowKeys[nextIndex];
+
+  setExpandedRowKeys([nextKey]);
 };
+
+
 
   const expandedRowRender = (record) => {
     return (
