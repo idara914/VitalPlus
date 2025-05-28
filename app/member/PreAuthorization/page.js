@@ -31,7 +31,6 @@ export default function ServiceAuthorizationTable() {
   const [selectedRows, setSelectedRows] = useState([]);
 const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 const [savedRowKeys, setSavedRowKeys] = useState([]);
-const [currentSelectedIndex, setCurrentSelectedIndex] = useState(0);
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 const [tableData, setTableData] = useState([]);
@@ -69,22 +68,17 @@ const handleSearch = async (values) => {
       payerId: "N/A",
     }));
 
-    // 🧠 Combine new search results with previously selected rows, avoiding duplicates
-    const combinedData = [...newResults];
+    // Merge selected rows and remove duplicates by `key`
+    const mergedData = [...selectedRows, ...newResults];
+    const uniqueData = Array.from(
+      new Map(mergedData.map((item) => [item.key, item])).values()
+    );
 
-    selectedRows.forEach((selected) => {
-      if (!combinedData.find((d) => d.key === selected.key)) {
-        combinedData.push(selected);
-      }
-    });
-
-    setTableData(combinedData);
+    setTableData(uniqueData);
   } catch (err) {
     console.error("🔴 Search failed:", err);
   }
 };
-
-
 
 
 
@@ -100,12 +94,7 @@ const handleSearch = async (values) => {
   ];
   setSelectedRowKeys(newSelectedKeys);
   setSelectedRows(newSelectedRows);
-  setCurrentSelectedIndex(0);
-  if (newSelectedKeys.length > 0) {
-    setExpandedRowKeys([newSelectedKeys[0]]);
-  }
 };
-
 
 
   const handleClear = () => {
@@ -214,6 +203,16 @@ const handleSearch = async (values) => {
       ),
     },
   ];
+const handleExpandNext = (currentKey) => {
+  const currentIndex = savedRowKeys.indexOf(currentKey);
+
+  if (currentIndex !== -1 && currentIndex < savedRowKeys.length - 1) {
+    const nextKey = savedRowKeys[currentIndex + 1];
+    setExpandedRowKeys([nextKey]);
+  } else {
+    console.log("No more selected rows to expand.");
+  }
+};
 
   const expandedRowRender = (record) => {
     return (
@@ -413,15 +412,7 @@ const handleSearch = async (values) => {
               <Button
   type="primary"
   className={styles.nextBtn}
-  onClick={() => {
-    if (selectedRowKeys.length === 0) return;
-
-    const nextIndex = currentSelectedIndex + 1;
-    if (nextIndex < selectedRowKeys.length) {
-      setCurrentSelectedIndex(nextIndex);
-      setExpandedRowKeys([selectedRowKeys[nextIndex]]);
-    }
-  }}
+  onClick={() => handleExpandNext(record.key)}
 >
   Next
 </Button>
