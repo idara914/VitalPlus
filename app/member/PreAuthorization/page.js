@@ -30,6 +30,7 @@ export default function ServiceAuthorizationTable() {
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+const [savedRowKeys, setSavedRowKeys] = useState([]);
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 const [tableData, setTableData] = useState([]);
@@ -53,7 +54,8 @@ const handleSearch = async (values) => {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    const results = data.results.map((r, i) => ({
+
+    const newResults = data.results.map((r, i) => ({
       key: r.Id || i,
       firstName: r.FirstName,
       lastName: r.LastName,
@@ -65,8 +67,14 @@ const handleSearch = async (values) => {
       payerName: "Unknown",
       payerId: "N/A",
     }));
-    
-    setTableData(results); // Always replace with latest results
+
+    // Merge selected rows and remove duplicates by `key`
+    const mergedData = [...selectedRows, ...newResults];
+    const uniqueData = Array.from(
+      new Map(mergedData.map((item) => [item.key, item])).values()
+    );
+
+    setTableData(uniqueData);
   } catch (err) {
     console.error("🔴 Search failed:", err);
   }
@@ -98,8 +106,11 @@ const handleSearch = async (values) => {
 
 
   const handleSaveSelection = () => {
-    console.log("Saving selection:", selectedRowKeys);
-  };
+  const newSaved = Array.from(new Set([...savedRowKeys, ...selectedRowKeys]));
+  setSavedRowKeys(newSaved);
+  console.log("✅ Saved selection:", newSaved);
+};
+
 
   const openTemplateModal = () => {
     setIsTemplateModalOpen(true);
@@ -471,12 +482,15 @@ const handleSearch = async (values) => {
 </Form>
 
 
-          <Table
+    <Table
   rowSelection={{
     type: "checkbox",
     selectedRowKeys,
     onChange: handleRowSelection,
   }}
+  rowClassName={(record) =>
+    savedRowKeys.includes(record.key) ? styles.savedRow : ""
+  }
   columns={columns}
   scroll={{ x: 768 }}
   dataSource={tableData}
@@ -488,6 +502,7 @@ const handleSearch = async (values) => {
   pagination={false}
   className={styles.table}
 />
+
 
 
           <CustomModal
