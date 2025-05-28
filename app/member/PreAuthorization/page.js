@@ -69,11 +69,21 @@ const handleSearch = async (values) => {
       payerId: "N/A",
     }));
 
-    // Merge selected rows and remove duplicates by `key`
-    const mergedData = [...selectedRows, ...newResults];
-    const uniqueData = Array.from(
-      new Map(mergedData.map((item) => [item.key, item])).values()
-    );
+    // 🧠 Combine new search results with previously selected rows, avoiding duplicates
+    const combinedData = [...newResults];
+
+    selectedRows.forEach((selected) => {
+      if (!combinedData.find((d) => d.key === selected.key)) {
+        combinedData.push(selected);
+      }
+    });
+
+    setTableData(combinedData);
+  } catch (err) {
+    console.error("🔴 Search failed:", err);
+  }
+};
+
 
     setTableData(uniqueData);
   } catch (err) {
