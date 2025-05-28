@@ -243,6 +243,12 @@
   border-radius: 6px;
 }
 
+/* Highlight saved rows in purple */
+.savedRow {
+  background-color: #e0d4f7 !important; /* light purple background */
+}
+
+
 @media (max-width: 1200px) {
   .infoGrid {
     grid-template-columns: repeat(3, 1fr);
