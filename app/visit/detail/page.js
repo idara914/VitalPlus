@@ -98,8 +98,10 @@ export default function Features() {
                 marginTop: "20px",
               }}
             >
-              {visits.map((visit, index) => (
-                <TimeCard />
+            {visits.map((visit) => (
+  <TimeCard key={visit.id} />
+))}
+
               ))}
             </div>
           </div>
