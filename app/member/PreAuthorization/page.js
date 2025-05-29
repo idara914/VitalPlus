@@ -374,6 +374,7 @@ const handleExpandNext = (currentKey) => {
   rules={[{ required: true, message: "Please select a HCPCS Code" }]}
 >
   <SelectField
+optionLabelProp="value"
     options={[
       {
         label: "Managed Care",
@@ -441,7 +442,7 @@ const handleExpandNext = (currentKey) => {
         ]
       }
     ]}
-    placeholder="Select here"
+    placeholder="HPCS Codes"
     containerStyle={{ backgroundColor: "#fff" }}
     customStyle={{
       backgroundColor: "#fff",
