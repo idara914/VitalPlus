@@ -307,12 +307,11 @@ const handleExpandNext = (currentKey) => {
 
            
 <Form.Item
-  name="Procedure Code(s)"
+  name="hcpcsCode"
   label="Procedure Code(s)"
   className={styles.formItem}
-  rules={[{ required: true, message: "HCPCS Cods" }]}
+  rules={[{ required: true, message: "Please select a HCPCS Code" }]}
 >
-    <Input placeholder="CPT/HCPCS" />
   <SelectField
     options={[
       {
@@ -381,8 +380,7 @@ const handleExpandNext = (currentKey) => {
         ]
       }
     ]}
-    onChange={(value) => form.setFieldsValue({ hcpcsCode: value })}
-    placeholder={"Select here"}
+    placeholder="Select here"
     containerStyle={{ backgroundColor: "#fff" }}
     customStyle={{
       backgroundColor: "#fff",
@@ -393,6 +391,7 @@ const handleExpandNext = (currentKey) => {
     }}
   />
 </Form.Item>
+
                   
               
 
