@@ -32,3 +32,9 @@
   visibility: visible !important;
 }
 
+.dropdownMenu {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+
