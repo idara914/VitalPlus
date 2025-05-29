@@ -375,6 +375,8 @@ const handleExpandNext = (currentKey) => {
 >
   <SelectField
 optionLabelProp="value"
+ showSearch
+  labelInValue={false}
     options={[
       {
         label: "Managed Care",
