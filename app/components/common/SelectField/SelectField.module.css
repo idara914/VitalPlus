@@ -1,14 +1,19 @@
 .container {
   display: flex;
   flex-direction: column;
+  overflow: visible; /* Ensure dropdown can overflow */
+  position: relative;
+  z-index: 0;
 }
+
 .label {
-  font-size: #121212;
-  font-size: 15px;
-  font-size: bold;
+  color: #121212;           /* ✅ Correct use of color */
+  font-size: 15px;          /* ✅ Font size in px */
+  font-weight: bold;        /* ✅ Use font-weight for boldness */
   margin-bottom: 12px;
   text-align: left;
 }
+
 .input {
   border: none;
   background-color: rgba(122, 130, 138, 0.2);
@@ -16,3 +21,20 @@
   border-radius: 8px;
   padding: 10px 20px;
 }
+
+
+/* ✅ Ensure dropdown doesn't get clipped and scrolls properly */
+.ant-cascader-dropdown {
+  z-index: 10000 !important;
+  max-height: 500px;
+  overflow-y: auto;
+  position: absolute !important;
+  visibility: visible !important;
+}
+
+.dropdownMenu {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+

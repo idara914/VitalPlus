@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.7",
     "@vercel/kv": "^3.0.0",
     "antd": "^5.20.1",
     "axios": "^1.7.7",
@@ -21,7 +20,7 @@
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
-    "lucide-react": "^0.511.0",
+
     "next": "14.2.5",
     "nodemailer": "^6.10.0",
     "npm": "^10.8.2",
