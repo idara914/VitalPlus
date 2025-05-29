@@ -102,7 +102,7 @@ export default function Features() {
   <TimeCard key={visit.id} />
 ))}
 
-              ))}
+
             </div>
           </div>
           <Button
