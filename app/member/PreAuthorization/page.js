@@ -35,6 +35,67 @@ const [savedRowKeys, setSavedRowKeys] = useState([]);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 const [tableData, setTableData] = useState([]);
 
+  const findServiceType = (hcpcsCode) => {
+  const serviceOptions = [
+    // Managed Care
+    { label: "NURSING - HHS OF RN EA 15 MIN", value: "G0299" },
+    { label: "NURSING - HHS OF LPN EA 15 MIN", value: "G0300" },
+    { label: "NURSING - HHS OF AIDE EA 15 MIN", value: "G0156" },
+    { label: "OT - ELECTRIC STIMULATION THERAPY", value: "97014" },
+    { label: "OT - PHYSICAL MEDICINE PROCEDURE", value: "97799" },
+    { label: "OT - ELECTRICAL STIMULATION", value: "97032" },
+    { label: "OT - THERAPEUTIC EXERCISES", value: "97110" },
+    { label: "OT - NEUROMUSCULAR REEDUCATION", value: "97112" },
+    { label: "OT - GAIT TRAINING THERAPY", value: "97116" },
+    { label: "OT - THERAPEUTIC PROCEDURE", value: "97124" },
+    { label: "OT - MANUAL THERAPY 1/> REGIONS", value: "97140" },
+    { label: "OT - THERAPEUTIC ACTIVITIES", value: "97530" },
+    { label: "OT - SELF CARE MNGMENT TRAINING", value: "97535" },
+    { label: "OT - COMMUNITY/WORK REINTEGRATION", value: "97537" },
+    { label: "OT - WHEELCHAIR MNGMENT TRAINING", value: "97542" },
+    { label: "OT - PHYSICAL PERFORMANCE TEST", value: "97750" },
+    { label: "RN Assessment of delegation of CFC tasks (MDCP)", value: "G0162" },
+    { label: "RN Training and Supervision of Delegated tasks", value: "G0495" },
+    { label: "Respite Care Specialized RN, (CDS)", value: "T1005" },
+    { label: "FFSS Specialized RN, (CDS)", value: "S9482" },
+    { label: "Nursing Services - RN Agency", value: "S9123" },
+    { label: "Nursing Care - LVN Agency", value: "S9124" },
+    { label: "Occupational Therapy Agency", value: "S9129" },
+    { label: "Physical Therapy Agency", value: "S9131" },
+    { label: "Private Duty Nursing (PDN)", value: "T1000" },
+
+    // Acute Care FFS
+    { label: "NURSING - RN-Skilled Care in the Client's Home", value: "S9123" },
+    { label: "NURSING - LVN-Skilled Care in the Client's Home", value: "S9124" },
+    { label: "PT - PHYSICAL MEDICINE PROCEDURE", value: "97799" },
+    { label: "PT - ELECTRIC STIMULATION THERAPY", value: "97014" },
+    { label: "PT - THERAPEUTIC EXERCISES", value: "97110" },
+    { label: "PT - GAIT TRAINING THERAPY", value: "97116" },
+    { label: "PT - THERAPEUTIC PROCEDURE", value: "97124" },
+    { label: "PT - MANUAL THERAPY 1/> REGIONS", value: "97140" },
+    { label: "PT - THERAPEUTIC ACTIVITIES", value: "97530" },
+    { label: "PT - SELF CARE MNGMENT TRAINING", value: "97535" },
+
+    // Shared between Managed and Acute (no duplicates needed but left for clarity)
+    { label: "OT - ELECTRICAL STIMULATION", value: "97032" },
+    { label: "OT - NEUROMUSCULAR REEDUCATION", value: "97112" },
+    { label: "OT - COMMUNITY/WORK REINTEGRATION", value: "97537" },
+
+    // Longterm Care FFS
+    { label: "In-Home OCCUPATIONAL THERAPY - EVV OHFH", value: "G0152" },
+    { label: "In-Home PHYSICAL THERAPY - EVV OHFH", value: "G0151" },
+    { label: "In-Home NURSING SERVICES BY LPN/LVN - EVV OHFH", value: "T1003" },
+    { label: "In-Home CDS NURSING RN - EVV OHFH", value: "T1002" },
+    { label: "In-Home OCCUPATIONAL THERAPY - CDS - EVV OHFH", value: "G0152" },
+    { label: "In-Home Physical Therapy - LC 1, 8 - EVV OHFH", value: "S8990" },
+    { label: "In-Home CDS Occupational Therapy - LC 1 - EVV OHFH", value: "M0232" },
+    { label: "In-Home CDS Physical Therapy - LC 1 - EVV OHFH", value: "M0235" },
+    { label: "In-Home CDS Physical Therapy - LC 1 - EVV OHFH", value: "G0151" },
+  ];
+
+  return serviceOptions.find((option) => option.value === hcpcsCode);
+};
+  
 const handleSearch = async (values) => {
   const [firstName, lastName = ""] = (values.name || "").split(" ");
   const payload = {
