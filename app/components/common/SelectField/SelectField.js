@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { Select } from "antd";
+import { Dropdown, Menu } from "antd";
 import styles from "./SelectField.module.css";
-
-const { Option, OptGroup } = Select;
 
 const SelectField = ({
   options = [],
@@ -10,58 +8,59 @@ const SelectField = ({
   placeholder,
   value,
   onChange,
-  onSearch, // for dynamic search
   customStyle,
   containerStyle,
-  showSearch = false,
-  optionLabelProp = "label", // ✅ NEW prop with default
+  optionLabelProp = "label",
 }) => {
-  const [dynamicOptions, setDynamicOptions] = useState([]);
-
-  useEffect(() => {
-    if (!showSearch) return;
-    setDynamicOptions(options); // initialize with props
-  }, [options, showSearch]);
-
   const isGrouped = options.some((opt) => opt.children);
 
-  const handleDynamicSearch = async (searchText) => {
-    if (onSearch) {
-      const results = await onSearch(searchText);
-      setDynamicOptions(results);
+  const [visibleLabel, setVisibleLabel] = useState("");
+
+  useEffect(() => {
+    if (!value) {
+      setVisibleLabel("");
+      return;
     }
-  };
+
+    for (const group of options) {
+      if (group.children) {
+        const found = group.children.find((item) => item.value === value);
+        if (found) {
+          setVisibleLabel(optionLabelProp === "value" ? found.value : found.label);
+          return;
+        }
+      } else if (group.value === value) {
+        setVisibleLabel(optionLabelProp === "value" ? group.value : group.label);
+        return;
+      }
+    }
+  }, [value, options, optionLabelProp]);
+
+  const buildMenu = () => (
+    <Menu>
+      {options.map((group) => (
+        <Menu.SubMenu key={group.label} title={group.label}>
+          {group.children.map((item) => (
+            <Menu.Item
+              key={item.value}
+              onClick={() => onChange(item.value)}
+            >
+              {item.label}
+            </Menu.Item>
+          ))}
+        </Menu.SubMenu>
+      ))}
+    </Menu>
+  );
 
   return (
     <div className={styles.container} style={containerStyle}>
       {label && <label className={styles.label}>{label}</label>}
-      <Select
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        style={customStyle}
-        className={styles.input}
-        showSearch={showSearch}
-        filterOption={!onSearch}
-        onSearch={handleDynamicSearch}
-        optionLabelProp={optionLabelProp} // ✅ dynamically control what shows in box
-      >
-        {(showSearch ? dynamicOptions : options).map((groupOrOption) =>
-          groupOrOption.children ? (
-            <OptGroup key={groupOrOption.label} label={groupOrOption.label}>
-              {groupOrOption.children.map((item) => (
-                <Option key={item.value} value={item.value}>
-                  {item.label}
-                </Option>
-              ))}
-            </OptGroup>
-          ) : (
-            <Option key={groupOrOption.value} value={groupOrOption.value}>
-              {groupOrOption.label}
-            </Option>
-          )
-        )}
-      </Select>
+      <Dropdown overlay={buildMenu()} trigger={["click"]} placement="bottomLeft">
+        <div className={styles.input} style={{ cursor: "pointer", ...customStyle }}>
+          {visibleLabel || placeholder || "Select"}
+        </div>
+      </Dropdown>
     </div>
   );
 };
