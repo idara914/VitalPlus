@@ -352,41 +352,38 @@ const handleExpandNext = (currentKey) => {
 </Form.Item>
 
 
-              <Form.Item label="Place of Service" className={styles.formItem}>
-                <SelectField
-                  options={[]}
-                  placeholder={"Service Address"}
-   
-  rules={[{ required: true, message: "Service Address" }]}
+              <Form.Item
+  label="Service Address"
+  name="location"
+  className={styles.formItem}
+  rules={[{ required: true, message: "Service Address is required" }]}
 >
   <div suppressHydrationWarning>
     {typeof window !== "undefined" ? (
       <AddressAutofill
         accessToken={MAPBOX_TOKEN}
         autoFillOnSubmit={true}
-     onRetrieve={(res) => {
-  const [lng, lat] = res.features[0]?.geometry?.coordinates || [];
-  const fullAddress = res.features[0]?.place_name;
+        onRetrieve={(res) => {
+          const [lng, lat] = res.features[0]?.geometry?.coordinates || [];
+          const fullAddress = res.features[0]?.place_name;
+          const context = res.features[0]?.context || [];
+          const city = context.find((c) => c.id.includes("place"))?.text || "";
+          const state = context.find((c) => c.id.includes("region"))?.text || "";
+          const zip = context.find((c) => c.id.includes("postcode"))?.text || "";
 
-  const context = res.features[0]?.context || [];
-  const city = context.find((c) => c.id.includes("place"))?.text || "";
-  const state = context.find((c) => c.id.includes("region"))?.text || "";
-  const zip = context.find((c) => c.id.includes("postcode"))?.text || "";
-
-  form.setFieldsValue({
-    location: fullAddress,
-    Latitude: lat,
-    Longitude: lng,
-    AddressLine1: fullAddress?.split(",")[0] || "",
-    City: city,
-    State: state,
-    ZipCode: zip,
-  });
-}}
-
+          form.setFieldsValue({
+            location: fullAddress,
+            Latitude: lat,
+            Longitude: lng,
+            AddressLine1: fullAddress?.split(",")[0] || "",
+            City: city,
+            State: state,
+            ZipCode: zip,
+          });
+        }}
       >
         <Input
-          name="Service Address"
+          name="location"
           placeholder="Service Address"
           className={styles.input}
           autoComplete="street-address"
@@ -394,26 +391,15 @@ const handleExpandNext = (currentKey) => {
       </AddressAutofill>
     ) : (
       <Input
-        name="Service Address"
+        name="location"
         placeholder="Service Address"
         className={styles.input}
         autoComplete="street-address"
         disabled
-   
-
-
-containerStyle={{
-                    backgroundColor: "#fff",
-                  }}
-                  customStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #d0d3d7",
-                    padding: "2px",
-                    height: "39px",
-                    textAlign: "left",
-                  }}
-                />
-              </Form.Item>
+      />
+    )}
+  </div>
+</Form.Item>
 
               <Form.Item
                 label="Diagnosis Code (ICD-10)"
