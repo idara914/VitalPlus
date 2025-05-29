@@ -276,9 +276,10 @@ const handleExpandNext = (currentKey) => {
 
           <Form form={form} layout="vertical" className={styles.authForm}>
             <div className={styles.formGrid}>
-              <Form.Item label="Service Type Code" className={styles.formItem}>
-                <Input placeholder="e.g. 42" />
-              </Form.Item>
+             <Form.Item label="Service Type Code" className={styles.formItem}>
+  <Input value="45" readOnly />
+</Form.Item>
+
 
               <Form.Item label="Place of Service" className={styles.formItem}>
                 <SelectField
